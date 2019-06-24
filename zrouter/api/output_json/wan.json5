@@ -1,0 +1,515 @@
+{
+    "test_001_get_wan": [
+        {
+            "data":[
+                {
+                    "module": "wan",
+                    "errcode": 0,
+                    "result": {
+                        "config": {
+                            "dhcp": {
+                                "peerdns": "1",
+                                "mtu": "1500"
+                            },
+                            "static": {
+                                "mtu": "1500"
+                            },
+                            "pppoe": {
+                                "sdial": "0",
+                                "peerdns": "1",
+                                "advance": "0",
+                                "mtu": "1480"
+                            },
+                            "wisp": {
+                                "peerdns": "1",
+                                "mtu": "1500"
+                            }
+                        },
+                        "proto": "dhcp"
+                    },
+                    "api": "get"
+                }
+            ],
+            "msg_id":11111,
+            "errcode":0
+        }
+    ],
+
+    "test_002_set_dhcp_auto_dns": [
+        {
+            "data": [{
+                "module": "wan",
+                "errcode": 0,
+                "result": {},
+                "api": "set"
+            }],
+            "msg_id": 11111,
+            "errcode": 0
+        },
+        {
+            "data":[{
+                "module":"wan",
+                "errcode":0,
+                "result":{
+                    "config":{
+                        "dhcp":{
+                            "peerdns":"1",
+                            "mtu":"1500"
+                        },
+                        "static":{
+                            "mtu":"1500"
+                        },
+                        "pppoe":{
+                            "sdial":"0",
+                            "peerdns":"1",
+                            "advance":"0",
+                            "mtu":"1480"
+                        },
+                        "wisp":{
+                            "peerdns":"1",
+                            "mtu":"1500"
+                        }
+                    },
+                    "proto":"dhcp"
+                },
+                "api":"get"
+            }],
+            "msg_id":11111,
+            "errcode":0
+        }
+    ],
+
+    "test_003_set_dhcp_hand_dns": [
+        {
+            "data": [{
+                "module": "wan",
+                "errcode": 0,
+                "result": {},
+                "api": "set"
+            }],
+            "msg_id": 11111,
+            "errcode": 0
+        },
+        {
+            "data":[{
+                "module":"wan",
+                "errcode":0,
+                "result":{
+                    "config":{
+                        "dhcp":{
+                            "ipv4dns1":"114.114.114.114",
+                            "peerdns":"0",
+                            "ipv4dns2":"114.114.115.115",
+                            "mtu":"1500"
+                        },
+                        "static":{
+                            "mtu":"1500"
+                        },
+                        "pppoe":{
+                            "sdial":"0",
+                            "peerdns":"1",
+                            "advance":"0",
+                            "mtu":"1480"
+                        },
+                        "wisp":{
+                            "peerdns":"1",
+                            "mtu":"1500"
+                        }
+                    },
+                    "proto":"dhcp"
+                },
+                "api":"get"
+            }],
+            "msg_id":11111,
+            "errcode":0
+        }
+    ],
+
+    "test_004_set_static": [
+        {
+            "data": [{
+                "module": "wan",
+                "errcode": 0,
+                "result": {},
+                "api": "set"
+            }],
+            "msg_id": 11111,
+            "errcode": 0
+        },
+        {
+            "data":[{
+                "module":"wan",
+                "errcode":0,
+                "result":{
+                    "config":{
+                        "dhcp":{
+                            "ipv4dns1":"114.114.114.114",
+                            "peerdns":"0",
+                            "ipv4dns2":"114.114.115.115",
+                            "mtu":"1500"
+                        },
+                        "static":{
+                            "ipv4dns2":"8.8.8.8",
+                            "mtu":"1500",
+                            "ipv4dns1":"144.144.144.144",
+                            "ipv4gateway":"192.168.199.1",
+                            "ipv4mask":"255.255.255.0",
+                            "ipv4addr":"192.168.199.123",
+                        },
+                        "pppoe":{
+                            "sdial":"0",
+                            "peerdns":"1",
+                            "advance":"0",
+                            "mtu":"1480"
+                        },
+                        "wisp":{
+                            "peerdns":"1",
+                            "mtu":"1500"
+                        }
+                    },
+                    "proto":"static"
+                },
+                "api":"get"
+            }],
+            "msg_id":11111,
+            "errcode":0
+        }
+    ],
+
+    "test_005_set_pppoe_auto_dns_no_senior": [
+        {
+            "data": [{
+                "module": "wan",
+                "errcode": 0,
+                "result": {},
+                "api": "set"
+            }],
+            "msg_id": 11111,
+            "errcode": 0
+        },
+        {
+            "data":[{
+                "module":"wan",
+                "errcode":0,
+                "result":{
+                    "config":{
+                        "dhcp":{
+                            "ipv4dns1":"114.114.114.114",
+                            "peerdns":"0",
+                            "ipv4dns2":"114.114.115.115",
+                            "mtu":"1500"
+                        },
+                        "static":{
+                            "ipv4dns2":"8.8.8.8",
+                            "mtu":"1500",
+                            "ipv4dns1":"144.144.144.144",
+                            "ipv4gateway":"192.168.199.1",
+                            "ipv4mask":"255.255.255.0",
+                            "ipv4addr":"192.168.199.123",
+                        },
+                        "pppoe":{
+                            "username": "YWRtaW4=",
+                            "password": "MTIzNDU2Nzg=",
+                            "sdial":"0",
+                            "peerdns":"1",
+                            "advance":"0",
+                            "mtu":"1480"
+                        },
+                        "wisp":{
+                            "peerdns":"1",
+                            "mtu":"1500"
+                        }
+                    },
+                    "proto":"pppoe"
+                },
+                "api":"get"
+            }],
+            "msg_id":11111,
+            "errcode":0
+        }
+    ],
+
+    "test_006_set_pppoe_auto_dns_has_senior": [
+        {
+            "data": [{
+                "module": "wan",
+                "errcode": 0,
+                "result": {},
+                "api": "set"
+            }],
+            "msg_id": 11111,
+            "errcode": 0
+        },
+        {
+            "data":[{
+                "module":"wan",
+                "errcode":0,
+                "result":{
+                    "config":{
+                        "dhcp":{
+                            "ipv4dns1":"114.114.114.114",
+                            "peerdns":"0",
+                            "ipv4dns2":"114.114.115.115",
+                            "mtu":"1500"
+                        },
+                        "static":{
+                            "ipv4dns2":"8.8.8.8",
+                            "mtu":"1500",
+                            "ipv4dns1":"144.144.144.144",
+                            "ipv4gateway":"192.168.199.1",
+                            "ipv4mask":"255.255.255.0",
+                            "ipv4addr":"192.168.199.123",
+                        },
+                        "pppoe":{
+                            "username": "YWRtaW4=",
+                            "password": "MTIzNDU2Nzg=",
+                            "peerdns":"1",
+                            "advance":"1",
+                            "sdial":"1",
+                            "service": "www.test.com",
+                            "mtu": "1492"
+                        },
+                        "wisp":{
+                            "peerdns":"1",
+                            "mtu":"1500"
+                        }
+                    },
+                    "proto":"pppoe"
+                },
+                "api":"get"
+            }],
+            "msg_id":11111,
+            "errcode":0
+        }
+    ],
+
+        "test_007_set_pppoe_hand_dns_no_senior": [
+        {
+            "data": [{
+                "module": "wan",
+                "errcode": 0,
+                "result": {},
+                "api": "set"
+            }],
+            "msg_id": 11111,
+            "errcode": 0
+        },
+        {
+            "data":[{
+                "module":"wan",
+                "errcode":0,
+                "result":{
+                    "config":{
+                        "dhcp":{
+                            "ipv4dns1":"114.114.114.114",
+                            "peerdns":"0",
+                            "ipv4dns2":"114.114.115.115",
+                            "mtu":"1500"
+                        },
+                        "static":{
+                            "ipv4dns2":"8.8.8.8",
+                            "mtu":"1500",
+                            "ipv4dns1":"144.144.144.144",
+                            "ipv4gateway":"192.168.199.1",
+                            "ipv4mask":"255.255.255.0",
+                            "ipv4addr":"192.168.199.123",
+                        },
+                        "pppoe":{
+                            "username": "YWRtaW4=",
+                            "password": "MTIzNDU2Nzg=",
+                            "peerdns": "0",
+                            "ipv4dns1": "144.144.144.144",
+                            "ipv4dns2": "8.8.8.8",
+                            "advance":"0",
+                            "sdial":"0",
+                            "service": "www.test.com",
+                            "mtu":"1492"
+                        },
+                        "wisp":{
+                            "peerdns":"1",
+                            "mtu":"1500"
+                        }
+                    },
+                    "proto":"pppoe"
+                },
+                "api":"get"
+            }],
+            "msg_id":11111,
+            "errcode":0
+        }
+    ],
+
+    "test_008_set_pppoe_hand_dns_has_senior": [
+        {
+            "data": [{
+                "module": "wan",
+                "errcode": 0,
+                "result": {},
+                "api": "set"
+            }],
+            "msg_id": 11111,
+            "errcode": 0
+        },
+        {
+            "data":[{
+                "module":"wan",
+                "errcode":0,
+                "result":{
+                    "config":{
+                        "dhcp":{
+                            "ipv4dns1":"114.114.114.114",
+                            "peerdns":"0",
+                            "ipv4dns2":"114.114.115.115",
+                            "mtu":"1500"
+                        },
+                        "static":{
+                            "ipv4dns2":"8.8.8.8",
+                            "mtu":"1500",
+                            "ipv4dns1":"144.144.144.144",
+                            "ipv4gateway":"192.168.199.1",
+                            "ipv4mask":"255.255.255.0",
+                            "ipv4addr":"192.168.199.123",
+                        },
+                        "pppoe":{
+                            "username": "YWRtaW4=",
+                            "password": "MTIzNDU2Nzg=",
+                            "peerdns": "0",
+                            "ipv4dns1": "144.144.144.144",
+                            "ipv4dns2": "8.8.8.8",
+                            "advance":"1",
+                            "sdial":"1",
+                            "service": "www.test.com",
+                            "mtu": "1492"
+                        },
+                        "wisp":{
+                            "peerdns":"1",
+                            "mtu":"1500"
+                        }
+                    },
+                    "proto":"pppoe"
+                },
+                "api":"get"
+            }],
+            "msg_id":11111,
+            "errcode":0
+        }
+    ],
+
+    "test_009_set_wisp_auto_dns": [
+        {
+            "data": [{
+                "module": "wan",
+                "errcode": 0,
+                "result": {},
+                "api": "set"
+            }],
+            "msg_id": 11111,
+            "errcode": 0
+        },
+        {
+            "data":[{
+                "module":"wan",
+                "errcode":0,
+                "result":{
+                    "config":{
+                        "dhcp":{
+                            "ipv4dns1":"114.114.114.114",
+                            "peerdns":"0",
+                            "ipv4dns2":"114.114.115.115",
+                            "mtu":"1500"
+                        },
+                        "static":{
+                            "ipv4dns2":"8.8.8.8",
+                            "mtu":"1500",
+                            "ipv4dns1":"144.144.144.144",
+                            "ipv4gateway":"192.168.199.1",
+                            "ipv4mask":"255.255.255.0",
+                            "ipv4addr":"192.168.199.123",
+                        },
+                        "pppoe":{
+                            "username": "YWRtaW4=",
+                            "password": "MTIzNDU2Nzg=",
+                            "peerdns": "0",
+                            "ipv4dns1": "144.144.144.144",
+                            "ipv4dns2": "8.8.8.8",
+                            "advance":"1",
+                            "sdial":"1",
+                            "service": "www.test.com",
+                            "mtu": "1492"
+                        },
+                        "wisp":{
+                            "ssid": "ziroom",
+                            "key": "4001001111",
+                            "peerdns":"1",
+                            "mtu":"1500"
+                        }
+                    },
+                    "proto":"wisp"
+                },
+                "api":"get"
+            }],
+            "msg_id":11111,
+            "errcode":0
+        }
+    ],
+
+    "test_010_set_wisp_hand_dns": [
+        {
+            "data": [{
+                "module": "wan",
+                "errcode": 0,
+                "result": {},
+                "api": "set"
+            }],
+            "msg_id": 11111,
+            "errcode": 0
+        },
+        {
+            "data":[{
+                "module":"wan",
+                "errcode":0,
+                "result":{
+                    "config":{
+                        "dhcp":{
+                            "ipv4dns1":"114.114.114.114",
+                            "peerdns":"0",
+                            "ipv4dns2":"114.114.115.115",
+                            "mtu":"1500"
+                        },
+                        "static":{
+                            "ipv4dns2":"8.8.8.8",
+                            "mtu":"1500",
+                            "ipv4dns1":"144.144.144.144",
+                            "ipv4gateway":"192.168.199.1",
+                            "ipv4mask":"255.255.255.0",
+                            "ipv4addr":"192.168.199.123",
+                        },
+                        "pppoe":{
+                            "username": "YWRtaW4=",
+                            "password": "MTIzNDU2Nzg=",
+                            "peerdns": "0",
+                            "ipv4dns1": "144.144.144.144",
+                            "ipv4dns2": "8.8.8.8",
+                            "advance":"1",
+                            "sdial":"1",
+                            "service": "www.test.com",
+                            "mtu": "1492"
+                        },
+                        "wisp":{
+                            "ssid": "ziroom",
+                            "key": "4001001111",
+                            "peerdns": "0",
+                            "ipv4dns1": "144.144.144.144",
+                            "ipv4dns2": "8.8.8.8",
+                            "mtu":"1500"
+                        }
+                    },
+                    "proto":"wisp"
+                },
+                "api":"get"
+            }],
+            "msg_id":11111,
+            "errcode":0
+        }
+    ]
+}
