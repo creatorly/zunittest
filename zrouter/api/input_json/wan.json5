@@ -7,9 +7,10 @@
 |test_004_set_static | 2 | 设置static方式上网，手动设置dns(静态无自动dns)|
 |test_005_set_pppoe_auto_dns_no_senior   | 2 | 设置pppoe方式上网，自动获取dns，没有高级设置|
 |test_006_set_pppoe_auto_dns_has_senior  | 2 | 设置pppoe方式上网，自动获取dns，有高级设置|
-|test_007_set_pppoe_hand_dns_no_senior   | 2 | 设置pppoe方式上网，手动获取dns，没有高级设置|
-|test_008_set_pppoe_hand_dns_has_senior  | 2 | 设置pppoe方式上网，手动获取dns，有高级设置|
-|test_009_set_wisp  | 2 | 设置pppoe方式上网，手动获取dns，有高级设置|
+|test_007_set_pppoe_hand_dns_no_senior   | 2 | 设置pppoe方式上网，手动设置dns，没有高级设置|
+|test_008_set_pppoe_hand_dns_has_senior  | 2 | 设置pppoe方式上网，手动设置dns，有高级设置|
+|test_009_set_wisp_auto_dns  | 2 | 设置wisp方式上网，自动获取dns|
+|test_010_set_wisp_and_dns  | 2 | 设置wisp方式上网，手动设置dns|
 */
 {
     "test_001_get_wan": [

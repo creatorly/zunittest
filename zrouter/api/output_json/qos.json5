@@ -1,0 +1,194 @@
+{
+    "test_001_get_qos": [
+        {
+            "data": [
+                {
+                    "module": "qos",
+                    "errcode": 0,
+                    "result": {
+                        "enabled": "0",
+                        "download": 1024000,
+                        "upload": 1024000
+                    },
+                    "api": "get"
+                }
+            ],
+            "msg_id": 11111,
+            "errcode": 0
+        }
+    ],
+
+    "test_002_set_qos": [
+        {
+            "data": [
+                {
+                    "module": "qos",
+                    "errcode": 0,
+                    "api": "set"
+                }
+            ],
+            "msg_id": 11111,
+            "errcode": 0
+        },
+        {
+            "data": [
+                {
+                    "module": "qos",
+                    "errcode": 0,
+                    "result": {
+                        "enabled": "1",
+                        "download": 204800,
+                        "upload": 1024000
+                    },
+                    "api": "get"
+                }
+            ],
+            "msg_id": 11111,
+            "errcode": 0
+        }
+    ],
+
+    "test_003_reset_qos": [
+        {
+            "data": [
+                {
+                    "module": "qos",
+                    "errcode": 0,
+                    "api": "set"
+                }
+            ],
+            "msg_id": 11111,
+            "errcode": 0
+        },
+        {
+            "data": [
+                {
+                    "module": "qos",
+                    "errcode": 0,
+                    "result": {
+                        "enabled": "0",
+                        "download": 1024000,
+                        "upload": 1024000
+                    },
+                    "api": "get"
+                }
+            ],
+            "msg_id": 11111,
+            "errcode": 0
+        }
+    ],
+
+    "test_004_get_qos_node": [
+        {
+            "data": [{
+                "module": "qos",
+                "errcode": 0,
+                "result": {
+                    "node": {},
+                    "maxnum": "64"
+                },
+                "api": "get_node"
+            }],
+            "msg_id": 11111,
+            "errcode": 0
+        }
+    ],
+
+    "test_005_add_qos_node": [
+        {
+           "data": [
+             {
+               "module": "qos",
+               "errcode": 0,
+               "result": {},
+               "api": "add_node"
+             }
+           ],
+           "msg_id": 11111,
+           "errcode": 0
+        },
+        {
+            "data": [{
+                "module": "qos",
+                "errcode": 0,
+                "result": {
+                "node": [{
+                        "enabled": "1",
+                        "index": 0,
+                        "comment": "t1",
+                        "upload": 2222,
+                        "download": 1111,
+                        "mac": "00:66:88:11:33:22",
+                        "white": "0"
+                    }],
+                "maxnum": "64"
+                },
+                "api": "get_node"
+            }],
+            "msg_id": 11111,
+            "errcode": 0
+        }
+    ],
+
+    "test_006_modify_qos_node": [
+        {
+            "data": [{
+                "module": "qos",
+                "errcode": 0,
+                "result": {},
+                "api": "modify_node"
+            }],
+            "msg_id": 11111,
+            "errcode": 0
+        },
+        {
+            "data": [{
+                "module": "qos",
+                "errcode": 0,
+                "result": {
+                "node": [{
+                        "enabled": "1",
+                        "index": 0,
+                        "comment": "t2",
+                        "upload": 2222,
+                        "download": 1111,
+                        "mac": "00:66:88:11:33:22",
+                        "white": "0"
+                    }],
+                "maxnum": "64"
+                },
+                "api": "get_node"
+            }],
+            "msg_id": 11111,
+            "errcode": 0
+        }
+    ],
+
+    "test_007_del_qos_node": [
+        {
+            "data": [
+                {
+                    "module": "qos",
+                    "errcode": 0,
+                    "result": {},
+                    "api": "delete_node"
+                }
+            ],
+            "msg_id": 11111,
+            "errcode": 0
+        },
+        {
+            "data": [{
+                "module": "qos",
+                "errcode": 0,
+                "result": {
+                    "node": {},
+                    "maxnum": "64"
+                },
+                "api": "get_node"
+            }],
+            "msg_id": 11111,
+            "errcode": 0
+        }
+    ]
+}

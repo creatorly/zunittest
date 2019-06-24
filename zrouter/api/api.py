@@ -123,7 +123,6 @@ def test_json_init(module_name):
         server.input_dict = json5.loads(load_f.read())
 
     for key in server.input_dict:
-
         # 判断key是否以"test_"开始
         if not str(key).startswith(check_name):
             logging.error("input_dict not start with test_")
