@@ -1,0 +1,31 @@
+{
+    "test_001_right_password": [
+        {
+            "data": [
+                {
+                    "module": "login",
+                    "errcode": 0,
+                    "result": {
+                        'sid': '1899842fda29915f22a93d9604fd1929'
+                    },
+                    "api": "login"
+                }
+            ],
+            "msg_id": 11111,
+            "errcode": 0
+        }
+    ],
+
+    "test_002_error_password": [
+        {
+            "data":[{
+                "module":"login",
+                "errcode":-2000,
+                "result":{},
+                "api":"login",
+            }],
+            "msg_id":11111,
+            "errcode":-2000,
+        }
+    ]
+}

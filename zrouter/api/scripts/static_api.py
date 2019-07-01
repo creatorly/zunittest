@@ -1,17 +1,26 @@
+#!/usr/bin/python3
+# -*- coding:utf-8 -*-
+# Author: ye.lin
+# Time: 2019/06/26
+# Describe：静态api测试，表示output的json是固定的，所以post得到的json和output里面的json内容完全匹配才通过
+
 import logging
 import requests
 import json
 import json5
 import base64
-import xlwt
+import sys
 import time
 import configparser
+sys.path.append("../../..")
+import zutils.zexcel
 
 
 class ServerInfo(object):
     url = ''
     headers = {}
     sid = ''
+    password = ''
     input_dict = {}
     output_dict = {}
 
@@ -38,7 +47,7 @@ excel = ExcelInfo
 def data_init():
     # 获取配置文件信息
     config = configparser.ConfigParser()
-    config.read("api.conf", encoding="utf-8")
+    config.read("../conf/static_api.conf", encoding="utf-8")
     if config.has_option("server", "host"):
         server.url = config.get("server", "host")
     if config.has_option("server", "passwd"):
@@ -52,73 +61,24 @@ def data_init():
 
 def logging_init():
     logging.basicConfig(
-        filename=test.output_file + ".log",  # 指定输出的文件
+        filename="../results/" + test.output_file + ".log",  # 指定输出的文件
         level=logging.INFO,
         format='%(asctime)s - %(filename)s[line:%(lineno)d] - %(levelname)s: %(message)s')
     return True
 
 
-def excel_style(font_color, height, bold=False, pattern_color='', align='center'):
-    style = xlwt.XFStyle()  # 初始化样式
-    font = xlwt.Font()  # 为样式创建字体
-    font.name = 'Times New Roman'
-    font.bold = bold
-    font.height = height
-    font.colour_index = font_color
-
-    borders = xlwt.Borders()  # 为样式创建边框
-    borders.left = 0
-    borders.right = 0
-    borders.top = 0
-    borders.bottom = 0
-
-    alignment = xlwt.Alignment()  # 设置排列
-    if align == 'center':
-        alignment.horz = xlwt.Alignment.HORZ_CENTER
-        alignment.vert = xlwt.Alignment.VERT_CENTER
-    else:
-        alignment.horz = xlwt.Alignment.HORZ_LEFT
-        alignment.vert = xlwt.Alignment.VERT_BOTTOM
-
-    if pattern_color != '':
-        pattern = xlwt.Pattern()  # 一个实例化的样式类
-        pattern.pattern = xlwt.Pattern.SOLID_PATTERN  # 固定的样式
-        pattern.pattern_fore_colour = xlwt.Style.colour_map[pattern_color]  # 背景颜色
-        style.pattern = pattern
-
-    style.font = font
-    style.borders = borders
-    style.alignment = alignment
-
-    return style
-
-
 def excel_init():
-    excel.excel_fd = xlwt.Workbook()
-    excel.sheet_fd = excel.excel_fd.add_sheet('Api Test')  # 增加sheet
-    excel.sheet_fd.col(0).width = 200 * 40  # 设置第1列列宽
-    excel.sheet_fd.col(1).width = 200 * 15  # 设置第2列列宽
-    excel.sheet_fd.col(2).width = 200 * 15  # 设置第3列列宽
-    excel.sheet_fd.col(3).width = 200 * 15  # 设置第4列列宽
-    excel.sheet_fd.col(4).width = 200 * 15  # 设置第5列列宽
-
-    # 写第一行数据
-    excel.sheet_fd.write_merge(0, 0, 0, 4, 'API测试结果', excel_style(0x7FFF, 320, bold=True))
-
-    # 写第二行数据
-    excel.row_point += 1
-    logging.info("excel.row_point:%d", excel.row_point)
-    rows = ['', 'Result', 'Count', 'Pass', 'Fail']
-    for index, val in enumerate(rows):
-        excel.sheet_fd.write(excel.row_point, index, val,
-                             style=excel_style(0x7FFF, 280, bold=True, pattern_color='gray25'))
+    excel.excel_fd = zutils.zexcel.excel_init()
+    excel.sheet_fd = zutils.zexcel.sheet_init(excel.excel_fd, "静态API测试结果")
+    # 从第二行开始写入
+    excel.row_point = 1
 
 
 def test_json_init(module_name):
     check_name = "test_"
     # 获取所有的测试名称及请求内容
-    input_file = "input_json/" + module_name + ".json5"
-    output_file = "output_json/" + module_name + ".json5"
+    input_file = "../input_json/static/" + module_name + ".json5"
+    output_file = "../output_json/static/" + module_name + ".json5"
     with open(input_file, 'r', encoding="utf8") as load_f:
         server.input_dict = json5.loads(load_f.read())
 
@@ -154,7 +114,7 @@ def test_json_init(module_name):
 def test_top_write(module_name):
     excel.row_point += 1
     excel.sheet_fd.write(excel.row_point, 0, module_name.capitalize() + "TestCase",
-                         style=excel_style(0x7FFF, 280, bold=False, align='', pattern_color='sky_blue'))
+                         style=zutils.zexcel.set_style(0x7FFF, 280, bold=False, align='', pattern_color='sky_blue'))
     excel.module_info[module_name] = {}
     excel.module_info[module_name]["row"] = excel.row_point
     excel.module_info[module_name]["count"] = 0
@@ -183,7 +143,7 @@ def test_000_login():
 
     excel.row_point += 1
     excel.sheet_fd.write(excel.row_point, 0, "test_000_login",
-                         style=excel_style(0x7FFF, 240, bold=False, align=''))
+                         style=zutils.zexcel.set_style(0x7FFF, 240, bold=False, align=''))
     excel.module_info[module_name]["count"] += 1
 
     logging.info(request_data)
@@ -194,17 +154,17 @@ def test_000_login():
         if 0 == msg["errcode"]:
             server.sid = msg["data"][0]["result"]["sid"]
             excel.sheet_fd.write(excel.row_point, 1, "pass",
-                                 style=excel_style(0x11, 240, bold=False, align=''))
+                                 style=zutils.zexcel.set_style(0x11, 240, bold=False, align=''))
             excel.module_info[module_name]["pass"] += 1
             return True
         else:
             excel.sheet_fd.write(excel.row_point, 1, "fail",
-                                 style=excel_style(0x0A, 240, bold=False, align=''))
+                                 style=zutils.zexcel.set_style(0x0A, 240, bold=False, align=''))
             excel.module_info[module_name]["fail"] += 1
             return False
     else:
         excel.sheet_fd.write(excel.row_point, 1, "fail",
-                             style=excel_style(0x0A, 240, bold=False, align=''))
+                             style=zutils.zexcel.set_style(0x0A, 240, bold=False, align=''))
         excel.module_info[module_name]["fail"] += 1
         return False
 
@@ -218,12 +178,12 @@ def run_test_case(module_name):
         # 填写测试名称到excel的第一列
         print(key)
         excel.row_point += 1
-        excel.sheet_fd.write(excel.row_point, 0, key, style=excel_style(0x7FFF, 240, bold=False, align=''))
+        excel.sheet_fd.write(excel.row_point, 0, key, style=zutils.zexcel.set_style(0x7FFF, 240, bold=False, align=''))
         excel.module_info[module_name]["count"] += 1
 
         # 一个case里面可能会有多个请求
         request_i = 0
-        request_result = 0
+        request_result = True
         while request_i < len(server.input_dict[key]):
             request_data = server.input_dict[key][request_i]
             request_data["sid"] = server.sid
@@ -232,29 +192,26 @@ def run_test_case(module_name):
             logging.info("%s recv:%s", key, resp_data.text)
             if resp_data.status_code == 200:
                 msg = json.loads(resp_data.text)
-                if 0 == msg["errcode"]:
-                    # 判断返回的数据与output_json里面的是否一致
-                    if msg != server.output_dict[key][request_i]:
-                        request_result = 1
-                else:
-                    request_result = 1
+                # 判断返回的数据与output_json里面的数据是否一致
+                if msg != server.output_dict[key][request_i]:
+                    request_result = False
             else:
-                request_result = 1
+                request_result = False
 
             request_i += 1
 
         # 填写测试结果到excel的第二列
-        if request_result == 0:
+        if request_result:
             logging.info("pass")
             print("pass")
             excel.sheet_fd.write(excel.row_point, 1, "pass",
-                                 style=excel_style(0x11, 240, bold=False, align=''))
+                                 style=zutils.zexcel.set_style(0x11, 240, bold=False, align=''))
             excel.module_info[module_name]["pass"] += 1
         else:
             logging.info("fail")
             print("fail")
             excel.sheet_fd.write(excel.row_point, 1, "fail",
-                                 style=excel_style(0x0A, 240, bold=False, align=''))
+                                 style=zutils.zexcel.set_style(0x0A, 240, bold=False, align=''))
             excel.module_info[module_name]["fail"] += 1
 
     return True
@@ -264,13 +221,13 @@ def test_end():
     # 将统计的count pass fail写入excel
     for key in excel.module_info:
         excel.sheet_fd.write(excel.module_info[key]["row"], 2, excel.module_info[key]["count"],
-                             style=excel_style(0x0A, 240, bold=False, align=''))
+                             style=zutils.zexcel.set_style(0x0A, 240, bold=False, align=''))
         excel.sheet_fd.write(excel.module_info[key]["row"], 3, excel.module_info[key]["pass"],
-                             style=excel_style(0x0A, 240, bold=False, align=''))
+                             style=zutils.zexcel.set_style(0x0A, 240, bold=False, align=''))
         excel.sheet_fd.write(excel.module_info[key]["row"], 4, excel.module_info[key]["fail"],
-                             style=excel_style(0x0A, 240, bold=False, align=''))
+                             style=zutils.zexcel.set_style(0x0A, 240, bold=False, align=''))
 
-    filename = test.output_file + ".xls"
+    filename = "../results/" + test.output_file + ".xls"
     excel.excel_fd.save(filename)  # 保存xls
     print("test end!")
     logging.info("test end!")

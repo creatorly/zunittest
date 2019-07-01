@@ -1,0 +1,37 @@
+/*
+|    单元测试      |post请求次数 |描述|
+|------------------|-------------|----|
+|test_001_get_status | 1 | 输入正确的密码|
+|test_002_get_board | 2 | 输入错误的密码|
+*/
+{
+    "test_001_get_status": [
+        {
+            "ver": "v1",
+            "sid": "00000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "status",
+                    "api": "get"
+                }]
+            }
+        }
+    ],
+
+    "test_002_get_board": [
+        {
+            "ver": "v1",
+            "sid": "00000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "status",
+                    "api": "get_board"
+                }]
+            }
+        }
+    ]
+}

@@ -5,10 +5,10 @@
 |test_002_set_dhcp_auto_dns  | 2 | 设置dhcp方式上网，自动获取dns|
 |test_003_set_dhcp_hand_dns  | 2 | 设置dhcp方式上网，手动设置dns|
 |test_004_set_static | 2 | 设置static方式上网，手动设置dns(静态无自动dns)|
-|test_005_set_pppoe_auto_dns_no_senior   | 2 | 设置pppoe方式上网，自动获取dns，没有高级设置|
-|test_006_set_pppoe_auto_dns_has_senior  | 2 | 设置pppoe方式上网，自动获取dns，有高级设置|
-|test_007_set_pppoe_hand_dns_no_senior   | 2 | 设置pppoe方式上网，手动设置dns，没有高级设置|
-|test_008_set_pppoe_hand_dns_has_senior  | 2 | 设置pppoe方式上网，手动设置dns，有高级设置|
+|test_005_set_pppoe_auto_dns_no_advance   | 2 | 设置pppoe方式上网，自动获取dns，没有高级设置|
+|test_006_set_pppoe_auto_dns_has_advance  | 2 | 设置pppoe方式上网，自动获取dns，有高级设置|
+|test_007_set_pppoe_hand_dns_no_advance   | 2 | 设置pppoe方式上网，手动设置dns，没有高级设置|
+|test_008_set_pppoe_hand_dns_has_advance  | 2 | 设置pppoe方式上网，手动设置dns，有高级设置|
 |test_009_set_wisp_auto_dns  | 2 | 设置wisp方式上网，自动获取dns|
 |test_010_set_wisp_and_dns  | 2 | 设置wisp方式上网，手动设置dns|
 */
@@ -141,7 +141,7 @@
         }
     ],
 
-    "test_005_set_pppoe_auto_dns_no_senior": [
+    "test_005_set_pppoe_auto_dns_no_advance": [
         {
             "ver": "v1",
             "sid": "00000000000000000000000000000000",
@@ -179,7 +179,7 @@
         }
     ],
 
-    "test_006_set_pppoe_auto_dns_has_senior": [
+    "test_006_set_pppoe_auto_dns_has_advance": [
         {
             "ver": "v1",
             "sid": "00000000000000000000000000000000",
@@ -220,7 +220,7 @@
         }
     ],
 
-    "test_007_set_pppoe_hand_dns_no_senior": [
+    "test_007_set_pppoe_hand_dns_no_advance": [
         {
             "ver": "v1",
             "sid": "00000000000000000000000000000000",
@@ -238,7 +238,7 @@
                             "peerdns": "0",
                             "ipv4dns1": "144.144.144.144",
                             "ipv4dns2": "8.8.8.8",
-                            "advance":"0"
+                            "advance":"0",
                         }
                     }
                 }]
@@ -260,7 +260,7 @@
         }
     ],
 
-    "test_008_set_pppoe_hand_dns_has_senior": [
+    "test_008_set_pppoe_hand_dns_has_advance": [
         {
             "ver": "v1",
             "sid": "00000000000000000000000000000000",

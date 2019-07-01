@@ -1,0 +1,50 @@
+{
+    "test_001_get_status": [
+        {
+            "data": [{
+                "module": "status",
+                "errcode": 0,
+                "result": {
+                    "diagnose": {
+                        "coredump": {
+                            "coredump_cnt": 2
+                            },
+                        "quality_2g": "high",
+                        "quality_5g": "low",
+                        "mem_loading": 52,
+                        "cpu_loading": 2,
+                        "inet_status": 3
+                    },
+                    "memory": {
+                        "buffered": 4263936,
+                        "total": 128868352,
+                        "shared": 0,
+                        "free": 58281984
+                    },
+                    "localtime": "Sun Apr 28 16:44:23 2019",
+                    "uptime": 8093,
+                    "cpu_percent": 3
+                },
+                "api": "get"
+            }],
+            "msg_id": 11111,
+            "errcode": 0
+        }
+    ],
+
+    "test_002_get_board": [
+        {
+            "data": [{
+                "module": "status",
+                "errcode": 0,
+                "result": {
+                    'mac': 'D4:EE:02:11:22:40',
+                    'firmware_ver': '1.0.0.4',
+                    'name': 'ZHA0103'},
+                "api": "get_board"
+            }],
+            "msg_id": 11111,
+            "errcode": 0
+        }
+    ]
+}

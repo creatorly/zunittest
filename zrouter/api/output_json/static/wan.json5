@@ -176,7 +176,7 @@
         }
     ],
 
-    "test_005_set_pppoe_auto_dns_no_senior": [
+    "test_005_set_pppoe_auto_dns_no_advance": [
         {
             "data": [{
                 "module": "wan",
@@ -229,7 +229,7 @@
         }
     ],
 
-    "test_006_set_pppoe_auto_dns_has_senior": [
+    "test_006_set_pppoe_auto_dns_has_advance": [
         {
             "data": [{
                 "module": "wan",
@@ -283,7 +283,7 @@
         }
     ],
 
-        "test_007_set_pppoe_hand_dns_no_senior": [
+        "test_007_set_pppoe_hand_dns_no_advance": [
         {
             "data": [{
                 "module": "wan",
@@ -321,7 +321,7 @@
                             "ipv4dns1": "144.144.144.144",
                             "ipv4dns2": "8.8.8.8",
                             "advance":"0",
-                            "sdial":"0",
+                            "sdial":"1",
                             "service": "www.test.com",
                             "mtu":"1492"
                         },
@@ -339,7 +339,7 @@
         }
     ],
 
-    "test_008_set_pppoe_hand_dns_has_senior": [
+    "test_008_set_pppoe_hand_dns_has_advance": [
         {
             "data": [{
                 "module": "wan",

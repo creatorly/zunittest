@@ -1,0 +1,43 @@
+/*
+|    单元测试      |post请求次数 |描述|
+|------------------|-------------|----|
+|test_001_right_password | 1 | 输入正确的密码|
+|test_002_error_password | 2 | 输入错误的密码|
+*/
+{
+    "test_001_right_password": [
+        {
+            "ver": "v1",
+            "sid": "00000000000000000000000000000000",
+            "method": "login",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "login",
+                    "api": "login",
+                    "param": {
+                        "password": "YWRtaW4="
+                    }
+                }]
+            }
+        }
+    ],
+
+    "test_002_error_password": [
+        {
+            "ver": "v1",
+            "sid": "00000000000000000000000000000000",
+            "method": "login",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "login",
+                    "api": "login",
+                    "param": {
+                        "password": "MTIzNDU2Nzg="
+                    }
+                }]
+            }
+        }
+    ]
+}
