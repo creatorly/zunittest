@@ -3,9 +3,9 @@
  - 包：requests、json5、base64、xlwt
 
 #### 1.运行
-直接执行api.py即可运行
+执行api.py后面添加static/dynamic即可运行
 ```
-python api.py
+python api.py static
 ```
 根据api.conf配置文件进行修改运行参数，如下：
 ```
@@ -14,12 +14,13 @@ host = http://192.168.18.1/zapi
 passwd = admin
 
 [test]
-modules = wan
+static_modules = wan
+dynamic_modules = ligon_in
 ```
 要测试那些模块在modules后面添加用,隔开即可，如下：
 ```
 [test]
-modules = wan,dhcp,lan
+static_modules = wan,dhcp,lan
 ```
 
 #### 2.添加测试模块
@@ -58,4 +59,4 @@ json5头部需要注明每个case的含义
 
 #### 4.注意事项
 ##### 4.1 测试跟wan相关的api，需要先将设备恢复出厂设置，否则会有一些遗留的默认值导致output_json校验不对
-
+##### 4.2 system接口会导致设备重启，会恢复出厂设置，所以放在最后一个测试

@@ -1,0 +1,85 @@
+/*
+|    单元测试      |post请求次数 |描述|
+|------------------|-------------|----|
+|test_001_get_macclone  | 1 | 获取默认macclone|
+|test_002_set_macclone  | 2 | 设置macclone|
+|test_003_reset_macclone  | 2 | 再次设置macclone，恢复成原本的参数|
+*/
+{
+    "test_001_get_macclone": [
+        {
+            "ver": "v1",
+            "sid":"000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "macclone",
+                    "api": "get"
+                }]
+            }
+        }
+    ],
+
+    "test_002_set_macclone": [
+        {
+            "ver": "v1",
+            "sid": "00000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "macclone",
+                    "api": "set",
+                    "param": {
+                        "macaddr": "00:88:99:11:11:00",
+                        "status": "2"
+                    }
+                }]
+            }
+        },
+        {
+            "ver": "v1",
+            "sid":"000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "macclone",
+                    "api": "get"
+                }]
+            }
+        }
+    ],
+
+    "test_003_reset_macclone": [
+        {
+            "ver": "v1",
+            "sid": "00000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "macclone",
+                    "api": "set",
+                    "param": {
+                        "macaddr": "00:88:99:11:11:00",
+                        "status": "1"
+                    }
+                }]
+            }
+        },
+        {
+            "ver": "v1",
+            "sid":"000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "macclone",
+                    "api": "get"
+                }]
+            }
+        }
+    ]
+}

@@ -1,0 +1,83 @@
+/*
+|    单元测试      |post请求次数 |描述|
+|------------------|-------------|----|
+|test_001_get_upnp  | 1 | 获取默认upnp|
+|test_002_set_upnp  | 2 | 设置upnp|
+|test_003_reset_upnp  | 2 | 再次设置upnp，恢复成原本的参数|
+*/
+{
+    "test_001_get_upnp": [
+        {
+            "ver": "v1",
+            "sid":"000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "upnp",
+                    "api": "get"
+                }]
+            }
+        }
+    ],
+
+    "test_002_set_upnp": [
+        {
+            "ver": "v1",
+            "sid": "00000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "upnp",
+                    "api": "set",
+                    "param": {
+                        "enabled":"0"
+                    }
+                }]
+            }
+        },
+        {
+            "ver": "v1",
+            "sid":"000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "upnp",
+                    "api": "get"
+                }]
+            }
+        }
+    ],
+
+    "test_003_reset_upnp": [
+        {
+            "ver": "v1",
+            "sid": "00000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "upnp",
+                    "api": "set",
+                    "param": {
+                        "enabled":"1"
+                    }
+                }]
+            }
+        },
+        {
+            "ver": "v1",
+            "sid":"000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "upnp",
+                    "api": "get"
+                }]
+            }
+        }
+    ]
+}

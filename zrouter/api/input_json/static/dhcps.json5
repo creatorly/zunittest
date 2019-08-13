@@ -1,0 +1,234 @@
+/*
+|    单元测试      |post请求次数 |描述|
+|------------------|-------------|----|
+|test_001_get_dhcps  | 1 | 获取dhcp租期信息|
+|test_002_set_dhcps  | 2 | 设置dhcp信息|
+|test_003_reset_dhcps  | 2 | 恢复dhcp原有信息|
+|test_004_get_dhcp_host | 2 | 获取dhcp host信息|
+|test_005_add_dhcp_host | 2 | 添加dhcp host信息|
+|test_006_modify_dhcp_host | 2 | 修改dhcp host信息|
+|test_007_del_dhcp_host | 2 | 删除dhcp host信息|
+*/
+{
+    "test_001_get_dhcps": [
+        {
+            "ver": "v1",
+            "sid":"000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "dhcps",
+                    "api": "get"
+                }]
+            }
+        }
+    ],
+
+    "test_002_set_dhcps": [
+        {
+            "ver": "v1",
+            "sid":"000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "dhcps",
+                    "api": "set",
+                    "param": {
+                        "enabled": "1",
+                        "startip": "192.168.18.6",
+                        "endip": "192.168.18.222",
+                        "leasetime": 100
+                    }
+                }]
+            }
+        },
+        {
+            "ver": "v1",
+            "sid": "00000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [
+                    {
+                        "module": "dhcps",
+                        "api": "get"
+                    }
+                ]
+            }
+        }
+    ],
+
+    "test_003_reset_dhcps": [
+        {
+            "ver": "v1",
+            "sid":"000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "dhcps",
+                    "api": "set",
+                    "param": {
+                        "enabled": "1",
+                        "startip": "192.168.18.100",
+                        "endip": "192.168.18.249",
+                        "leasetime": 720
+                    }
+                }]
+            }
+        },
+        {
+            "ver": "v1",
+            "sid": "00000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [
+                    {
+                        "module": "dhcps",
+                        "api": "get"
+                    }
+                ]
+            }
+        }
+    ],
+
+    "test_004_get_dhcp_host": [
+        {
+            "ver": "v1",
+            "sid": "00000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [
+                    {
+                        "module": "dhcps",
+                        "api": "get_host"
+                    }
+                ]
+            }
+        }
+    ],
+
+    "test_005_add_dhcp_host": [
+        {
+            "ver": "v1",
+            "sid":"000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "dhcps",
+                    "api": "add_host",
+                    "param": {
+                        "host":[{
+                            "enabled": "1",
+                            "ip": "192.168.18.6",
+                            "mac": "00:66:88:11:33:22",
+                            "comment": "t1"
+                        }]
+                    }
+                }]
+            }
+        },
+        {
+            "ver": "v1",
+            "sid": "00000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [
+                    {
+                        "module": "dhcps",
+                        "api": "get_host"
+                    }
+                ]
+            }
+        }
+    ],
+
+    "test_006_modify_dhcp_host": [
+        {
+            "ver": "v1",
+            "sid":"000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "dhcps",
+                    "api": "modify_host",
+                    "param": {
+                        "host":{
+                            "new":{
+                                "enabled":"1",
+                                "mac":"00:66:88:11:34:22",
+                                "comment":"t1_new",
+                                "ip":"192.168.18.111"
+                                },
+                            "old":{
+                                "enabled":"1",
+                                "mac":"00:66:88:11:33:22",
+                                "comment":"t1",
+                                "ip":"192.168.18.6"
+                            }
+                        }
+                    }
+                }]
+            }
+        },
+        {
+            "ver": "v1",
+            "sid": "00000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [
+                    {
+                        "module": "dhcps",
+                        "api": "get_host"
+                    }
+                ]
+            }
+        }
+    ],
+
+    "test_007_del_dhcp_host": [
+        {
+            "ver": "v1",
+            "sid":"000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "dhcps",
+                    "api": "delete_host",
+                    "param": {
+                        "host":[{
+                            "enabled":"1",
+                            "index":0,
+                            "comment":"t1_new",
+                            "mac":"00:66:88:11:34:22",
+                            "ip":"192.168.18.111"
+                        }]
+                    }
+                }]
+            }
+        },
+        {
+            "ver": "v1",
+            "sid": "00000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [
+                    {
+                        "module": "dhcps",
+                        "api": "get_host"
+                    }
+                ]
+            }
+        }
+    ]
+}

@@ -1,0 +1,127 @@
+/*
+|    单元测试      |post请求次数 |描述|
+|------------------|-------------|----|
+|test_001_get_wireless | 1 | 获取默认wireless|
+|test_002_set_wireless | 1 | 设置wireless|
+|test_003_reset_wireless | 1 | 再次设置wireless，恢复成原本的参数|
+*/
+{
+    "test_001_get_wireless": [
+        {
+            "ver": "v1",
+            "sid": "000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "wireless",
+                    "api": "get_config",
+                  }],
+            },
+        },
+    ],
+
+    "test_002_set_wireless": [
+        {
+            "ver": "v1",
+            "sid": "000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "wireless",
+                    "api": "set_config",
+                    "param": {
+                        "merge_wifi": 0,
+                        "prio_5g_access": 0,
+                        "w2": {
+                            "ssid": "2g",
+                            "auth": "mixed-psk",
+                            "key": "12345678",
+                            "hidden": 1,
+                            "disabled": 0
+                        },
+                        "w5": {
+                            "ssid": "5g",
+                            "auth": "mixed-psk",
+                            "key": "1234567890",
+                            "hidden": 1,
+                            "disabled": 0
+                        },
+                        "radio0": {"bw": "HT40","channel": 1, "txpower": "max"},
+                        "radio1": {"bw": "HT80","channel": 48, "txpower": "max"}
+                    }
+                }]
+            }
+        },
+
+        {
+            "ver": "v1",
+            "sid": "000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "wireless",
+                    "api": "get_config",
+                  }],
+            },
+        },
+    ],
+
+    "test_003_reset_wireless": [
+        {
+            "ver": "v1",
+            "sid": "000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "wireless",
+                    "api": "set_config",
+                    "param": {
+                        "merge_wifi": 0,
+                        "prio_5g_access": 0,
+                        "w2": {
+                            "ssid": "ZHOME_2240",
+                            "auth": "none",
+                            "key": "",
+                            "hidden": 0,
+                            "disabled": 0,
+                        },
+                        "w5": {
+                            "ssid": "ZHOME_2240_5G",
+                            "auth": "none",
+                            "key": "",
+                            "hidden": 0,
+                            "disabled": 0,
+                        },
+                        "radio0": {
+                            "bw": "auto",
+                            "channel": 0,
+                            "txpower": "max",
+                        },
+                        "radio1": {
+                            "bw": "auto",
+                            "channel": 0,
+                            "txpower": "max",
+                        },
+                    },
+                }],
+            },
+        },
+
+        {
+            "ver": "v1",
+            "sid": "000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "wireless",
+                    "api": "get_config",
+                  }],
+            },
+        },
+    ],
+}

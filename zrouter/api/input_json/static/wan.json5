@@ -2,15 +2,23 @@
 |    单元测试      |post请求次数 |描述|
 |------------------|-------------|----|
 |test_001_get_wan  | 1 | 获取默认上网方式|
-|test_002_set_dhcp_auto_dns  | 2 | 设置dhcp方式上网，自动获取dns|
-|test_003_set_dhcp_hand_dns  | 2 | 设置dhcp方式上网，手动设置dns|
-|test_004_set_static | 2 | 设置static方式上网，手动设置dns(静态无自动dns)|
-|test_005_set_pppoe_auto_dns_no_advance   | 2 | 设置pppoe方式上网，自动获取dns，没有高级设置|
-|test_006_set_pppoe_auto_dns_has_advance  | 2 | 设置pppoe方式上网，自动获取dns，有高级设置|
-|test_007_set_pppoe_hand_dns_no_advance   | 2 | 设置pppoe方式上网，手动设置dns，没有高级设置|
-|test_008_set_pppoe_hand_dns_has_advance  | 2 | 设置pppoe方式上网，手动设置dns，有高级设置|
+|test_002_set_static | 2 | 设置static方式上网，手动设置dns(静态无自动dns)|
+|test_003_reset_static | 2 | 设置static方式上网，手动设置dns(静态无自动dns)|
+|test_004_set_pppoe_auto_dns_no_advance   | 2 | 设置pppoe方式上网，自动获取dns，没有高级设置|
+|test_005_set_pppoe_auto_dns_has_advance  | 2 | 设置pppoe方式上网，自动获取dns，有高级设置|
+|test_006_set_pppoe_hand_dns_no_advance   | 2 | 设置pppoe方式上网，手动设置dns，没有高级设置|
+|test_007_set_pppoe_hand_dns_has_advance  | 2 | 设置pppoe方式上网，手动设置dns，有高级设置|
+|test_008_reset_pppoe  | 2 | 设置pppoe方式上网，手动设置dns，有高级设置|
 |test_009_set_wisp_auto_dns  | 2 | 设置wisp方式上网，自动获取dns|
 |test_010_set_wisp_and_dns  | 2 | 设置wisp方式上网，手动设置dns|
+|test_011_reset_wisp_and_dns  | 2 | 设置wisp方式上网，手动设置dns|
+|test_012_set_dhcp_auto_dns  | 2 | 设置dhcp方式上网，自动获取dns|
+|test_013_set_dhcp_hand_dns  | 2 | 设置dhcp方式上网，手动设置dns|
+|test_014_reset_dhcp_hand_dns  | 2 | 设置dhcp方式上网，手动设置dns|
+|test_015_reset_wan  | 2 | 回复成原本的dhcp模式|
+|test_016_get_phy_mode  | 1 | 获取默认phy_mode|
+|test_017_set_phy_mode  | 2 | 设置phy_mode|
+|test_018_reset_phy_mode  | 2 | 再次设置phy_mode，恢复成原本的参数|
 */
 {
     "test_001_get_wan": [
@@ -375,6 +383,116 @@
                         "api": "get"
                     }
                 ]
+            }
+        }
+    ],
+
+    "test_011_reset_wan": [
+        {
+            "ver": "v1",
+            "sid": "00000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "wan",
+                    "api": "set",
+                    "param": {
+                        "proto": "dhcp",
+                        "dhcp": {
+                            "peerdns": "1",
+                        }
+                    }
+                }]
+            }
+        },
+        {
+            "ver": "v1",
+            "sid": "00000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [
+                    {
+                        "module": "wan",
+                        "api": "get"
+                    }
+                ]
+            }
+        }
+    ],
+
+    "test_012_get_phy_mode": [
+        {
+            "ver": "v1",
+            "sid":"000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "wan",
+                    "api": "get_phy_mode"
+                }]
+            }
+        }
+    ],
+
+    "test_013_set_phy_mode": [
+        {
+            "ver": "v1",
+            "sid": "00000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "wan",
+                    "api": "set_phy_mode",
+                    "param": {
+                        "phymode": "10h"
+                    }
+                }]
+            }
+        },
+        {
+            "ver": "v1",
+            "sid":"000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "wan",
+                    "api": "get_phy_mode"
+                }]
+            }
+        }
+    ],
+
+    "test_014_reset_phy_mode": [
+        {
+            "ver": "v1",
+            "sid": "00000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "wan",
+                    "api": "set_phy_mode",
+                    "param": {
+                        "phymode": "auto"
+                    }
+                }]
+            }
+        },
+        {
+            "ver": "v1",
+            "sid":"000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "wan",
+                    "api": "get_phy_mode"
+                }]
             }
         }
     ]

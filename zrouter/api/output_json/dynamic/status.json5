@@ -6,9 +6,6 @@
                 "errcode": 0,
                 "result": {
                     "diagnose": {
-                        "coredump": {
-                            "coredump_cnt": 2
-                            },
                         "quality_2g": "high",
                         "quality_5g": "low",
                         "mem_loading": 52,
@@ -32,16 +29,21 @@
         }
     ],
 
-    "test_002_get_board": [
+    "test_002_get_diagnose": [
         {
             "data": [{
                 "module": "status",
                 "errcode": 0,
                 "result": {
-                    'mac': 'D4:EE:02:11:22:40',
-                    'firmware_ver': '1.0.0.4',
-                    'name': 'ZHA0103'},
-                "api": "get_board"
+                    "diagnose": {
+                        "quality_2g": "high",
+                        "quality_5g": "low",
+                        "mem_loading": 52,
+                        "cpu_loading": 2,
+                        "inet_status": 3
+                    }
+                },
+                "api": "get_diagnose"
             }],
             "msg_id": 11111,
             "errcode": 0

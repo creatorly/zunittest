@@ -1,0 +1,76 @@
+{
+    "test_001_get_macclone": [
+        {
+            "data": [{
+                "module": "macclone",
+                "errcode": 0,
+                "result": {
+                    "client_mac_addr":"D0:17:C2:9A:B7:D1",
+                    "device_mac_addr":"D4:EE:02:11:22:41",
+                    "status":"1"
+                },
+                "api": "get"
+            }],
+            "msg_id": 11111,
+            "errcode": 0
+        }
+    ],
+
+    "test_002_set_macclone": [
+        {
+            "data": [
+                {
+                    "module": "macclone",
+                    "errcode": 0,
+                    "api": "set"
+                }
+            ],
+            "msg_id": 11111,
+            "errcode": 0
+        },
+        {
+            "data": [{
+                "module": "macclone",
+                "errcode": 0,
+                "result": {
+                    "client_mac_addr":"D0:17:C2:9A:B7:D1",
+                    "clone_mac_addr":"00:88:99:11:11:00",
+                    "device_mac_addr":"D4:EE:02:11:22:41",
+                    "status":"2"
+                },
+                "api": "get"
+            }],
+            "msg_id": 11111,
+            "errcode": 0
+        }
+    ],
+
+    "test_003_reset_macclone": [
+        {
+            "data": [
+                {
+                    "module": "macclone",
+                    "errcode": 0,
+                    "api": "set"
+                }
+            ],
+            "msg_id": 11111,
+            "errcode": 0
+        },
+        {
+            "data": [{
+                "module": "macclone",
+                "errcode": 0,
+                "result": {
+                    "client_mac_addr":"D0:17:C2:9A:B7:D1",
+                    "clone_mac_addr":"00:88:99:11:11:00",
+                    "device_mac_addr":"D4:EE:02:11:22:41",
+                    "status":"1"
+                },
+                "api": "get"
+            }],
+            "msg_id": 11111,
+            "errcode": 0
+        }
+    ]
+}

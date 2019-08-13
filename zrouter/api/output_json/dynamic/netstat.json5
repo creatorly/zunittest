@@ -1,0 +1,43 @@
+{
+    "test_001_get_total": [
+        {
+            "data": [{
+                "module": "netstat",
+                "errcode": 0,
+                "result": {
+                    "txbytes": 0,
+                    "rxbytes": 0,
+                    "rxspeed": 0,
+                    "txspeed": 0
+                },
+                "api": "get_total"
+            }],
+            "msg_id": 11111,
+            "errcode": 0
+        }
+    ],
+
+    "test_002_get_device": [
+        {
+            "data": [{
+                "module": "netstat",
+                "errcode": 0,
+                "result": {
+                    "device": [{
+                        "txspeed": 0,
+                        "online": 229,
+                        "ipaddr": "192.168.18.111",
+                        "rxspeed": 0,
+                        "macaddr": "00:0E:C6:D0:2F:8F",
+                        "rxbytes": 0,
+                        "txbytes": 0,
+                        "hostname": "iphone"
+                    }]
+                },
+                "api": "get_device"
+            }],
+            "msg_id": 11111,
+            "errcode": 0
+        }
+    ]
+}

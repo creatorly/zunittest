@@ -1,0 +1,17 @@
+{
+    "test_001_get_time": [
+        {
+            "data": [{
+                "module": "time",
+                "errcode": 0,
+                "result": {
+                    "disabled": "0",
+                    "time": "2019-04-28 11:56:15"
+                },
+                "api": "get"
+            }],
+            "msg_id": 11111,
+            "errcode": 0
+        }
+    ]
+}

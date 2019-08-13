@@ -1,0 +1,125 @@
+{
+    "test_001_get_pforward": [
+        {
+            "data": [
+                {
+                    "module": "firewall",
+                    "errcode": 0,
+                    "result": {
+                        "pforward": {},
+                        "lanipv4addr": "192.168.18.1",
+                        "maxnum": "64",
+                        "lanipv4mask": "255.255.255.0"
+                    },
+                    "api": "get_pforward"
+                }
+            ],
+            "msg_id": 11111,
+            "errcode": 0
+        }
+    ],
+
+    "test_002_add_pforward": [
+        {
+            "data": [{
+                "module": "firewall",
+                "errcode": 0,
+                "result": {},
+                "api": "add_pforward"
+            }],
+            "msg_id": 11111,
+            "errcode": 0
+        },
+        {
+            "data": [{
+                "module": "firewall",
+                "errcode": 0,
+                "result": {
+                    "lanipv4addr": "192.168.18.1",
+                    "maxnum": "64",
+                    "lanipv4mask": "255.255.255.0",
+                    "pforward": [{
+                        "enabled": "1",
+                        "proto": "tcp",
+                        "index": 0,
+                        "src_dport": 34561,
+                        "dest_ip": "192.168.18.6",
+                        "comment": "test1",
+                        "dest_port": 34568
+                    }]
+                },
+                "api": "get_pforward"
+            }],
+            "msg_id": 11111,
+            "errcode": 0
+        }
+    ],
+
+    "test_003_modify_pforward": [
+        {
+            "data": [{
+                "module": "firewall",
+                "errcode": 0,
+                "result": {},
+                "api": "modify_pforward"
+            }],
+            "msg_id": 11111,
+            "errcode": 0
+        },
+        {
+            "data": [{
+                "module": "firewall",
+                "errcode": 0,
+                "result": {
+                    "lanipv4addr": "192.168.18.1",
+                    "maxnum": "64",
+                    "lanipv4mask": "255.255.255.0",
+                    "pforward": [{
+                        "enabled": "1",
+                        "proto": "tcp",
+                        "index": 0,
+                        "src_dport": 34568,
+                        "dest_ip": "192.168.18.6",
+                        "comment": "test111",
+                        "dest_port": 34561
+                    }]
+                },
+                "api": "get_pforward"
+            }],
+            "msg_id": 11111,
+            "errcode": 0
+        }
+    ],
+
+    "test_004_del_pforward": [
+        {
+            "data": [
+                {
+                    "module": "firewall",
+                    "errcode": 0,
+                    "result": {},
+                    "api": "delete_pforward"
+                }
+            ],
+            "msg_id": 11111,
+            "errcode": 0
+        },
+       {
+            "data": [
+                {
+                    "module": "firewall",
+                    "errcode": 0,
+                    "result": {
+                        "pforward": {},
+                        "lanipv4addr": "192.168.18.1",
+                        "maxnum": "64",
+                        "lanipv4mask": "255.255.255.0"
+                    },
+                    "api": "get_pforward"
+                }
+            ],
+            "msg_id": 11111,
+            "errcode": 0
+        }
+    ]
+}

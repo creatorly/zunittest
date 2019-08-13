@@ -1,11 +1,11 @@
 /*
 |    单元测试      |post请求次数 |描述|
 |------------------|-------------|----|
-|test_001_get_status | 1 | 获取wifi质量，内存等|
-|test_002_get_diagnose | 1 | 获取版本号，mac地址等|
+|test_001_system_factory  | 1 | 恢复出厂设置|
+|test_002_system_restart  | 1 | 重启|
 */
 {
-    "test_001_get_status": [
+    "test_001_system_factory": [
         {
             "ver": "v1",
             "sid": "00000000000000000000000000000000",
@@ -13,14 +13,14 @@
             "param": {
                 "msg_id": 11111,
                 "params": [{
-                    "module": "status",
-                    "api": "get"
+                    "module": "system",
+                    "api": "factory"
                 }]
             }
         }
     ],
 
-    "test_002_get_diagnose": [
+    "test_002_system_restart": [
         {
             "ver": "v1",
             "sid": "00000000000000000000000000000000",
@@ -28,8 +28,8 @@
             "param": {
                 "msg_id": 11111,
                 "params": [{
-                    "module": "status",
-                    "api": "get_diagnose"
+                    "module": "system",
+                    "api": "restart"
                 }]
             }
         }

@@ -1,0 +1,154 @@
+/*
+|    单元测试      |post请求次数 |描述|
+|------------------|-------------|----|
+|test_001_get_pforward | 2 | 获取端口转发信息|
+|test_002_add_pforward | 2 | 添加端口转发信息|
+|test_003_modify_pforward | 2 | 修改端口转发信息|
+|test_004_del_pforward | 2 | 删除端口转发信息|
+*/
+{
+    "test_001_get_pforward": [
+        {
+            "ver": "v1",
+            "sid": "00000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [
+                    {
+                        "module": "firewall",
+                        "api": "get_pforward"
+                    }
+                ]
+            }
+        }
+    ],
+
+    "test_002_add_pforward": [
+        {
+            "ver": "v1",
+            "sid": "00000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "firewall",
+                    "api": "add_pforward",
+                    "param": {
+                        "pforward": [{
+                            "enabled": "1",
+                            "proto": "tcp",
+                            "dest_ip": "192.168.18.6",
+                            "src_dport": 34561,
+                            "dest_port": 34568,
+                            "comment": "test1"
+                        }]
+                    }
+                }]
+            }
+        },
+        {
+            "ver": "v1",
+            "sid": "00000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [
+                    {
+                        "module": "firewall",
+                        "api": "get_pforward"
+                    }
+                ]
+            }
+        }
+    ],
+
+    "test_003_modify_pforward": [
+        {
+            "ver": "v1",
+            "sid": "00000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "firewall",
+                    "api": "modify_pforward",
+                    "param": {
+                        "pforward": {
+                            "new": {
+                                "enabled": "1",
+                                "proto": "tcp",
+                                "dest_ip": "192.168.18.6",
+                                "src_dport": 34568,
+                                "dest_port": 34561,
+                                "comment": "test111"
+                            },
+                            "old": {
+                                "enabled": "1",
+                                "proto": "tcp",
+                                "dest_ip": "192.168.18.6",
+                                "src_dport": 34561,
+                                "dest_port": 34568,
+                                "comment": "test1"
+                            }
+                        }
+                    }
+                }]
+            }
+        },
+        {
+            "ver": "v1",
+            "sid": "00000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [
+                    {
+                        "module": "firewall",
+                        "api": "get_pforward"
+                    }
+                ]
+            }
+        }
+    ],
+
+    "test_004_del_pforward": [
+        {
+            "ver": "v1",
+            "sid": "00000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "firewall",
+                    "api": "delete_pforward",
+                    "param": {
+                        "pforward": [{
+                            "enabled": "1",
+                            "proto": "tcp",
+                            "index": 0,
+                            "src_dport": 34568,
+                            "dest_ip": "192.168.18.6",
+                            "comment": "test111",
+                            "dest_port": 34561
+                        }]
+                    }
+                }]
+            }
+        },
+        {
+            "ver": "v1",
+            "sid": "00000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [
+                    {
+                        "module": "firewall",
+                        "api": "get_pforward"
+                    }
+                ]
+            }
+        }
+    ]
+}

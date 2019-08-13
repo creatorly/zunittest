@@ -190,5 +190,78 @@
             "msg_id": 11111,
             "errcode": 0
         }
+    ],
+
+    "test_008_get_rule": [
+        {
+            "data": [
+                {
+                    "module": "qos",
+                    "errcode": 0,
+                    "result": {
+                        "rule": "1"
+                    },
+                    "api": "get_rule"
+                }
+            ],
+            "msg_id": 11111,
+            "errcode": 0
+        }
+    ],
+
+    "test_009_set_rule": [
+        {
+            "data": [
+                {
+                    "module": "qos",
+                    "errcode": 0,
+                    "api": "set_rule"
+                }
+            ],
+            "msg_id": 11111,
+            "errcode": 0
+        },
+        {
+            "data": [
+                {
+                    "module": "qos",
+                    "errcode": 0,
+                    "result": {
+                        "rule": "4"
+                    },
+                    "api": "get_rule"
+                }
+            ],
+            "msg_id": 11111,
+            "errcode": 0
+        }
+    ],
+
+    "test_010_reset_rule": [
+        {
+            "data": [
+                {
+                    "module": "qos",
+                    "errcode": 0,
+                    "api": "set_rule"
+                }
+            ],
+            "msg_id": 11111,
+            "errcode": 0
+        },
+        {
+            "data": [
+                {
+                    "module": "qos",
+                    "errcode": 0,
+                    "result": {
+                        "rule": "1"
+                    },
+                    "api": "get_rule"
+                }
+            ],
+            "msg_id": 11111,
+            "errcode": 0
+        }
     ]
 }

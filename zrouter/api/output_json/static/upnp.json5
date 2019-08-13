@@ -1,0 +1,73 @@
+{
+    "test_001_get_upnp": [
+        {
+            "data": [{
+                "module": "upnp",
+                "errcode": 0,
+                "result": {
+                    "enabled": "1",
+                    "rules": {}
+                },
+                "api": "get"
+            }],
+            "msg_id": 11111,
+            "errcode": 0
+        }
+    ],
+
+    "test_002_set_upnp": [
+        {
+            "data": [
+                {
+                    "module": "upnp",
+                    "errcode": 0,
+                    "result":{},
+                    "api": "set"
+                }
+            ],
+            "msg_id": 11111,
+            "errcode": 0
+        },
+        {
+            "data": [{
+                "module": "upnp",
+                "errcode": 0,
+                "result": {
+                    "enabled": "0",
+                    "rules": {}
+                },
+                "api": "get"
+            }],
+            "msg_id": 11111,
+            "errcode": 0
+        }
+    ],
+
+    "test_003_reset_upnp": [
+        {
+            "data": [
+                {
+                    "module": "upnp",
+                    "errcode": 0,
+                    "result":{},
+                    "api": "set"
+                }
+            ],
+            "msg_id": 11111,
+            "errcode": 0
+        },
+        {
+            "data": [{
+                "module": "upnp",
+                "errcode": 0,
+                "result": {
+                    "enabled": "1",
+                    "rules": {}
+                },
+                "api": "get"
+            }],
+            "msg_id": 11111,
+            "errcode": 0
+        }
+    ]
+}

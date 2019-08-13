@@ -1,0 +1,208 @@
+{
+    "test_001_get_wireless": [
+        {
+            "data": [{
+                  "module": "wireless",
+                  "errcode": 0,
+                  "result": {
+                      "prio_5g_access": 0,
+                      "merge_wifi": 0,
+                      "radio0": {
+                          "current_channel": 11,
+                          "txpower": "max",
+                          "bw": "auto",
+                          "channel": 0,
+                          "current_bw": "HT20",
+                          "chanlist": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 0],
+                      },
+                      "w2": {
+                          "disabled": 0,
+                          "hidden": 0,
+                          "ssid": "ZHOME_2240",
+                          "auth": "none",
+                      },
+                      "radio1": {
+                          "current_channel": 40,
+                          "txpower": "max",
+                          "bw": "auto",
+                          "channel": 0,
+                          "current_bw": "HT40",
+                          "chanlist": [36, 40, 44, 48, 149, 153, 157, 161, 165, 0],
+                      },
+                      "wisp": {
+                          "ssid": "ZHOMEWISP-2240",
+                          "disabled": "1",
+                          "auth": "none",
+                      },
+                      "txpower_list": [
+                          {
+                              "val": "min",
+                              "level": 1,
+                          },
+                          {
+                              "val": "normal",
+                              "level": 2,
+                          },
+                          {
+                              "val": "max",
+                              "level": 3,
+                          }
+                      ],
+                      "w5": {
+                          "disabled": 0,
+                          "hidden": 0,
+                          "ssid": "ZHOME_2240_5G",
+                          "auth": "none",
+                      },
+                  },
+                "api": "get_config",
+              }],
+            "msg_id": 11111,
+            "errcode": 0,
+        }
+    ],
+
+  "test_002_set_wireless": [
+      {
+          "data": [{
+              "module": "wireless",
+              "errcode": 0,
+              "result": {},
+              "api": "set_config"
+          }],
+          "msg_id": 11111,
+          "errcode": 0
+      },
+      {
+            "data": [{
+                  "module": "wireless",
+                  "errcode": 0,
+                  "result": {
+                      "prio_5g_access": 0,
+                      "merge_wifi": 0,
+                      "radio0": {
+                          "txpower": "max",
+                          "bw": "HT40",
+                          "channel": 1,
+                          "chanlist": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 0],
+                      },
+                      "w2": {
+                          "disabled": 0,
+                          "hidden": 1,
+                          "ssid": "2g",
+                          "auth": "mixed-psk",
+                          "key":"12345678"
+                      },
+                      "radio1": {
+                          "txpower": "max",
+                          "bw": "HT80",
+                          "channel": 48,
+                          "chanlist": [36, 40, 44, 48, 149, 153, 157, 161, 165, 0],
+                      },
+                      "wisp": {
+                          "ssid": "ZHOMEWISP-2240",
+                          "disabled": "1",
+                          "auth": "none"
+                      },
+                      "txpower_list": [
+                          {
+                              "val": "min",
+                              "level": 1,
+                          },
+                          {
+                              "val": "normal",
+                              "level": 2,
+                          },
+                          {
+                              "val": "max",
+                              "level": 3,
+                          }
+                      ],
+                      "w5": {
+                          "disabled": 0,
+                          "hidden": 1,
+                          "ssid": "5g",
+                          "auth": "mixed-psk",
+                          "key":"1234567890"
+                      },
+                  },
+                "api": "get_config",
+              }],
+            "msg_id": 11111,
+            "errcode": 0,
+        }
+    ],
+
+    "test_003_reset_wireless": [
+      {
+          "data": [{
+              "module": "wireless",
+              "errcode": 0,
+              "result": {},
+              "api": "set_config"
+          }],
+          "msg_id": 11111,
+          "errcode": 0
+      },
+      {
+          "data": [{
+              "module": "wireless",
+              "errcode": 0,
+              "result": {
+                  "prio_5g_access": 0,
+                  "merge_wifi": 0,
+                  "radio0": {
+                      "current_channel": 11,
+                      "txpower": "max",
+                      "bw": "auto",
+                      "channel": 0,
+                      "current_bw": "HT20",
+                      "chanlist": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 0],
+                  },
+                  "w2": {
+                      "disabled": 0,
+                      "hidden": 0,
+                      "ssid": "ZHOME_2240",
+                      "auth": "none",
+                  },
+                  "radio1": {
+                      "current_channel": 40,
+                      "txpower": "max",
+                      "bw": "auto",
+                      "channel": 0,
+                      "current_bw": "HT40",
+                      "chanlist": [36, 40, 44, 48, 149, 153, 157, 161, 165, 0],
+                  },
+                  "wisp": {
+                      "ssid": "ZHOMEWISP-2240",
+                      "disabled": "1",
+                      "auth": "none"
+                  },
+                  "txpower_list": [
+                      {
+                          "val": "min",
+                          "level": 1,
+                      },
+                      {
+                          "val": "normal",
+                          "level": 2,
+                      },
+                      {
+                          "val": "max",
+                          "level": 3,
+                      }
+                  ],
+                  "w5": {
+                      "disabled": 0,
+                      "hidden": 0,
+                      "ssid": "ZHOME_2240_5G",
+                      "auth": "none",
+                  },
+              },
+              "api": "get_config",
+            }],
+          "msg_id": 11111,
+          "errcode": 0,
+        }
+    ],
+}
