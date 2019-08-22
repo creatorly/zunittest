@@ -35,10 +35,8 @@ def get_sid(request_url, request_heads, request_passwd):
             if msg["data"][0]["result"].__contains__("sid"):
                 return msg["data"][0]["result"]["sid"]
         else:
-
             return False
     else:
-
         return False
 
 

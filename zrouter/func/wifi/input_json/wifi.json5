@@ -1,0 +1,150 @@
+/*
+|    单元测试      |post请求次数 |描述|
+|------------------|-------------|----|
+|test_001_default_ssid | 1 | 使用默认的SSID进行连接|
+|test_002_set_short_ssid | 2 | 设置最短的2G和5G的SSID，并设置成加密模式，按新的SSID重新连接|
+|test_003_set_long_ssid | 2 | 设置最长的2G和5G的SSID，并设置最长的密码，按新的SSID重新连接|
+|test_004_reset_ssid | 2 | 还原成原本的2G和5G的SSID，并按新的SSID重新连接|
+*/
+{
+    "test_001_default_ssid": [
+        {
+            "w2": {
+                "ssid": "ZHOME_2240",
+                "auth": "none",
+                "key": "",
+            },
+            "w5": {
+                "ssid": "ZHOME_2240_5G",
+                "auth": "none",
+                "key": "",
+            }
+        }
+    ],
+
+    "test_002_set_short_ssid": [
+        {
+            "ver": "v1",
+            "sid": "000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "wireless",
+                    "api": "set_config",
+                    "param": {
+                        "merge_wifi": 0,
+                        "prio_5g_access": 0,
+                        "w2": {
+                            "ssid": "2",
+                            "auth": "mixed-psk",
+                            "key": "12345678"
+                        },
+                        "w5": {
+                            "ssid": "5",
+                            "auth": "mixed-psk",
+                            "key": "1234567890"
+                        }
+                    }
+                }]
+            }
+        },
+
+        {
+            "w2": {
+                "ssid": "2",
+                "auth": "mixed-psk",
+                "key": "12345678"
+            },
+            "w5": {
+                "ssid": "5",
+                "auth": "mixed-psk",
+                "key": "1234567890"
+            }
+        }
+    ],
+
+    "test_003_set_long_ssid": [
+        {
+            "ver": "v1",
+            "sid": "000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "wireless",
+                    "api": "set_config",
+                    "param": {
+                        "merge_wifi": 0,
+                        "prio_5g_access": 0,
+                        "w2": {
+                            "ssid": "wifi1234567890123456789-2.4g",
+                            "auth": "mixed-psk",
+                            "key": "123456789012345678901234567890123456789012345678901234567890123"
+                        },
+                        "w5": {
+                            "ssid": "wifi1234567890123456789-5g",
+                            "auth": "mixed-psk",
+                            "key": "123456789012345678901234567890123456789012345678901234567890123"
+                        }
+                    }
+                }]
+            }
+        },
+
+        {
+            "w2": {
+                "ssid": "wifi1234567890123456789-2.4g",
+                "auth": "mixed-psk",
+                "key": "123456789012345678901234567890123456789012345678901234567890123"
+            },
+            "w5": {
+                "ssid": "wifi1234567890123456789-5g",
+                "auth": "mixed-psk",
+                "key": "123456789012345678901234567890123456789012345678901234567890123"
+            }
+        }
+    ],
+
+    "test_004_reset_ssid": [
+        {
+            "ver": "v1",
+            "sid": "000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "wireless",
+                    "api": "set_config",
+                    "param": {
+                        "merge_wifi": 0,
+                        "prio_5g_access": 0,
+                        "w2": {
+                            "ssid": "ZHOME_2240",
+                            "auth": "none",
+                            "key": ""
+                        },
+                        "w5": {
+                            "ssid": "ZHOME_2240_5G",
+                            "auth": "none",
+                            "key": ""
+                        }
+                    }
+                }]
+            }
+        },
+
+        {
+            "w2": {
+                "ssid": "ZHOME_2240",
+                "auth": "none",
+                "key": ""
+            },
+            "w5": {
+                "ssid": "ZHOME_2240_5G",
+                "auth": "none",
+                "key": ""
+            }
+        }
+    ]
+}
