@@ -1,0 +1,295 @@
+/*
+|    单元测试      |post请求次数 |描述|
+|------------------|-------------|----|
+|test_001_set_dhcp_auto_dns | 2 | 设置dhcp方式上网，自动获取dns|
+|test_002_set_dhcp_hand_dns | 2 | 设置dhcp方式上网，手动设置dns|
+|test_003_set_static   | 2 | 设置static方式上网，手动设置dns(静态无自动dns)|
+|test_004_set_pppoe_auto_dns_no_advance  | 2 | 设置pppoe方式上网，自动获取dns，没有高级设置|
+|test_005_set_pppoe_auto_dns_has_advance   | 2 | 设置pppoe方式上网，自动获取dns，有高级设置|
+|test_006_set_pppoe_hand_dns_no_advance  | 2 | 设置pppoe方式上网，手动设置dns，没有高级设置|
+|test_007_set_pppoe_hand_dns_has_advance  | 2 | 设置pppoe方式上网，手动设置dns，有高级设置|
+|test_008_set_wisp_auto_dns  | 2 | 设置wisp方式上网，自动获取dns|
+|test_009_set_wisp_hand_dns  | 2 | 设置wisp方式上网，手动设置dns|
+|test_01-_reset_wan  | 2 | 回复成原本的dhcp模式|
+|test_011_set_phy_mode  | 2 | 设置phy_mode|
+|test_012_reset_phy_mode  | 2 | 再次设置phy_mode，恢复成原本的参数|
+*/
+{
+    "test_001_set_dhcp_auto_dns": [
+        {
+            "ver": "v1",
+            "sid": "00000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "wan",
+                    "api": "set",
+                    "param": {
+                        "proto": "dhcp",
+                        "dhcp": {
+                            "peerdns": "1"
+                        }
+                    }
+                }]
+            }
+        }
+    ],
+
+    "test_002_set_dhcp_hand_dns": [
+        {
+            "ver": "v1",
+            "sid": "00000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "wan",
+                    "api": "set",
+                    "param": {
+                        "proto": "dhcp",
+                        "dhcp": {
+                            "peerdns": "0",
+                            "ipv4dns1": "114.114.114.114",
+                            "ipv4dns2": "114.114.115.115"
+                        }
+                    }
+                }]
+            }
+        }
+    ],
+
+    "test_003_set_static": [
+        {
+            "ver": "v1",
+            "sid": "00000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "wan",
+                    "api": "set",
+                    "param": {
+                        "proto": "static",
+                        "static": {
+                            "ipv4addr": "192.168.10.192",
+                            "ipv4mask": "255.255.255.0",
+                            "ipv4gateway": "192.168.10.1",
+                            "ipv4dns1": "144.144.144.144",
+                            "ipv4dns2": "8.8.8.8"
+                        }
+                    }
+                }]
+            }
+        }
+    ],
+
+    "test_004_set_pppoe_auto_dns_no_advance": [
+        {
+            "ver": "v1",
+            "sid": "00000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "wan",
+                    "api": "set",
+                    "param": {
+                        "proto": "pppoe",
+                        "pppoe": {
+                            "username": "cHBwb2U=",
+                            "password": "cHBwb2U=",
+                            "peerdns": "1",
+                            "advance":"0"
+                        }
+                    }
+                }]
+            }
+        }
+    ],
+
+    "test_005_set_pppoe_auto_dns_has_advance": [
+        {
+            "ver": "v1",
+            "sid": "00000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "wan",
+                    "api": "set",
+                    "param": {
+                        "proto": "pppoe",
+                        "pppoe": {
+                            "username": "cHBwb2U=",
+                            "password": "cHBwb2U=",
+                            "peerdns": "1",
+                            "advance":"1",
+                            "sdial":"1",
+                            "mtu": "1492"
+                        }
+                    }
+                }]
+            }
+        }
+    ],
+
+    "test_006_set_pppoe_hand_dns_no_advance": [
+        {
+            "ver": "v1",
+            "sid": "00000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "wan",
+                    "api": "set",
+                    "param": {
+                        "proto": "pppoe",
+                        "pppoe": {
+                            "username": "cHBwb2U=",
+                            "password": "cHBwb2U=",
+                            "peerdns": "0",
+                            "ipv4dns1": "144.144.144.144",
+                            "ipv4dns2": "8.8.8.8",
+                            "advance":"0",
+                        }
+                    }
+                }]
+            }
+        }
+    ],
+
+    "test_007_set_pppoe_hand_dns_has_advance": [
+        {
+            "ver": "v1",
+            "sid": "00000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "wan",
+                    "api": "set",
+                    "param": {
+                        "proto": "pppoe",
+                        "pppoe": {
+                            "username": "cHBwb2U=",
+                            "password": "cHBwb2U=",
+                            "peerdns": "0",
+                            "ipv4dns1": "144.144.144.144",
+                            "ipv4dns2": "8.8.8.8",
+                            "advance":"1",
+                            "sdial":"1",
+                            "mtu": "1492"
+                        }
+                    }
+                }]
+            }
+        }
+    ],
+
+    "test_008_set_wisp_auto_dns": [
+        {
+            "ver": "v1",
+            "sid": "00000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "wan",
+                    "api": "set",
+                    "param": {
+                        "proto": "wisp",
+                        "wisp": {
+                            "ssid": "ziroom",
+                            "key": "4001001111",
+                            "peerdns": "1"
+                        }
+                    }
+                }]
+            }
+        }
+    ],
+
+    "test_009_set_wisp_hand_dns": [
+        {
+            "ver": "v1",
+            "sid": "00000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "wan",
+                    "api": "set",
+                    "param": {
+                        "proto": "wisp",
+                        "wisp": {
+                            "ssid": "ziroom",
+                            "key": "4001001111",
+                            "peerdns": "0",
+                            "ipv4dns1": "144.144.144.144",
+                            "ipv4dns2": "8.8.8.8"
+                        }
+                    }
+                }]
+            }
+        }
+    ],
+
+    "test_010_reset_wan": [
+        {
+            "ver": "v1",
+            "sid": "00000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "wan",
+                    "api": "set",
+                    "param": {
+                        "proto": "dhcp",
+                        "dhcp": {
+                            "peerdns": "1",
+                        }
+                    }
+                }]
+            }
+        }
+    ],
+
+    "test_011_set_phy_mode": [
+        {
+            "ver": "v1",
+            "sid": "00000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "wan",
+                    "api": "set_phy_mode",
+                    "param": {
+                        "phymode": "10h"
+                    }
+                }]
+            }
+        }
+    ],
+
+    "test_012_reset_phy_mode": [
+        {
+            "ver": "v1",
+            "sid": "00000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "wan",
+                    "api": "set_phy_mode",
+                    "param": {
+                        "phymode": "auto"
+                    }
+                }]
+            }
+        }
+    ]
+}

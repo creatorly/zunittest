@@ -1,0 +1,159 @@
+{
+    "test_001_set_dhcp_auto_dns": [
+        {
+            "data": [{
+                "module": "wan",
+                "errcode": 0,
+                "result": {},
+                "api": "set"
+            }],
+            "msg_id": 11111,
+            "errcode": 0
+        }
+    ],
+
+    "test_002_set_dhcp_hand_dns": [
+        {
+            "data": [{
+                "module": "wan",
+                "errcode": 0,
+                "result": {},
+                "api": "set"
+            }],
+            "msg_id": 11111,
+            "errcode": 0
+        }
+    ],
+
+    "test_003_set_static": [
+        {
+            "data": [{
+                "module": "wan",
+                "errcode": 0,
+                "result": {},
+                "api": "set"
+            }],
+            "msg_id": 11111,
+            "errcode": 0
+        }
+    ],
+
+    "test_004_set_pppoe_auto_dns_no_advance": [
+        {
+            "data": [{
+                "module": "wan",
+                "errcode": 0,
+                "result": {},
+                "api": "set"
+            }],
+            "msg_id": 11111,
+            "errcode": 0
+        }
+    ],
+
+    "test_005_set_pppoe_auto_dns_has_advance": [
+        {
+            "data": [{
+                "module": "wan",
+                "errcode": 0,
+                "result": {},
+                "api": "set"
+            }],
+            "msg_id": 11111,
+            "errcode": 0
+        }
+    ],
+
+    "test_006_set_pppoe_hand_dns_no_advance": [
+        {
+            "data": [{
+                "module": "wan",
+                "errcode": 0,
+                "result": {},
+                "api": "set"
+            }],
+            "msg_id": 11111,
+            "errcode": 0
+        }
+    ],
+
+    "test_007_set_pppoe_hand_dns_has_advance": [
+        {
+            "data": [{
+                "module": "wan",
+                "errcode": 0,
+                "result": {},
+                "api": "set"
+            }],
+            "msg_id": 11111,
+            "errcode": 0
+        }
+    ],
+
+    "test_008_set_wisp_auto_dns": [
+        {
+            "data": [{
+                "module": "wan",
+                "errcode": 0,
+                "result": {},
+                "api": "set"
+            }],
+            "msg_id": 11111,
+            "errcode": 0
+        }
+    ],
+
+    "test_009_set_wisp_hand_dns": [
+        {
+            "data": [{
+                "module": "wan",
+                "errcode": 0,
+                "result": {},
+                "api": "set"
+            }],
+            "msg_id": 11111,
+            "errcode": 0
+        }
+    ],
+
+    "test_010_reset_wan": [
+        {
+            "data": [{
+                "module": "wan",
+                "errcode": 0,
+                "result": {},
+                "api": "set"
+            }],
+            "msg_id": 11111,
+            "errcode": 0
+        }
+    ],
+
+    "test_011_set_phy_mode": [
+        {
+            "data": [{
+                "module": "wan",
+                "errcode": 0,
+                "result": {
+                },
+                "api": "set_phy_mode"
+            }],
+            "msg_id": 11111,
+            "errcode": 0
+        }
+    ],
+
+    "test_012_reset_phy_mode": [
+        {
+            "data": [{
+                "module": "wan",
+                "errcode": 0,
+                "result": {
+                },
+                "api": "set_phy_mode"
+            }],
+            "msg_id": 11111,
+            "errcode": 0
+        }
+    ]
+}
