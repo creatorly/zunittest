@@ -18,20 +18,20 @@
                 }]
             }
         }
-    ],
-
-    "test_002_system_restart": [
-        {
-            "ver": "v1",
-            "sid": "00000000000000000000000000000000",
-            "method": "api",
-            "param": {
-                "msg_id": 11111,
-                "params": [{
-                    "module": "system",
-                    "api": "restart"
-                }]
-            }
-        }
+//    ],
+//
+//    "test_002_system_restart": [
+//        {
+//            "ver": "v1",
+//            "sid": "00000000000000000000000000000000",
+//            "method": "api",
+//            "param": {
+//                "msg_id": 11111,
+//                "params": [{
+//                    "module": "system",
+//                    "api": "restart"
+//                }]
+//            }
+//        }
     ]
 }

@@ -283,25 +283,31 @@ def run_test_case(module_name):
         request_i = 0
         request_result = True
         while request_i < len(server.input_dict[key]):
-            request_data = server.input_dict[key][request_i]
-            request_data["sid"] = server.sid
-            logging.info("%s send:%s", key, request_data)
-            resp_data = requests.post(server.url, data=json.dumps(request_data), headers=server.headers)
-            logging.info("%s recv:%s", key, resp_data.text)
-            if resp_data.status_code == 200:
-                logging.info("%s src:%s", key, server.output_dict[key][request_i])
-                msg = json.loads(resp_data.text)
+            try:
+                request_data = server.input_dict[key][request_i]
+                request_data["sid"] = server.sid
+                logging.info("%s send:%s", key, request_data)
+                resp_data = requests.post(server.url, data=json.dumps(request_data), headers=server.headers)
+                logging.info("%s recv:%s", key, resp_data.text)
+                if resp_data.status_code == 200:
+                    logging.info("%s src:%s", key, server.output_dict[key][request_i])
+                    msg = json.loads(resp_data.text)
 
-                if test.name == "static":
-                    # 判断返回的数据与output_json里面的数据是否一致
-                    if msg != server.output_dict[key][request_i]:
-                        request_result = False
-                elif test.name == "dynamic":
-                    # 判断返回的数据与output_json里面的是结构是否一致
-                    if not comp_json_key(msg, server.output_dict[key][request_i]):
-                        request_result = False
+                    if test.name == "static":
+                        # 判断返回的数据与output_json里面的数据是否一致
+                        if msg != server.output_dict[key][request_i]:
+                            request_result = False
+                    elif test.name == "dynamic":
+                        # 判断返回的数据与output_json里面的是结构是否一致
+                        if not comp_json_key(msg, server.output_dict[key][request_i]):
+                            request_result = False
+
+            except Exception as e:
+                logging.info("---异常---：", e)
+                request_result = False
 
             request_i += 1
+            time.sleep(1)
 
         # 填写测试结果到excel的第二列
         if request_result:
@@ -337,7 +343,7 @@ def test_end():
                          style=zexcel.set_style(zexcel.BLACK, 260, bold=True, align='', pattern_color='light_orange'))
     excel.sheet_fd.write(zexcel.MAC_ROW, zexcel.MAC_COL + 1, test.mac,
                          style=zexcel.set_style(zexcel.BLACK, 260, bold=True, align='', pattern_color='light_orange'))
-    excel.sheet_fd.write(zexcel.DATA_ROW, zexcel.DATA_COL + 1, test.date,
+    excel.sheet_fd.write(zexcel.DATE_ROW, zexcel.DATE_COL + 1, test.date,
                          style=zexcel.set_style(zexcel.BLACK, 260, bold=True, align='', pattern_color='light_orange'))
     excel.sheet_fd.write(zexcel.TOTAL_ROW, zexcel.TOTAL_COL + 1, test.total_num,
                          style=zexcel.set_style(zexcel.BLACK, 260, bold=True, align='', pattern_color='light_orange'))

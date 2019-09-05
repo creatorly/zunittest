@@ -12,20 +12,20 @@
             "msg_id": 11111,
             "errcode": 0
         }
-    ],
-
-    "test_002_system_restart": [
-        {
-            "data": [
-                {
-                    "module": "system",
-                    "errcode": 0,
-                    "result": {},
-                    "api": "restart"
-                }
-            ],
-            "msg_id": 11111,
-            "errcode": 0
-        }
+//    ],
+//
+//    "test_002_system_restart": [
+//        {
+//            "data": [
+//                {
+//                    "module": "system",
+//                    "errcode": 0,
+//                    "result": {},
+//                    "api": "restart"
+//                }
+//            ],
+//            "msg_id": 11111,
+//            "errcode": 0
+//        }
     ]
 }

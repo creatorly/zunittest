@@ -1,0 +1,79 @@
+{
+    "test_001_default_ssid": [
+        {
+
+        }
+    ],
+
+    "test_002_set_short_ssid": [
+        {
+          "data": [{
+              "module": "wireless",
+              "errcode": 0,
+              "result": {},
+              "api": "set_config"
+          }],
+          "msg_id": 11111,
+          "errcode": 0
+        },
+
+        {
+          "data": [{
+              "module": "wireless",
+              "errcode": 0,
+              "result": {},
+              "api": "set_config"
+          }],
+          "msg_id": 11111,
+          "errcode": 0
+        }
+    ],
+
+    "test_003_set_long_ssid": [
+        {
+          "data": [{
+              "module": "wireless",
+              "errcode": 0,
+              "result": {},
+              "api": "set_config"
+          }],
+          "msg_id": 11111,
+          "errcode": 0
+        },
+
+        {
+          "data": [{
+              "module": "wireless",
+              "errcode": 0,
+              "result": {},
+              "api": "set_config"
+          }],
+          "msg_id": 11111,
+          "errcode": 0
+        }
+    ],
+
+    "test_004_reset_ssid": [
+        {
+          "data": [{
+              "module": "wireless",
+              "errcode": 0,
+              "result": {},
+              "api": "set_config"
+          }],
+          "msg_id": 11111,
+          "errcode": 0
+        },
+
+        {
+          "data": [{
+              "module": "wireless",
+              "errcode": 0,
+              "result": {},
+              "api": "set_config"
+          }],
+          "msg_id": 11111,
+          "errcode": 0
+        }
+    ]
+}

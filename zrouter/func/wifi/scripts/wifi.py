@@ -134,7 +134,8 @@ def excel_init():
 def test_json_init(module_name):
     check_name = "test_"
     # 获取所有的测试名称及请求内容
-    input_file = "../input_json/" + test.name + "/" + module_name + ".json5"
+    input_file = "../input_json/" + module_name + ".json5"
+    output_file = "../output_json/" + module_name + ".json5"
     with open(input_file, 'r', encoding="utf8") as load_f:
         server.input_dict = json5.loads(load_f.read())
 
@@ -143,6 +144,26 @@ def test_json_init(module_name):
         if not str(key).startswith(check_name):
             logging.error("input_dict not start with test_")
             return False
+
+    with open(output_file, 'r', encoding="utf8") as load_f:
+        server.output_dict = json5.loads(load_f.read())
+
+    for key in server.output_dict:
+        # 判断key是否以"test_"开始
+        if not str(key).startswith(check_name):
+            logging.error("output_dict not start with test_")
+            return False
+
+    # 判断input和output的内容是否对应
+    if len(server.input_dict) == len(server.output_dict):
+        for key in server.input_dict:
+            if key in server.output_dict:
+                logging.info("test case:%s", key)
+            else:
+                logging.error("input_json is different with output_json")
+                return False
+    else:
+        return False
 
     return True
 
@@ -164,13 +185,18 @@ def start_connect_wifi(info):
         utils_wifi.disconnect_wifi(wifi)
 
     scan_i = 0
-    while scan_i != 1:
+    while scan_i != 5:
         wifi_list = utils_wifi.scan_wifi(wifi)
+        scan_i += 1
         for wifi_i in wifi_list:
             if wifi_i[0] == info["ssid"]:
-                logging.info("find ssid:%s", wifi_i[0])
-                scan_i = 1
+                logging.info("find ssid:%s", info["ssid"])
+                scan_i = 5
                 break
+
+    if scan_i > 5:
+        logging.info("find ssid:%s fail", info["ssid"])
+        test_end()
 
     profile_info = pywifi.profile.Profile()  # 配置文件
     profile_info.ssid = info["ssid"]  # wifi名称
@@ -198,26 +224,34 @@ def run_test_case(module_name):
         request_i = 0
         request_result = True
         while request_i < len(server.input_dict[key]):
-            if server.input_dict[key][request_i].__contains__("method"):
-                request_data = server.input_dict[key][request_i]
-                request_data["sid"] = server.sid
-                logging.info("%s send:%s", key, request_data)
-                resp_data = requests.post(server.url, data=json.dumps(request_data), headers=server.headers)
-                logging.info("%s recv:%s", key, resp_data.text)
-                if resp_data.status_code == 200:
-                    msg = json.loads(resp_data.text)
-                    logging.info(msg)
-            else:
-                wifi_info = server.input_dict[key][request_i]
-                if wifi_info["w2"]["ssid"]:
-                    if not start_connect_wifi(wifi_info["w2"]):
-                        request_result = False
+            try:
+                if server.input_dict[key][request_i].__contains__("method"):
+                    request_data = server.input_dict[key][request_i]
+                    request_data["sid"] = server.sid
+                    logging.info("%s send:%s", key, request_data)
+                    resp_data = requests.post(server.url, data=json.dumps(request_data), headers=server.headers)
+                    logging.info("%s recv:%s", key, resp_data.text)
+                    if resp_data.status_code == 200:
+                        msg = json.loads(resp_data.text)
+                        # 判断返回的数据与output_json里面的数据是否一致
+                        if msg != server.output_dict[key][request_i]:
+                            request_result = False
+                else:
+                    wifi_info = server.input_dict[key][request_i]
+                    if wifi_info["w2"]["ssid"]:
+                        if not start_connect_wifi(wifi_info["w2"]):
+                            request_result = False
 
-                if wifi_info["w5"]["ssid"]:
-                    if not start_connect_wifi(wifi_info["w5"]):
-                        request_result = False
+                    if wifi_info["w5"]["ssid"]:
+                        if not start_connect_wifi(wifi_info["w5"]):
+                            request_result = False
+
+            except Exception as e:
+                logging.info("---异常---：", e)
+                request_result = False
 
             request_i += 1
+            time.sleep(1)
 
         # 填写测试结果到excel的第二列
         if request_result:
@@ -253,7 +287,7 @@ def test_end():
                          style=zexcel.set_style(zexcel.BLACK, 260, bold=True, align='', pattern_color='light_orange'))
     excel.sheet_fd.write(zexcel.MAC_ROW, zexcel.MAC_COL + 1, test.mac,
                          style=zexcel.set_style(zexcel.BLACK, 260, bold=True, align='', pattern_color='light_orange'))
-    excel.sheet_fd.write(zexcel.DATA_ROW, zexcel.DATA_COL + 1, test.date,
+    excel.sheet_fd.write(zexcel.DATE_ROW, zexcel.DATE_COL + 1, test.date,
                          style=zexcel.set_style(zexcel.BLACK, 260, bold=True, align='', pattern_color='light_orange'))
     excel.sheet_fd.write(zexcel.TOTAL_ROW, zexcel.TOTAL_COL + 1, test.total_num,
                          style=zexcel.set_style(zexcel.BLACK, 260, bold=True, align='', pattern_color='light_orange'))

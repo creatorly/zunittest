@@ -215,6 +215,7 @@
                 {
                     "module": "qos",
                     "errcode": 0,
+                    "result":{},
                     "api": "set_rule"
                 }
             ],
@@ -243,6 +244,7 @@
                 {
                     "module": "qos",
                     "errcode": 0,
+                    "result":{},
                     "api": "set_rule"
                 }
             ],

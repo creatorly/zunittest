@@ -14,8 +14,8 @@ VERSION_COL = 6
 VERSION_ROW = 1
 MAC_COL = 6
 MAC_ROW = 2
-DATA_COL = 6
-DATA_ROW = 3
+DATE_COL = 6
+DATE_ROW = 3
 TOTAL_COL = 6
 TOTAL_ROW = 4
 TOTAL_PASS_COL = 6
@@ -94,7 +94,7 @@ def sheet_init(excel_fd, sheet_name):
                    style=set_style(BLACK, 260, bold=True, align='', pattern_color='light_orange'))
     sheet_fd.write(MAC_ROW, MAC_COL, "mac:",
                    style=set_style(BLACK, 260, bold=True, align='', pattern_color='light_orange'))
-    sheet_fd.write(DATA_ROW, DATA_COL, "data:",
+    sheet_fd.write(DATE_ROW, DATE_COL, "date:",
                    style=set_style(BLACK, 260, bold=True, align='', pattern_color='light_orange'))
     sheet_fd.write(TOTAL_ROW, TOTAL_COL, "total:",
                    style=set_style(BLACK, 260, bold=True, align='', pattern_color='light_orange'))
