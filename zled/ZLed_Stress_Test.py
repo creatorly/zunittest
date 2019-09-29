@@ -37,6 +37,31 @@ def hex_show(argv):
     logging.info('Led Read:%s(%d)', result, hLen)
 
 
+# 打开串口
+def fd_open(uart, bps, timeout):
+    try:
+        # 打开串口，并得到串口对象
+        fd = serial.Serial(uart, bps, timeout=timeout)
+        # 判断是否打开成功
+        if not fd.is_open:
+           fd = -1
+    except Exception as e:
+        print("---异常---：", e)
+
+    return fd
+
+
+# 关闭串口
+def fd_close(uartfd):
+    uartfd.close()
+
+
+# 写数据
+def fd_write(uartfd, data):
+    result = uartfd.write(data)  # 写数据
+    return result
+
+
 def crc_sum(data, data_len):
     crc = 0
     i = 0
@@ -44,32 +69,6 @@ def crc_sum(data, data_len):
         crc += data[i]
         i += 1
     return crc & 0x00FF
-
-
-# 打开串口
-def uart_open(uart, bps, timeout):
-    try:
-        # 打开串口，并得到串口对象
-        ser = serial.Serial(uart, bps, timeout=timeout)
-        # 判断是否打开成功
-        if not ser.is_open:
-           ser = -1
-    except Exception as e:
-        print("---异常---：", e)
-
-    return ser
-
-
-# 关闭串口
-def uart_close(ser):
-    uart.fdstate = -1
-    ser.close()
-
-
-# 写数据
-def uart_write(ser, data):
-    result = ser.write(data)  # 写数据
-    return result
 
 
 # 读数据
@@ -123,7 +122,7 @@ def Led2_4_SetPower(ser, sn, power):
 
     writebuf.append(crc_sum(writebuf, len(writebuf)))
 
-    count = uart_write(ser, writebuf)
+    count = fd_write(ser, writebuf)
     logging.info("Led Write %s(%d)" % (writebuf.hex(), count))
 
 
@@ -163,7 +162,7 @@ def Led2_4_TestProcess(ser):
 
 
 def Led2_4_TestStop(ser):
-    uart_close(uart.fd)  # 关闭串口
+    fd_close(uart.fd)  # 关闭串口
 
 
 if __name__ == "__main__":
@@ -176,7 +175,7 @@ if __name__ == "__main__":
         uart.sn = sys.argv[2]
 
     logging_init()
-    uart.fd = uart_open(uart.tty, 115200, None)
+    uart.fd = fd_open(uart.tty, 115200, None)
 
     if(uart.fd != -1):  # 判断串口是否成功打开
         threading.Thread(target=Led2_4_TestProcess, args=(uart.fd,)).start()
