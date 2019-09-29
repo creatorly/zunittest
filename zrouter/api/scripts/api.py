@@ -58,7 +58,7 @@ excel = ExcelInfo
 def data_init():
     # 获取配置文件信息
     config = configparser.ConfigParser()
-    config.read("../conf/api.conf", encoding="utf-8")
+    config.read("../../zrouter.conf", encoding="utf-8")
     if config.has_option("server", "host"):
         server.url = config.get("server", "host")
     else:
@@ -89,6 +89,7 @@ def data_init():
         print("miss version")
         exit()
 
+    config.read("../conf/api.conf", encoding="utf-8")
     if config.has_option("test", test.name + "_modules"):
         test.modules = config.get("test", test.name + "_modules").split(",")
     else:
@@ -120,6 +121,7 @@ def update_json5():
         json.dump(output_dict, load_f)
 
     # update wireless
+    '''
     input_file = "../input_json/static/wireless.json5"
     output_file = "../output_json/static/wireless.json5"
     shutil.copyfile(input_file, "../input_json/static/wireless.backup")
@@ -142,7 +144,7 @@ def update_json5():
         json.dump(input_dict, load_f)
     with open(output_file, 'w+', encoding="utf8") as load_f:
         json.dump(output_dict, load_f)
-
+    '''
     logging.info("json5更新完成...")
 
 
@@ -152,11 +154,12 @@ def recovery_json5():
     shutil.move("../output_json/static/status.backup", output_file)
 
     # recovery wireless
+    '''
     input_file = "../input_json/static/wireless.json5"
     output_file = "../output_json/static/wireless.json5"
     shutil.move("../input_json/static/wireless.backup", input_file)
     shutil.move("../output_json/static/wireless.backup", output_file)
-
+    '''
     logging.info("json5恢复完成...")
 
 

@@ -59,7 +59,7 @@ excel = ExcelInfo
 def data_init():
     # 获取配置文件信息
     config = configparser.ConfigParser()
-    config.read("../conf/wifi.conf", encoding="utf-8")
+    config.read("../../../zrouter.conf", encoding="utf-8")
     if config.has_option("server", "host"):
         server.url = config.get("server", "host")
     else:
