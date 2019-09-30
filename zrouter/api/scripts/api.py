@@ -329,7 +329,17 @@ def run_test_case(module_name):
     return True
 
 
+def test_start():
+    data_init()
+    logging_init()
+    logging.info("test start...")
+    update_json5()
+    excel_init()
+
+
 def test_end():
+    # 回复更新的json5文件
+    recovery_json5()
     # 将统计的count pass fail写入excel
     test.total_num = test.pass_num + test.fail_num
     for key in excel.module_info:
@@ -368,11 +378,7 @@ if __name__ == '__main__':
     else:
         test.name = sys.argv[1]
 
-    data_init()
-    logging_init()
-    logging.info("test start...")
-    update_json5()
-    excel_init()
+    test_start()
 
     server.sid = utils_login.get_sid(server.url, server.headers, server.password)
     if not server.sid:
@@ -386,5 +392,4 @@ if __name__ == '__main__':
 
         run_test_case(module)
 
-    recovery_json5()
     test_end()

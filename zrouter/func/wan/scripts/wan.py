@@ -224,7 +224,7 @@ def run_test_case(module_name):
                     if msg != server.output_dict[key][request_i]:
                         request_result = False
                     else:
-                        time.sleep(20)
+                        time.sleep(30)
                         request_result = requests_internet()
                 else:
                     request_result = False
@@ -251,6 +251,13 @@ def run_test_case(module_name):
             test.fail_num += 1
 
     return True
+
+
+def test_start():
+    data_init()
+    logging_init()
+    logging.info("test start...")
+    excel_init()
 
 
 def test_end():
@@ -286,17 +293,17 @@ def test_end():
 
 
 if __name__ == '__main__':
-    data_init()
-    logging_init()
-    excel_init()
-    logging.info("test start...")
+    test_start()
 
     server.sid = utils_login.get_sid(server.url, server.headers, server.password)
     if not server.sid:
         logging.error("login fail")
         test_end()
 
-    test_json_init("wan")
+    if not test_json_init("wan"):
+        logging.error("json init error")
+        test_end()
+
     run_test_case("wan")
 
     test_end()

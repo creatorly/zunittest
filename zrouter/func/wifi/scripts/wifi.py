@@ -13,6 +13,8 @@ import time
 import configparser
 import sys
 import pywifi
+import shutil
+
 
 sys.path.append("../../../..")
 from zutils import zexcel
@@ -97,6 +99,38 @@ def data_init():
     test.fail_num = 0
     test.output_file = time.strftime("%Y%m%d_%H%M%S", time.localtime()) + "_wifi_test"
     excel.row_point = 0
+
+
+def update_json5():
+    # update wireless
+    input_file = "../input_json/wifi.json5"
+    shutil.copyfile(input_file, "../input_json/wifi.backup")
+
+    with open(input_file, 'r', encoding="utf8") as load_f:
+        input_dict = json5.loads(load_f.read())
+
+    sn = test.mac.split(":")
+    new_str = "ZHOME_" + sn[4] + sn[5]
+    input_dict["test_001_default_ssid"][0]["w2"]["ssid"] = new_str
+    input_dict["test_004_reset_ssid"][0]["param"]["params"][0]["param"]["w2"]["ssid"] = new_str
+    input_dict["test_004_reset_ssid"][1]["w2"]["ssid"] = new_str
+
+    new_str = "ZHOME_" + sn[4] + sn[5] + "_5G"
+    input_dict["test_001_default_ssid"][0]["w5"]["ssid"] = new_str
+    input_dict["test_004_reset_ssid"][0]["param"]["params"][0]["param"]["w5"]["ssid"] = new_str
+    input_dict["test_004_reset_ssid"][1]["w5"]["ssid"] = new_str
+
+    with open(input_file, 'w+', encoding="utf8") as load_f:
+        json.dump(input_dict, load_f)
+
+    logging.info("json5更新完成...")
+
+
+def recovery_json5():
+    # recovery wireless
+    input_file = "../input_json/wifi.json5"
+    shutil.move("../input_json/wifi.backup", input_file)
+    logging.info("json5恢复完成...")
 
 
 def logging_init():
@@ -225,7 +259,7 @@ def run_test_case(module_name):
         request_result = True
         while request_i < len(server.input_dict[key]):
             try:
-                if server.input_dict[key][request_i].__contains__("method"):
+                if server.input_dict[key][request_i].__contains__("method"):   # api设置接口
                     request_data = server.input_dict[key][request_i]
                     request_data["sid"] = server.sid
                     logging.info("%s send:%s", key, request_data)
@@ -236,7 +270,7 @@ def run_test_case(module_name):
                         # 判断返回的数据与output_json里面的数据是否一致
                         if msg != server.output_dict[key][request_i]:
                             request_result = False
-                else:
+                else:   # wifi连接
                     wifi_info = server.input_dict[key][request_i]
                     if wifi_info["w2"]["ssid"]:
                         if not start_connect_wifi(wifi_info["w2"]):
@@ -270,7 +304,18 @@ def run_test_case(module_name):
     return True
 
 
+def test_start():
+    data_init()
+    logging_init()
+    logging.info("test start...")
+    update_json5()
+    excel_init()
+
+
 def test_end():
+    # 回复更新的json5文件
+    recovery_json5()
+
     # 将统计的count pass fail写入excel
     test.total_num = test.pass_num + test.fail_num
     for key in excel.module_info:
@@ -303,17 +348,17 @@ def test_end():
 
 
 if __name__ == '__main__':
-    data_init()
-    logging_init()
-    excel_init()
-    logging.info("test start...")
+    test_start()
 
     server.sid = utils_login.get_sid(server.url, server.headers, server.password)
     if not server.sid:
         logging.error("login fail")
         test_end()
 
-    test_json_init("wifi")
+    if not test_json_init("wifi"):
+        logging.error("json init error")
+        test_end()
+
     run_test_case("wifi")
 
     test_end()
