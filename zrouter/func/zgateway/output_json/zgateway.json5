@@ -1,0 +1,677 @@
+{
+    "test_001_check_ssh_off": [
+        {
+
+        }
+    ],
+
+    "test_002_check_gateway_version": [
+        {
+            "part_same": {
+                "code": 200,
+                "data": {
+                    "connectState": 1,
+                    "deviceMac": "D4EE02112240",
+                    "prodTypeId": "M04C02D02Z02L01",
+                    "version": "2.0.8"
+                },
+                "message": "成功"
+            },
+        }
+    ],
+
+    "test_003_check_iot_version": [
+        {
+            "Dusun_zigbeeGate": {
+                "code": 200,
+                "data": {
+
+                },
+                "message": "成功"
+            }
+        },
+
+        {
+            "part_same": {
+                "code": 200,
+                "data": {
+                    "connectState": 1,
+                    "deviceMac": "04B36D3342907908",
+                    "gatewayMac": "D4EE02112240",
+                    "prodTypeId": "Dusun_zigbeeGate",
+                    "version": ""
+                },
+                "message": "成功"
+            }
+        },
+
+        {
+            "part_same": {
+                "code": 200,
+                "data": {
+                    "connectState": 1,
+                    "deviceMac": "D4EE02112240_S3GATEWAY",
+                    "gatewayMac": "D4EE02112240",
+                    "prodTypeId": "S3GATEWAY",
+                    "version": "ZIROOM433*V1.02"
+                },
+                "message": "成功"
+            }
+        },
+
+        {
+            "part_same": {
+                "code": 200,
+                "data": {
+                    "connectState": 1,
+                    "deviceMac": "D4EE02112240_LED2_4",
+                    "gatewayMac": "D4EE02112240",
+                    "prodTypeId": "LED2_4",
+                    "version": "1.0.8"
+                },
+                "message": "成功"
+            },
+        }
+    ],
+
+    "test_004_set_device_ssid": [
+        {
+           "total_same": {
+              "code": 200,
+              "message": "成功"
+           }
+        },
+
+        {
+
+        },
+
+        {
+           "total_same": {
+              "code": 200,
+              "message": "成功"
+           }
+        }
+    ],
+
+    "test_005_zigbee_connect": [
+        {
+            "total_same": {
+              "code": 200,
+              "message": "成功"
+            }
+        },
+
+        {
+            "part_same": {
+                "code": 200,
+                "data": {
+                    "connectState": 1,
+                    "deviceMac": "000d6f000b7ab1d3",
+                    "gatewayMac": "D4EE02112240",
+                    "prodTypeId": "SmartPlug",
+                },
+                "message": "成功"
+            },
+		}
+    ],
+
+    "test_006_zigbee_control": [
+        {
+            "total_same": {
+                "code": 200,
+                "message": "成功"
+            }
+        },
+
+        {
+            "part_same": {
+                "code": 200,
+                "data": {
+                    "attribute": "metersocket_switchstate",
+                    "command": "set_switchstate",
+                    "creater": "link_control",
+                    "data": [
+                        {
+                            "k": "switchstate",
+                            "v": "10"
+                        }
+                    ],
+                    "devId": "000d6f000b7ab1d3",
+                    "devUuid": "000d6f000b7ab1d3",
+                    "hid": "FDS544S8FD5FF4C7B",
+                    "isCallback": 1,
+                    "isDel": 0,
+                    "isMultiple": 0,
+                    "isSuccess": 1,
+                    "lastModifer": "link_control",
+                    "message": "成功",
+                    "prodOperCode": "0b8de76d81474fe3a906fba206a04b3e",
+                    "prodTypeId": "SmartPlug",
+                    "systemCode": "deletePwdJob",
+                    "userCode": "ebe71c40-42d1-4efb-827c-042c22b23ce6",
+                    "userType": 1
+                },
+                "message": "成功"
+            },
+		},
+
+        {
+            "total_same": {
+                "code": 200,
+                "message": "成功"
+            }
+        },
+
+        {
+            "part_same": {
+                "code": 200,
+                "data": {
+                    "attribute": "metersocket_switchstate",
+                    "command": "set_switchstate",
+                    "creater": "link_control",
+                    "data": [
+                        {
+                            "k": "switchstate",
+                            "v": "11"
+                        }
+                    ],
+                    "devId": "000d6f000b7ab1d3",
+                    "devUuid": "000d6f000b7ab1d3",
+                    "hid": "FDS544S8FD5FF4C7B",
+                    "isCallback": 1,
+                    "isDel": 0,
+                    "isMultiple": 0,
+                    "isSuccess": 1,
+                    "lastModifer": "link_control",
+                    "message": "成功",
+                    "prodOperCode": "0b8de76d81474fe3a906fba206a04b3e",
+                    "prodTypeId": "SmartPlug",
+                    "systemCode": "deletePwdJob",
+                    "userCode": "ebe71c40-42d1-4efb-827c-042c22b23ce6",
+                    "userType": 1
+                },
+                "message": "成功"
+            },
+		}
+    ],
+
+    "test_007_2.4G_connect": [
+        {
+            "total_same": {
+                "code": 200,
+                "message": "成功"
+            }
+        },
+
+        {
+            "part_same": {
+                "code": 200,
+                "data": {
+                    "attribute": "metersocket_switchstate",
+                    "command": "set_switchstate",
+                    "creater": "link_control",
+                    "data": [
+                        {
+                            "k": "switchstate",
+                            "v": "10"
+                        }
+                    ],
+                    "devId": "000d6f000b7ab1d3",
+                    "devUuid": "000d6f000b7ab1d3",
+                    "hid": "FDS544S8FD5FF4C7B",
+                    "isCallback": 1,
+                    "isDel": 0,
+                    "isMultiple": 0,
+                    "isSuccess": 1,
+                    "lastModifer": "link_control",
+                    "message": "成功",
+                    "prodOperCode": "0b8de76d81474fe3a906fba206a04b3e",
+                    "prodTypeId": "SmartPlug",
+                    "systemCode": "deletePwdJob",
+                    "userCode": "ebe71c40-42d1-4efb-827c-042c22b23ce6",
+                    "userType": 1
+                },
+                "message": "成功"
+            },
+		},
+
+        {
+            "total_same": {
+                "code": 200,
+                "message": "成功"
+            }
+        },
+
+        {
+            "part_same": {
+                "code": 200,
+                "data": {
+                    "attribute": "metersocket_switchstate",
+                    "command": "set_switchstate",
+                    "creater": "link_control",
+                    "data": [
+                        {
+                            "k": "switchstate",
+                            "v": "11"
+                        }
+                    ],
+                    "devId": "000d6f000b7ab1d3",
+                    "devUuid": "000d6f000b7ab1d3",
+                    "hid": "FDS544S8FD5FF4C7B",
+                    "isCallback": 1,
+                    "isDel": 0,
+                    "isMultiple": 0,
+                    "isSuccess": 1,
+                    "lastModifer": "link_control",
+                    "message": "成功",
+                    "prodOperCode": "0b8de76d81474fe3a906fba206a04b3e",
+                    "prodTypeId": "SmartPlug",
+                    "systemCode": "deletePwdJob",
+                    "userCode": "ebe71c40-42d1-4efb-827c-042c22b23ce6",
+                    "userType": 1
+                },
+                "message": "成功"
+            },
+		},
+
+        {
+            "total_same": {
+                "code": 200,
+                "message": "成功"
+            }
+        },
+
+        {
+            "part_same": {
+                "code": 200,
+                "data": {
+                    "attribute": "metersocket_switchstate",
+                    "command": "set_switchstate",
+                    "creater": "link_control",
+                    "data": [
+                        {
+                            "k": "switchstate",
+                            "v": "10"
+                        }
+                    ],
+                    "devId": "000d6f000b7ab1d3",
+                    "devUuid": "000d6f000b7ab1d3",
+                    "hid": "FDS544S8FD5FF4C7B",
+                    "isCallback": 1,
+                    "isDel": 0,
+                    "isMultiple": 0,
+                    "isSuccess": 1,
+                    "lastModifer": "link_control",
+                    "message": "成功",
+                    "prodOperCode": "0b8de76d81474fe3a906fba206a04b3e",
+                    "prodTypeId": "SmartPlug",
+                    "systemCode": "deletePwdJob",
+                    "userCode": "ebe71c40-42d1-4efb-827c-042c22b23ce6",
+                    "userType": 1
+                },
+                "message": "成功"
+            },
+		},
+
+        {
+            "total_same": {
+                "code": 200,
+                "message": "成功"
+            }
+        },
+
+        {
+            "part_same": {
+                "code": 200,
+                "data": {
+                    "attribute": "metersocket_switchstate",
+                    "command": "set_switchstate",
+                    "creater": "link_control",
+                    "data": [
+                        {
+                            "k": "switchstate",
+                            "v": "11"
+                        }
+                    ],
+                    "devId": "000d6f000b7ab1d3",
+                    "devUuid": "000d6f000b7ab1d3",
+                    "hid": "FDS544S8FD5FF4C7B",
+                    "isCallback": 1,
+                    "isDel": 0,
+                    "isMultiple": 0,
+                    "isSuccess": 1,
+                    "lastModifer": "link_control",
+                    "message": "成功",
+                    "prodOperCode": "0b8de76d81474fe3a906fba206a04b3e",
+                    "prodTypeId": "SmartPlug",
+                    "systemCode": "deletePwdJob",
+                    "userCode": "ebe71c40-42d1-4efb-827c-042c22b23ce6",
+                    "userType": 1
+                },
+                "message": "成功"
+            },
+		},
+
+        {
+            "total_same": {
+                "code": 200,
+                "message": "成功"
+            }
+        },
+
+        {
+            "part_same": {
+                "code": 200,
+                "data": {
+                    "attribute": "metersocket_switchstate",
+                    "command": "set_switchstate",
+                    "creater": "link_control",
+                    "data": [
+                        {
+                            "k": "switchstate",
+                            "v": "10"
+                        }
+                    ],
+                    "devId": "000d6f000b7ab1d3",
+                    "devUuid": "000d6f000b7ab1d3",
+                    "hid": "FDS544S8FD5FF4C7B",
+                    "isCallback": 1,
+                    "isDel": 0,
+                    "isMultiple": 0,
+                    "isSuccess": 1,
+                    "lastModifer": "link_control",
+                    "message": "成功",
+                    "prodOperCode": "0b8de76d81474fe3a906fba206a04b3e",
+                    "prodTypeId": "SmartPlug",
+                    "systemCode": "deletePwdJob",
+                    "userCode": "ebe71c40-42d1-4efb-827c-042c22b23ce6",
+                    "userType": 1
+                },
+                "message": "成功"
+            },
+		},
+
+        {
+            "total_same": {
+                "code": 200,
+                "message": "成功"
+            }
+        },
+
+        {
+            "part_same": {
+                "code": 200,
+                "data": {
+                    "attribute": "metersocket_switchstate",
+                    "command": "set_switchstate",
+                    "creater": "link_control",
+                    "data": [
+                        {
+                            "k": "switchstate",
+                            "v": "11"
+                        }
+                    ],
+                    "devId": "000d6f000b7ab1d3",
+                    "devUuid": "000d6f000b7ab1d3",
+                    "hid": "FDS544S8FD5FF4C7B",
+                    "isCallback": 1,
+                    "isDel": 0,
+                    "isMultiple": 0,
+                    "isSuccess": 1,
+                    "lastModifer": "link_control",
+                    "message": "成功",
+                    "prodOperCode": "0b8de76d81474fe3a906fba206a04b3e",
+                    "prodTypeId": "SmartPlug",
+                    "systemCode": "deletePwdJob",
+                    "userCode": "ebe71c40-42d1-4efb-827c-042c22b23ce6",
+                    "userType": 1
+                },
+                "message": "成功"
+            },
+		},
+
+        {
+            "total_same": {
+                "code": 200,
+                "message": "成功"
+            }
+        },
+
+        {
+            "part_same": {
+                "code": 200,
+                "data": {
+                    "attribute": "metersocket_switchstate",
+                    "command": "set_switchstate",
+                    "creater": "link_control",
+                    "data": [
+                        {
+                            "k": "switchstate",
+                            "v": "10"
+                        }
+                    ],
+                    "devId": "000d6f000b7ab1d3",
+                    "devUuid": "000d6f000b7ab1d3",
+                    "hid": "FDS544S8FD5FF4C7B",
+                    "isCallback": 1,
+                    "isDel": 0,
+                    "isMultiple": 0,
+                    "isSuccess": 1,
+                    "lastModifer": "link_control",
+                    "message": "成功",
+                    "prodOperCode": "0b8de76d81474fe3a906fba206a04b3e",
+                    "prodTypeId": "SmartPlug",
+                    "systemCode": "deletePwdJob",
+                    "userCode": "ebe71c40-42d1-4efb-827c-042c22b23ce6",
+                    "userType": 1
+                },
+                "message": "成功"
+            },
+		},
+
+        {
+            "total_same": {
+                "code": 200,
+                "message": "成功"
+            }
+        },
+
+        {
+            "part_same": {
+                "code": 200,
+                "data": {
+                    "attribute": "metersocket_switchstate",
+                    "command": "set_switchstate",
+                    "creater": "link_control",
+                    "data": [
+                        {
+                            "k": "switchstate",
+                            "v": "11"
+                        }
+                    ],
+                    "devId": "000d6f000b7ab1d3",
+                    "devUuid": "000d6f000b7ab1d3",
+                    "hid": "FDS544S8FD5FF4C7B",
+                    "isCallback": 1,
+                    "isDel": 0,
+                    "isMultiple": 0,
+                    "isSuccess": 1,
+                    "lastModifer": "link_control",
+                    "message": "成功",
+                    "prodOperCode": "0b8de76d81474fe3a906fba206a04b3e",
+                    "prodTypeId": "SmartPlug",
+                    "systemCode": "deletePwdJob",
+                    "userCode": "ebe71c40-42d1-4efb-827c-042c22b23ce6",
+                    "userType": 1
+                },
+                "message": "成功"
+            },
+		},
+
+        {
+            "total_same": {
+                "code": 200,
+                "message": "成功"
+            }
+        },
+
+        {
+            "part_same": {
+                "code": 200,
+                "data": {
+                    "attribute": "metersocket_switchstate",
+                    "command": "set_switchstate",
+                    "creater": "link_control",
+                    "data": [
+                        {
+                            "k": "switchstate",
+                            "v": "10"
+                        }
+                    ],
+                    "devId": "000d6f000b7ab1d3",
+                    "devUuid": "000d6f000b7ab1d3",
+                    "hid": "FDS544S8FD5FF4C7B",
+                    "isCallback": 1,
+                    "isDel": 0,
+                    "isMultiple": 0,
+                    "isSuccess": 1,
+                    "lastModifer": "link_control",
+                    "message": "成功",
+                    "prodOperCode": "0b8de76d81474fe3a906fba206a04b3e",
+                    "prodTypeId": "SmartPlug",
+                    "systemCode": "deletePwdJob",
+                    "userCode": "ebe71c40-42d1-4efb-827c-042c22b23ce6",
+                    "userType": 1
+                },
+                "message": "成功"
+            },
+		},
+
+        {
+            "total_same": {
+                "code": 200,
+                "message": "成功"
+            }
+        },
+
+        {
+            "part_same": {
+                "code": 200,
+                "data": {
+                    "attribute": "metersocket_switchstate",
+                    "command": "set_switchstate",
+                    "creater": "link_control",
+                    "data": [
+                        {
+                            "k": "switchstate",
+                            "v": "11"
+                        }
+                    ],
+                    "devId": "000d6f000b7ab1d3",
+                    "devUuid": "000d6f000b7ab1d3",
+                    "hid": "FDS544S8FD5FF4C7B",
+                    "isCallback": 1,
+                    "isDel": 0,
+                    "isMultiple": 0,
+                    "isSuccess": 1,
+                    "lastModifer": "link_control",
+                    "message": "成功",
+                    "prodOperCode": "0b8de76d81474fe3a906fba206a04b3e",
+                    "prodTypeId": "SmartPlug",
+                    "systemCode": "deletePwdJob",
+                    "userCode": "ebe71c40-42d1-4efb-827c-042c22b23ce6",
+                    "userType": 1
+                },
+                "message": "成功"
+            },
+		},
+
+        {
+            "total_same": {
+              "code": 200,
+              "message": "成功",
+            }
+        },
+
+        {
+            "part_same": {
+                "code": 200,
+                "data": {
+                    "connectState": 1,
+                    "deviceMac": "05f00124a7",
+                    "gatewayMac": "D4EE02112240",
+                    "prodTypeId": "esujto8n"
+                },
+                "message": "成功"
+            },
+		}
+    ],
+
+    "test_008_2.4G_control": [
+        {
+            "total_same": {
+              "code": 200,
+              "message": "成功",
+            }
+        },
+
+        {
+            "part_same": {
+                "code": 200,
+                "data": {
+                        "connectState": 1,
+                        "deviceMac": "000d6f000b7ab1d3",
+                        "gatewayMac": "D4EE02112240",
+                        "prodTypeId": "SmartPlug"
+                    },
+                "message": "成功"
+            },
+		}
+    ],
+
+    "test_009_2.4G_remove": [
+        {
+            "total_same": {
+              "code": 200,
+              "message": "成功",
+            }
+        },
+
+        {
+            "part_same": {
+                "code": 200,
+                "data": {
+                    "connectState": 0,
+                    "deviceMac": "011001215b",
+                    "gatewayMac": "D4EE02112240",
+                    "prodTypeId": "8grteg3l"
+                },
+                "message": "成功"
+            }
+        }
+    ],
+
+    "test_010_zigbee_remove": [
+        {
+            "total_same": {
+              "code": 200,
+              "message": "成功",
+            }
+        },
+
+        {
+            "part_same": {
+                "code":200,
+                "data":{
+                    "connectState":0,
+                    "deviceMac":"000d6f000b7ab1d3",
+                    "gatewayMac":"D4EE02112240",
+                    "prodTypeId":"SmartPlug",
+                    "version":""
+                },
+                "message": "成功"
+            },
+		}
+    ]
+}

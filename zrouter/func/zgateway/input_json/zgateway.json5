@@ -1,0 +1,678 @@
+/*
+|    单元测试      |post请求次数 |描述|
+|------------------|-------------|----|
+|test_001_check_ssh_off | 1 | 检查ssh是否关闭 |
+|test_002_check_gateway_version | 2 | 检查gateway版本是否正常 |
+|test_003_check_iot_version | 2 | 检查iot版本是否正常 |
+|test_004_set_device_ssid | 2 | 设置设备wifi |
+|test_005_zigbee_connect | 1 | 添加zigbee设备 |
+|test_006_zigbee_control | 2 | 控制zigbee |
+|test_007_2.4G_connect | 2 |  添加2.4G设置 |
+|test_008_2.4G_control | 2 | 控制2.4G设备 |
+|test_009_2.4G_remove | 2 | 2.4G设备删除 |
+|test_010_zigbee_remove | 2 |  zigbee设备删除|
+*/
+{
+    "test_001_check_ssh_off": [
+        {
+            "ssh_connect": {
+                "host": "192.168.18.1",
+                "username": "root",
+                "passwd": "admin"
+            }
+        }
+    ],
+
+    "test_002_check_gateway_version": [
+        {
+            "url": "/link-dataquery/v1/device/query/mac/prodtype",
+            "query": {
+                "devId": "D4EE02112240",
+                "prodTypeId": "M04C02D02Z02L01",
+            }
+        }
+    ],
+
+    "test_003_check_iot_version": [
+        {
+            "url": "/link-dataquery/v1/device/list",
+            "query": {
+               "mac": "E4F3E8D38B66",
+            }
+        },
+
+        {
+            "url": "/link-dataquery/v1/device/query/mac/prodtype",
+            "query": {
+               "devId": "04B36D3342907908",
+               "prodTypeId": "Dusun_zigbeeGate"
+            }
+        },
+
+        {
+            "url": "/link-dataquery/v1/device/query/mac/prodtype",
+            "query": {
+               "devId": "D4EE02112240_S3GATEWAY",
+               "prodTypeId": "S3GATEWAY"
+            }
+        },
+
+        {
+            "url": "/link-dataquery/v1/device/query/mac/prodtype",
+            "query": {
+               "devId": "D4EE02112240_LED2_4",
+               "prodTypeId": "LED2_4"
+            }
+        }
+    ],
+
+    "test_004_set_device_ssid": [
+        {
+            "url": "/link-handle-gateway/v1/operate/device/control",
+            "query": {
+                "msgType": "DEVICE_CONTROL",
+                "devId": "D4EE02112240",
+                "prodTypeId": "M04C02D02Z02L01",
+                "time": "2019-09-19 18:27:10",
+                "sno": "123",
+                "attribute": "device_wifi",
+                "command": "set_device_wifi",
+                "data": [
+                    {
+                        "k": "ssid",
+                        "v": "ZR-test1234567"
+                    },
+                    {
+                        "k": "key",
+                        "v": "1234567891"
+                    },
+                    {
+                        "k": "isHide",
+                        "v": "0"
+                    }
+                ],
+            }
+        },
+
+        {
+            "wifi_connect": {
+                "ssid": "ZR-test1234567",
+                "auth": "mixed-psk",
+                "key": "1234567891"
+            }
+        },
+
+        {
+            "url": "/link-handle-gateway/v1/operate/device/control",
+            "query": {
+                "msgType": "DEVICE_CONTROL",
+                "devId": "D4EE02112240",
+                "prodTypeId": "M04C02D02Z02L01",
+                "time": "2019-09-19 18:27:10",
+                "sno": "123",
+                "attribute": "device_wifi",
+                "command": "set_device_wifi",
+                "data": [
+                    {
+                        "k": "ssid",
+                        "v": "ZR_D2240"
+                    },
+                    {
+                        "k": "key",
+                        "v": "ZR_P2240"
+                    },
+                    {
+                        "k": "isHide",
+                        "v": "1"
+                    }
+                ],
+            }
+        }
+    ],
+
+    "test_005_zigbee_connect": [
+        {
+            "url": "/link-handle-gateway/v1/operate/device/control",
+            "connect": {
+                "msgType": "DEVICE_CONTROL",
+                "devId": "04B36D3342907908",
+                "prodTypeId": "Dusun_zigbeeGate",
+                "time": "2018-05-14 10:10:10",
+                "sno": "123",
+                "attribute": "zigbee_netstate",
+                "command": "set_netstate",
+                "data": [{
+                    "k": "timeout",
+                    "v": "100"
+                }]
+            }
+        },
+        {
+            "url": "/link-dataquery/v1/device/query/mac/prodtype",
+            "query": {
+               "devId": "000d6f000b7ab1d3",
+               "prodTypeId": "SmartPlug"
+            }
+        }
+    ],
+
+    "test_006_zigbee_control": [
+        {
+            "url": "/link-control/v1/device/controlDevice",
+            "head_1": "AccessToken",
+            "head_2": "asdwefe3232ffhdkal82iedjfalki290",
+            "control": {
+                "prodOperCode": "0b8de76d81474fe3a906fba206a04b3e",
+                "hid": "FDS544S8FD5FF4C7B",
+                "userCode": "ebe71c40-42d1-4efb-827c-042c22b23ce6",
+                "userName": "程志广",
+                "userType": 1,
+                "mobile": "18518115887",
+                "msgType": "DEVICE_CONTROL",
+                "devId": "000d6f000b7ab1d3",
+                "devUuid": "000d6f000b7ab1d3",
+                "prodTypeId": "SmartPlug",
+                "time": "2018-05-14 10:10:10",
+                "sno": "26bf95ac-eb03-11e9-96d4-d017c29ab7d1",
+                "attribute": "metersocket_switchstate",
+                "command": "set_switchstate",
+                "data": [
+                    {
+                        "k": "switchstate",
+                        "v": "10"
+                    }
+                ],
+            }
+        },
+
+        {
+            "url": "/link-control-record/v1/query/queryRecordBySno",
+            "control_resp": {
+               "sno": "94a11da4-eb0c-11e9-abfd-d017c29ab7d1"
+            }
+        },
+
+        {
+            "url": "/link-control/v1/device/controlDevice",
+            "head_1": "AccessToken",
+            "head_2": "asdwefe3232ffhdkal82iedjfalki290",
+            "control": {
+                "prodOperCode": "0b8de76d81474fe3a906fba206a04b3e",
+                "hid": "FDS544S8FD5FF4C7B",
+                "userCode": "ebe71c40-42d1-4efb-827c-042c22b23ce6",
+                "userName": "程志广",
+                "userType": 1,
+                "mobile": "18518115887",
+                "msgType": "DEVICE_CONTROL",
+                "devId": "000d6f000b7ab1d3",
+                "devUuid": "000d6f000b7ab1d3",
+                "prodTypeId": "SmartPlug",
+                "time": "2018-05-14 10:10:10",
+                "sno": "26bf95ac-eb03-11e9-96d4-d017c29ab7d1",
+                "attribute": "metersocket_switchstate",
+                "command": "set_switchstate",
+                "data": [
+                    {
+                        "k": "switchstate",
+                        "v": "11"
+                    }
+                ],
+            }
+        },
+
+        {
+            "url": "/link-control-record/v1/query/queryRecordBySno",
+            "control_resp": {
+               "sno": "94a11da4-eb0c-11e9-abfd-d017c29ab7d1"
+            }
+        }
+    ],
+
+    "test_007_2.4G_connect": [
+        {
+            "url": "/link-control/v1/device/controlDevice",
+            "head_1": "AccessToken",
+            "head_2": "asdwefe3232ffhdkal82iedjfalki290",
+            "control": {
+                "prodOperCode": "0b8de76d81474fe3a906fba206a04b3e",
+                "hid": "FDS544S8FD5FF4C7B",
+                "userCode": "ebe71c40-42d1-4efb-827c-042c22b23ce6",
+                "userName": "程志广",
+                "userType": 1,
+                "mobile": "18518115887",
+                "msgType": "DEVICE_CONTROL",
+                "devId": "000d6f000b7ab1d3",
+                "devUuid": "000d6f000b7ab1d3",
+                "prodTypeId": "SmartPlug",
+                "time": "2018-05-14 10:10:10",
+                "sno": "26bf95ac-eb03-11e9-96d4-d017c29ab7d1",
+                "attribute": "metersocket_switchstate",
+                "command": "set_switchstate",
+                "data": [
+                    {
+                        "k": "switchstate",
+                        "v": "10"
+                    }
+                ],
+            }
+        },
+
+        {
+            "url": "/link-control-record/v1/query/queryRecordBySno",
+            "control_resp": {
+               "sno": "94a11da4-eb0c-11e9-abfd-d017c29ab7d1"
+            }
+        },
+
+        {
+            "url": "/link-control/v1/device/controlDevice",
+            "head_1": "AccessToken",
+            "head_2": "asdwefe3232ffhdkal82iedjfalki290",
+            "control": {
+                "prodOperCode": "0b8de76d81474fe3a906fba206a04b3e",
+                "hid": "FDS544S8FD5FF4C7B",
+                "userCode": "ebe71c40-42d1-4efb-827c-042c22b23ce6",
+                "userName": "程志广",
+                "userType": 1,
+                "mobile": "18518115887",
+                "msgType": "DEVICE_CONTROL",
+                "devId": "000d6f000b7ab1d3",
+                "devUuid": "000d6f000b7ab1d3",
+                "prodTypeId": "SmartPlug",
+                "time": "2018-05-14 10:10:10",
+                "sno": "26bf95ac-eb03-11e9-96d4-d017c29ab7d1",
+                "attribute": "metersocket_switchstate",
+                "command": "set_switchstate",
+                "data": [
+                    {
+                        "k": "switchstate",
+                        "v": "11"
+                    }
+                ],
+            }
+        },
+
+        {
+            "url": "/link-control-record/v1/query/queryRecordBySno",
+            "control_resp": {
+               "sno": "94a11da4-eb0c-11e9-abfd-d017c29ab7d1"
+            }
+        },
+
+        {
+            "url": "/link-control/v1/device/controlDevice",
+            "head_1": "AccessToken",
+            "head_2": "asdwefe3232ffhdkal82iedjfalki290",
+            "control": {
+                "prodOperCode": "0b8de76d81474fe3a906fba206a04b3e",
+                "hid": "FDS544S8FD5FF4C7B",
+                "userCode": "ebe71c40-42d1-4efb-827c-042c22b23ce6",
+                "userName": "程志广",
+                "userType": 1,
+                "mobile": "18518115887",
+                "msgType": "DEVICE_CONTROL",
+                "devId": "000d6f000b7ab1d3",
+                "devUuid": "000d6f000b7ab1d3",
+                "prodTypeId": "SmartPlug",
+                "time": "2018-05-14 10:10:10",
+                "sno": "26bf95ac-eb03-11e9-96d4-d017c29ab7d1",
+                "attribute": "metersocket_switchstate",
+                "command": "set_switchstate",
+                "data": [
+                    {
+                        "k": "switchstate",
+                        "v": "10"
+                    }
+                ],
+            }
+        },
+
+        {
+            "url": "/link-control-record/v1/query/queryRecordBySno",
+            "control_resp": {
+               "sno": "94a11da4-eb0c-11e9-abfd-d017c29ab7d1"
+            }
+        },
+
+        {
+            "url": "/link-control/v1/device/controlDevice",
+            "head_1": "AccessToken",
+            "head_2": "asdwefe3232ffhdkal82iedjfalki290",
+            "control": {
+                "prodOperCode": "0b8de76d81474fe3a906fba206a04b3e",
+                "hid": "FDS544S8FD5FF4C7B",
+                "userCode": "ebe71c40-42d1-4efb-827c-042c22b23ce6",
+                "userName": "程志广",
+                "userType": 1,
+                "mobile": "18518115887",
+                "msgType": "DEVICE_CONTROL",
+                "devId": "000d6f000b7ab1d3",
+                "devUuid": "000d6f000b7ab1d3",
+                "prodTypeId": "SmartPlug",
+                "time": "2018-05-14 10:10:10",
+                "sno": "26bf95ac-eb03-11e9-96d4-d017c29ab7d1",
+                "attribute": "metersocket_switchstate",
+                "command": "set_switchstate",
+                "data": [
+                    {
+                        "k": "switchstate",
+                        "v": "11"
+                    }
+                ],
+            }
+        },
+
+        {
+            "url": "/link-control-record/v1/query/queryRecordBySno",
+            "control_resp": {
+               "sno": "94a11da4-eb0c-11e9-abfd-d017c29ab7d1"
+            }
+        },
+
+        {
+            "url": "/link-control/v1/device/controlDevice",
+            "head_1": "AccessToken",
+            "head_2": "asdwefe3232ffhdkal82iedjfalki290",
+            "control": {
+                "prodOperCode": "0b8de76d81474fe3a906fba206a04b3e",
+                "hid": "FDS544S8FD5FF4C7B",
+                "userCode": "ebe71c40-42d1-4efb-827c-042c22b23ce6",
+                "userName": "程志广",
+                "userType": 1,
+                "mobile": "18518115887",
+                "msgType": "DEVICE_CONTROL",
+                "devId": "000d6f000b7ab1d3",
+                "devUuid": "000d6f000b7ab1d3",
+                "prodTypeId": "SmartPlug",
+                "time": "2018-05-14 10:10:10",
+                "sno": "26bf95ac-eb03-11e9-96d4-d017c29ab7d1",
+                "attribute": "metersocket_switchstate",
+                "command": "set_switchstate",
+                "data": [
+                    {
+                        "k": "switchstate",
+                        "v": "10"
+                    }
+                ],
+            }
+        },
+
+        {
+            "url": "/link-control-record/v1/query/queryRecordBySno",
+            "control_resp": {
+               "sno": "94a11da4-eb0c-11e9-abfd-d017c29ab7d1"
+            }
+        },
+
+        {
+            "url": "/link-control/v1/device/controlDevice",
+            "head_1": "AccessToken",
+            "head_2": "asdwefe3232ffhdkal82iedjfalki290",
+            "control": {
+                "prodOperCode": "0b8de76d81474fe3a906fba206a04b3e",
+                "hid": "FDS544S8FD5FF4C7B",
+                "userCode": "ebe71c40-42d1-4efb-827c-042c22b23ce6",
+                "userName": "程志广",
+                "userType": 1,
+                "mobile": "18518115887",
+                "msgType": "DEVICE_CONTROL",
+                "devId": "000d6f000b7ab1d3",
+                "devUuid": "000d6f000b7ab1d3",
+                "prodTypeId": "SmartPlug",
+                "time": "2018-05-14 10:10:10",
+                "sno": "26bf95ac-eb03-11e9-96d4-d017c29ab7d1",
+                "attribute": "metersocket_switchstate",
+                "command": "set_switchstate",
+                "data": [
+                    {
+                        "k": "switchstate",
+                        "v": "11"
+                    }
+                ],
+            }
+        },
+
+        {
+            "url": "/link-control-record/v1/query/queryRecordBySno",
+            "control_resp": {
+               "sno": "94a11da4-eb0c-11e9-abfd-d017c29ab7d1"
+            }
+        },
+
+        {
+            "url": "/link-control/v1/device/controlDevice",
+            "head_1": "AccessToken",
+            "head_2": "asdwefe3232ffhdkal82iedjfalki290",
+            "control": {
+                "prodOperCode": "0b8de76d81474fe3a906fba206a04b3e",
+                "hid": "FDS544S8FD5FF4C7B",
+                "userCode": "ebe71c40-42d1-4efb-827c-042c22b23ce6",
+                "userName": "程志广",
+                "userType": 1,
+                "mobile": "18518115887",
+                "msgType": "DEVICE_CONTROL",
+                "devId": "000d6f000b7ab1d3",
+                "devUuid": "000d6f000b7ab1d3",
+                "prodTypeId": "SmartPlug",
+                "time": "2018-05-14 10:10:10",
+                "sno": "26bf95ac-eb03-11e9-96d4-d017c29ab7d1",
+                "attribute": "metersocket_switchstate",
+                "command": "set_switchstate",
+                "data": [
+                    {
+                        "k": "switchstate",
+                        "v": "10"
+                    }
+                ],
+            }
+        },
+
+        {
+            "url": "/link-control-record/v1/query/queryRecordBySno",
+            "control_resp": {
+               "sno": "94a11da4-eb0c-11e9-abfd-d017c29ab7d1"
+            }
+        },
+
+        {
+            "url": "/link-control/v1/device/controlDevice",
+            "head_1": "AccessToken",
+            "head_2": "asdwefe3232ffhdkal82iedjfalki290",
+            "control": {
+                "prodOperCode": "0b8de76d81474fe3a906fba206a04b3e",
+                "hid": "FDS544S8FD5FF4C7B",
+                "userCode": "ebe71c40-42d1-4efb-827c-042c22b23ce6",
+                "userName": "程志广",
+                "userType": 1,
+                "mobile": "18518115887",
+                "msgType": "DEVICE_CONTROL",
+                "devId": "000d6f000b7ab1d3",
+                "devUuid": "000d6f000b7ab1d3",
+                "prodTypeId": "SmartPlug",
+                "time": "2018-05-14 10:10:10",
+                "sno": "26bf95ac-eb03-11e9-96d4-d017c29ab7d1",
+                "attribute": "metersocket_switchstate",
+                "command": "set_switchstate",
+                "data": [
+                    {
+                        "k": "switchstate",
+                        "v": "11"
+                    }
+                ],
+            }
+        },
+
+        {
+            "url": "/link-control-record/v1/query/queryRecordBySno",
+            "control_resp": {
+               "sno": "94a11da4-eb0c-11e9-abfd-d017c29ab7d1"
+            }
+        },
+
+        {
+            "url": "/link-control/v1/device/controlDevice",
+            "head_1": "AccessToken",
+            "head_2": "asdwefe3232ffhdkal82iedjfalki290",
+            "control": {
+                "prodOperCode": "0b8de76d81474fe3a906fba206a04b3e",
+                "hid": "FDS544S8FD5FF4C7B",
+                "userCode": "ebe71c40-42d1-4efb-827c-042c22b23ce6",
+                "userName": "程志广",
+                "userType": 1,
+                "mobile": "18518115887",
+                "msgType": "DEVICE_CONTROL",
+                "devId": "000d6f000b7ab1d3",
+                "devUuid": "000d6f000b7ab1d3",
+                "prodTypeId": "SmartPlug",
+                "time": "2018-05-14 10:10:10",
+                "sno": "26bf95ac-eb03-11e9-96d4-d017c29ab7d1",
+                "attribute": "metersocket_switchstate",
+                "command": "set_switchstate",
+                "data": [
+                    {
+                        "k": "switchstate",
+                        "v": "10"
+                    }
+                ],
+            }
+        },
+
+        {
+            "url": "/link-control-record/v1/query/queryRecordBySno",
+            "control_resp": {
+               "sno": "94a11da4-eb0c-11e9-abfd-d017c29ab7d1"
+            }
+        },
+
+        {
+            "url": "/link-control/v1/device/controlDevice",
+            "head_1": "AccessToken",
+            "head_2": "asdwefe3232ffhdkal82iedjfalki290",
+            "control": {
+                "prodOperCode": "0b8de76d81474fe3a906fba206a04b3e",
+                "hid": "FDS544S8FD5FF4C7B",
+                "userCode": "ebe71c40-42d1-4efb-827c-042c22b23ce6",
+                "userName": "程志广",
+                "userType": 1,
+                "mobile": "18518115887",
+                "msgType": "DEVICE_CONTROL",
+                "devId": "000d6f000b7ab1d3",
+                "devUuid": "000d6f000b7ab1d3",
+                "prodTypeId": "SmartPlug",
+                "time": "2018-05-14 10:10:10",
+                "sno": "26bf95ac-eb03-11e9-96d4-d017c29ab7d1",
+                "attribute": "metersocket_switchstate",
+                "command": "set_switchstate",
+                "data": [
+                    {
+                        "k": "switchstate",
+                        "v": "11"
+                    }
+                ],
+            }
+        },
+
+        {
+            "url": "/link-control-record/v1/query/queryRecordBySno",
+            "control_resp": {
+               "sno": "94a11da4-eb0c-11e9-abfd-d017c29ab7d1"
+            }
+        },
+
+        {
+            "url": "/link-handle-gateway/v1/operate/device/control",
+            "connect": {
+                "msgType": "DEVICE_CONTROL",
+                "devId": "D4EE02112240_LED2_4",
+                "prodTypeId":   "LED2_4",
+                "time": "2019-02-14 10:10:10",
+                "sno": "789",
+                "attribute": "light_network",
+                "command": "add_light"
+            }
+        },
+        {
+            "url": "/link-dataquery/v1/device/query/mac/prodtype",
+            "query": {
+               "devId": "05f00124a7",
+               "prodTypeId": "esujto8n"
+            }
+        }
+    ],
+
+    "test_008_2.4G_control": [
+        {
+            "url": "/link-handle-gateway/v1/operate/device/control",
+            "query": {
+               "msgType": "DEVICE_CONTROL",
+               "devId": "05f00124a7",
+               "prodTypeId":   "esujto8n",
+               "time": "2018-05-14 10:10:10",
+               "sno": "789",
+                "attribute":"light_power",
+                "command":"set_power",
+                "data":[{
+                    "k":"power",
+                    "v":"1"
+                }]
+            },
+        },
+        {
+            "url": "/link-dataquery/v1/device/list",
+            "query": {
+                "mac": "D4EE02112240"
+            }
+        }
+    ],
+
+    "test_009_2.4G_remove": [
+        {
+            "url": "/link-handle-gateway/v1/operate/device/control",
+            "remove": {
+                "msgType": "DEVICE_CONTROL",
+                "devId": "D4EE02112240_LED2_4",
+                "prodTypeId":   "LED2_4",
+                "time": "2019-02-14 10:10:10",
+                "sno": "789",
+                "attribute": "light_network",
+                "command": "remove_light",
+                "data": [{"k":"index","v":"2"},
+                    {"k":"mac","v":"05f00124a7"}]
+            }
+        },
+        {
+            "url": "/link-dataquery/v1/device/query/mac/prodtype",
+            "query": {
+               "devId": "05f00124a7",
+               "prodTypeId": "esujto8n"
+            }
+        }
+    ],
+
+    "test_010_zigbee_remove": [
+        {
+            "url": "/link-handle-gateway/v1/operate/device/control",
+            "remove": {
+               "msgType": "DEVICE_CONTROL",
+               "devId": "04B36D3342907908",
+               "prodTypeId": "Dusun_zigbeeGate",
+               "time": "2018-05-14 10:10:10",
+               "sno": "123",
+               "attribute": "zigbee_deviceinfo",
+               "command": "set_deletedevice",
+               "data": [{
+                  "k": "mac",
+                  "v": "000d6f000b7ab1d3"
+               }
+               ]
+            }
+        },
+        {
+            "url": "/link-dataquery/v1/device/query/mac/prodtype",
+            "query": {
+               "devId": "000d6f000b7ab1d3",
+               "prodTypeId": "SmartPlug"
+            }
+        }
+    ]
+}
