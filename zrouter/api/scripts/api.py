@@ -12,7 +12,6 @@ import base64
 import time
 import configparser
 import sys
-import shutil
 
 sys.path.append("../../..")
 from zutils import zexcel
@@ -105,64 +104,6 @@ def data_init():
     excel.row_point = 0
 
 
-def update_json5():
-    # update status
-    output_file = "../output_json/static/status.json5"
-    shutil.copyfile(output_file, "../output_json/static/status.backup")
-
-    with open(output_file, 'r', encoding="utf8") as load_f:
-        output_dict = json5.loads(load_f.read())
-
-    output_dict["test_001_get_board"][0]["data"][0]["result"]["mac"] = test.mac
-    output_dict["test_001_get_board"][0]["data"][0]["result"]["firmware_ver"] = test.version
-    output_dict["test_001_get_board"][0]["data"][0]["result"]["name"] = test.project
-
-    with open(output_file, 'w+', encoding="utf8") as load_f:
-        json.dump(output_dict, load_f)
-
-    # update wireless
-    '''
-    input_file = "../input_json/static/wireless.json5"
-    output_file = "../output_json/static/wireless.json5"
-    shutil.copyfile(input_file, "../input_json/static/wireless.backup")
-    shutil.copyfile(output_file, "../output_json/static/wireless.backup")
-
-    with open(input_file, 'r', encoding="utf8") as load_f:
-        input_dict = json5.loads(load_f.read())
-    with open(output_file, 'r', encoding="utf8") as load_f:
-        output_dict = json5.loads(load_f.read())
-
-    sn = test.mac.split(":")
-    new_str = "ZHOME_" + sn[4] + sn[5]
-    input_dict["test_003_reset_wireless"][0]["param"]["params"][0]["param"]["w2"]["ssid"] = new_str
-    output_dict["test_001_get_wireless"][0]["data"][0]["result"]["w2"]["ssid"] = new_str
-    new_str = "ZHOME_" + sn[4] + sn[5] + "_5G"
-    input_dict["test_003_reset_wireless"][0]["param"]["params"][0]["param"]["w5"]["ssid"] = new_str
-    output_dict["test_001_get_wireless"][0]["data"][0]["result"]["w5"]["ssid"] = new_str
-
-    with open(input_file, 'w+', encoding="utf8") as load_f:
-        json.dump(input_dict, load_f)
-    with open(output_file, 'w+', encoding="utf8") as load_f:
-        json.dump(output_dict, load_f)
-    '''
-    logging.info("json5更新完成...")
-
-
-def recovery_json5():
-    # recovery status
-    output_file = "../output_json/static/status.json5"
-    shutil.move("../output_json/static/status.backup", output_file)
-
-    # recovery wireless
-    '''
-    input_file = "../input_json/static/wireless.json5"
-    output_file = "../output_json/static/wireless.json5"
-    shutil.move("../input_json/static/wireless.backup", input_file)
-    shutil.move("../output_json/static/wireless.backup", output_file)
-    '''
-    logging.info("json5恢复完成...")
-
-
 def logging_init():
     # 创建logger，如果参数为空则返回root logger
     logger = logging.getLogger("")
@@ -198,6 +139,25 @@ def excel_init():
     excel.row_point = 1
 
 
+def test_json_update(module_name):
+    if test.name == "static" and module_name == "status":
+        server.output_dict["test_001_get_board"][0]["data"][0]["result"]["mac"] = test.mac
+        server.output_dict["test_001_get_board"][0]["data"][0]["result"]["firmware_ver"] = test.version
+        server.output_dict["test_001_get_board"][0]["data"][0]["result"]["name"] = test.project
+        logging.info("json5更新完成...")
+
+    # update wireless
+    '''
+    sn = test.mac.split(":")
+    new_str = "ZHOME_" + sn[4] + sn[5]
+    server.input_dict["test_003_reset_wireless"][0]["param"]["params"][0]["param"]["w2"]["ssid"] = new_str
+    server.output_dict["test_001_get_wireless"][0]["data"][0]["result"]["w2"]["ssid"] = new_str
+    new_str = "ZHOME_" + sn[4] + sn[5] + "_5G"
+    server.input_dict["test_003_reset_wireless"][0]["param"]["params"][0]["param"]["w5"]["ssid"] = new_str
+    server.output_dict["test_001_get_wireless"][0]["data"][0]["result"]["w5"]["ssid"] = new_str
+    '''
+
+
 def test_json_init(module_name):
     check_name = "test_"
     # 获取所有的测试名称及请求内容
@@ -231,6 +191,8 @@ def test_json_init(module_name):
                 return False
     else:
         return False
+
+    test_json_update(module_name)
 
     return True
 
@@ -333,13 +295,10 @@ def test_start():
     data_init()
     logging_init()
     logging.info("test start...")
-    update_json5()
     excel_init()
 
 
 def test_end():
-    # 回复更新的json5文件
-    recovery_json5()
     # 将统计的count pass fail写入excel
     test.total_num = test.pass_num + test.fail_num
     for key in excel.module_info:

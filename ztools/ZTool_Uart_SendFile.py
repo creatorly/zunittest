@@ -58,6 +58,24 @@ def fd_write(uartfd, data):
     return result
 
 
+def crc_sum(data, data_len):
+    crc = 0
+    i = 0
+    while(i < data_len):
+        crc += data[i]
+        i += 1
+    return crc & 0x00FF
+
+
+def crc_oxr(data, data_len):
+    crc = 0
+    i = 0
+    while(i < data_len):
+        crc ^= data[i]
+        i += 1
+    return crc & 0x00FF
+
+
 # 十六进制显示
 def hex_show(argv):
     result = ''
@@ -78,21 +96,57 @@ def send_file(ser, file, size, looptime):
         otafd.seek(0, 0)  # 0代表从文件开头开始算起，1代表从当前位置开始算起，2代表从文件末尾算起。
         otafd.seek(0, 2)
         fileSize = otafd.tell()  # 读取总文件长度
-
+        logging.info("total len:%x", fileSize)
         otafd.seek(0, 0)
         while (sendSize < fileSize):
-            writebuf = bytearray()
+            writebuf = bytearray([0xAA])
             otafd.seek(sendSize, 0)  # 0代表从文件开头开始算起，1代表从当前位置开始算起，2代表从文件末尾算起。
             readBuffer = otafd.read(size)
+            writebuf.append(10 + len(readBuffer))
+            writebuf.append(0x74)
+            writebuf.append(0x00)
+            writebuf.append(0x00)
+            writebuf.append(0x00)
+            writebuf.append(0x01)
+            writebuf.append(0x00)
+            writebuf.append(0xAA)
+            writebuf.append(0x10)
+            writebuf.append(0x22)
+            # data len
+            data_len = len(readBuffer) + 4
+            writebuf.append(data_len)
+            # image addr
+            byte_hexlength = (sendSize & 0xFF000000) >> 24
+            writebuf.append(byte_hexlength)
+            byte_hexlength = (sendSize & 0xFF0000) >> 16
+            writebuf.append(byte_hexlength)
+            byte_hexlength = (sendSize & 0x00FF00) >> 8
+            writebuf.append(byte_hexlength)
+            byte_hexlength = (sendSize & 0x0000FF)
+            writebuf.append(byte_hexlength)
+
             # image data
             i = 0
             while i < len(readBuffer):
                 writebuf.append(readBuffer[i])
                 i += 1
 
+            # crc data
+            i = 0
+            crc_data = []
+            while i < (8 + len(readBuffer)):
+                crc_data.append(writebuf[8 + i])
+                i += 1
+
+            writebuf.append(crc_sum(crc_data, len(crc_data)))
+            writebuf.append(0x16)
+            writebuf.append(crc_oxr(writebuf, len(writebuf)))
+            writebuf.append(0x55)
+
             fd_write(ser, writebuf)
             logging.info(writebuf.hex())
             sendSize += len(readBuffer)
+
             time.sleep(looptime)
         return True
 

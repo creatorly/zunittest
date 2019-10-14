@@ -12,8 +12,6 @@ import base64
 import time
 import configparser
 import sys
-import pywifi
-import shutil
 
 
 sys.path.append("../../../..")
@@ -101,38 +99,6 @@ def data_init():
     excel.row_point = 0
 
 
-def update_json5():
-    # update wireless
-    input_file = "../input_json/wifi.json5"
-    shutil.copyfile(input_file, "../input_json/wifi.backup")
-
-    with open(input_file, 'r', encoding="utf8") as load_f:
-        input_dict = json5.loads(load_f.read())
-
-    sn = test.mac.split(":")
-    new_str = "ZHOME_" + sn[4] + sn[5]
-    input_dict["test_001_default_ssid"][0]["w2"]["ssid"] = new_str
-    input_dict["test_004_reset_ssid"][0]["param"]["params"][0]["param"]["w2"]["ssid"] = new_str
-    input_dict["test_004_reset_ssid"][1]["w2"]["ssid"] = new_str
-
-    new_str = "ZHOME_" + sn[4] + sn[5] + "_5G"
-    input_dict["test_001_default_ssid"][0]["w5"]["ssid"] = new_str
-    input_dict["test_004_reset_ssid"][0]["param"]["params"][0]["param"]["w5"]["ssid"] = new_str
-    input_dict["test_004_reset_ssid"][1]["w5"]["ssid"] = new_str
-
-    with open(input_file, 'w+', encoding="utf8") as load_f:
-        json.dump(input_dict, load_f)
-
-    logging.info("json5更新完成...")
-
-
-def recovery_json5():
-    # recovery wireless
-    input_file = "../input_json/wifi.json5"
-    shutil.move("../input_json/wifi.backup", input_file)
-    logging.info("json5恢复完成...")
-
-
 def logging_init():
     # 创建logger，如果参数为空则返回root logger
     logger = logging.getLogger("")
@@ -163,6 +129,21 @@ def excel_init():
     excel.sheet_fd = zexcel.sheet_init(excel.excel_fd, "WIFI测试结果")
     # 从第二行开始写入
     excel.row_point = 1
+
+
+def test_json_update():
+    sn = test.mac.split(":")
+    new_str = "ZHOME_" + sn[4] + sn[5]
+    server.input_dict["test_001_default_ssid"][0]["w2"]["ssid"] = new_str
+    server.input_dict["test_004_reset_ssid"][0]["param"]["params"][0]["param"]["w2"]["ssid"] = new_str
+    server.input_dict["test_004_reset_ssid"][1]["w2"]["ssid"] = new_str
+
+    new_str = "ZHOME_" + sn[4] + sn[5] + "_5G"
+    server.input_dict["test_001_default_ssid"][0]["w5"]["ssid"] = new_str
+    server.input_dict["test_004_reset_ssid"][0]["param"]["params"][0]["param"]["w5"]["ssid"] = new_str
+    server.input_dict["test_004_reset_ssid"][1]["w5"]["ssid"] = new_str
+
+    logging.info("json5更新完成...")
 
 
 def test_json_init(module_name):
@@ -199,6 +180,8 @@ def test_json_init(module_name):
     else:
         return False
 
+    test_json_update()
+
     return True
 
 
@@ -211,37 +194,6 @@ def test_top_write(module_name):
     excel.module_info[module_name]["count"] = 0
     excel.module_info[module_name]["pass"] = 0
     excel.module_info[module_name]["fail"] = 0
-
-
-def start_connect_wifi(info):
-    wifi = utils_wifi.get_wifi_interfaces()
-    if utils_wifi.check_interfaces(wifi):
-        utils_wifi.disconnect_wifi(wifi)
-
-    scan_i = 0
-    while scan_i != 5:
-        wifi_list = utils_wifi.scan_wifi(wifi)
-        scan_i += 1
-        for wifi_i in wifi_list:
-            if wifi_i[0] == info["ssid"]:
-                logging.info("find ssid:%s", info["ssid"])
-                scan_i = 5
-                break
-
-    if scan_i > 5:
-        logging.info("find ssid:%s fail", info["ssid"])
-        test_end()
-
-    profile_info = pywifi.profile.Profile()  # 配置文件
-    profile_info.ssid = info["ssid"]  # wifi名称
-    profile_info.auth = pywifi.const.AUTH_ALG_OPEN
-    if info["auth"] == "none":
-        profile_info.akm.append(pywifi.const.AKM_TYPE_NONE)  # 加密类型
-    elif info["auth"] == "mixed-psk":
-        profile_info.akm.append(pywifi.const.AKM_TYPE_WPA2PSK)  # 加密类型
-        profile_info.key = info["key"]
-    profile_info.cipher = pywifi.const.CIPHER_TYPE_CCMP  # 加密单元
-    return utils_wifi.connect_wifi(wifi, profile_info)
 
 
 def run_test_case(module_name):
@@ -273,11 +225,11 @@ def run_test_case(module_name):
                 else:   # wifi连接
                     wifi_info = server.input_dict[key][request_i]
                     if wifi_info["w2"]["ssid"]:
-                        if not start_connect_wifi(wifi_info["w2"]):
+                        if not utils_wifi.start_connect_wifi(wifi_info["w2"]):
                             request_result = False
 
                     if wifi_info["w5"]["ssid"]:
-                        if not start_connect_wifi(wifi_info["w5"]):
+                        if not utils_wifi.start_connect_wifi(wifi_info["w5"]):
                             request_result = False
 
             except Exception as e:
@@ -285,7 +237,7 @@ def run_test_case(module_name):
                 request_result = False
 
             request_i += 1
-            time.sleep(1)
+            time.sleep(2)
 
         # 填写测试结果到excel的第二列
         if request_result:
@@ -308,14 +260,10 @@ def test_start():
     data_init()
     logging_init()
     logging.info("test start...")
-    update_json5()
     excel_init()
 
 
 def test_end():
-    # 回复更新的json5文件
-    recovery_json5()
-
     # 将统计的count pass fail写入excel
     test.total_num = test.pass_num + test.fail_num
     for key in excel.module_info:

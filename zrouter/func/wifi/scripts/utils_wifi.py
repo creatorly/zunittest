@@ -59,10 +59,12 @@ def check_interfaces(self):
 # 连接wifi
 def connect_wifi(self, profile_info):
     self.remove_all_network_profiles()  # 删除其他配置文件
+    logging.info("删除其他配置文件")
+    time.sleep(2)  # 删除其他配置文件
     tmp_profile = self.add_network_profile(profile_info)  # 加载配置文件
 
     self.connect(tmp_profile)  # 连接
-    time.sleep(8)  # 尝试8秒能否成功连接
+    time.sleep(10)  # 尝试10秒能否成功连接
 
     logging.info(self.status())
     if self.status() == pywifi.const.IFACE_CONNECTED:
@@ -85,6 +87,45 @@ def disconnect_wifi(self):
     else:
         logging.info(u'无线网卡：%s 未断开。' % self.name())
         return False
+
+
+def start_connect_wifi(info):
+    wifi = get_wifi_interfaces()
+    if check_interfaces(wifi):
+        disconnect_wifi(wifi)
+
+    scan_i = 0
+    scan_result = False
+    while scan_i < 5:
+        wifi_list = scan_wifi(wifi)
+        scan_i += 1
+        for wifi_i in wifi_list:
+            if wifi_i[0] == info["ssid"]:
+                logging.info("find ssid:%s", info["ssid"])
+                scan_result = True
+                scan_i = 5
+                break
+
+    if not scan_result:
+        logging.info("find ssid:%s fail", info["ssid"])
+        return False
+
+    profile_info = pywifi.profile.Profile()  # 配置文件
+    profile_info.ssid = info["ssid"]  # wifi名称
+    profile_info.auth = pywifi.const.AUTH_ALG_OPEN
+    if info["auth"] == "none":
+        profile_info.akm.append(pywifi.const.AKM_TYPE_NONE)  # 加密类型
+    elif info["auth"] == "mixed-psk":
+        profile_info.akm.append(pywifi.const.AKM_TYPE_WPA2PSK)  # 加密类型
+        profile_info.key = info["key"]
+    profile_info.cipher = pywifi.const.CIPHER_TYPE_CCMP  # 加密单元
+
+    conn_result = connect_wifi(wifi, profile_info)
+    time.sleep(2)
+    if check_interfaces(wifi):
+        disconnect_wifi(wifi)
+
+    return conn_result
 
 
 if __name__ == '__main__':
