@@ -25,7 +25,7 @@ def get_wifi_interfaces():
         for i, w in enumerate(wifi.interfaces()):
             logging.info('%-4s   %s' % (i, w.name()))
         while True:
-            iface_no = input('请选择网卡接口序号：'.decode('utf-8').encode('gbk'))
+            iface_no = input('请选择网卡接口序号：'.encode('utf-8').decode('gbk'))
             no = int(iface_no)
             if no >= 0 and no < num:
                 return wifi.interfaces()[no]

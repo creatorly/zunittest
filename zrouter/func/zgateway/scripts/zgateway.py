@@ -40,6 +40,10 @@ class TestInfo(object):
     modules = []
     start_time = ''
     output_file = ''
+    zigbee_devId = "000d6f000b7ab1d3"
+    zigbee_prodTypeId = "SmartPlug"
+    ble_devId = "011001275a"
+    ble_prodTypeId = "8grteg3l"
 
 
 class ExcelInfo(object):
@@ -63,6 +67,34 @@ def data_init():
         server.url = config.get("link", "host")
     else:
         print("miss url")
+        exit()
+
+    config.read("../conf/zgateway.conf", encoding="utf-8")
+    if config.has_option("link", "zigbee_devId"):
+        test.zigbee_devId = config.get("link", "zigbee_devId")
+    else:
+        print("miss zigbee_devId")
+        exit()
+
+    config.read("../conf/zgateway.conf", encoding="utf-8")
+    if config.has_option("link", "zigbee_prodTypeId"):
+        test.zigbee_prodTypeId = config.get("link", "zigbee_prodTypeId")
+    else:
+        print("miss zigbee_prodTypeId")
+        exit()
+
+    config.read("../conf/zgateway.conf", encoding="utf-8")
+    if config.has_option("link", "ble_devId"):
+        test.ble_devId = config.get("link", "ble_devId")
+    else:
+        print("miss ble_devId")
+        exit()
+
+    config.read("../conf/zgateway.conf", encoding="utf-8")
+    if config.has_option("link", "ble_prodTypeId"):
+        test.ble_prodTypeId = config.get("link", "ble_prodTypeId")
+    else:
+        print("miss ble_prodTypeId")
         exit()
 
     config.read("../../../zrouter.conf", encoding="utf-8")
@@ -136,8 +168,16 @@ def test_json_update():
     server.input_dict["test_004_set_device_ssid"][2]["query"]["data"][0]["v"] = "ZR_D" + sn[4] + sn[5]
     server.input_dict["test_004_set_device_ssid"][2]["query"]["data"][1]["v"] = "ZR_P" + sn[4] + sn[5]
     server.input_dict["test_004_set_device_ssid"][2]["query"]["devId"] = new_str
+
     server.input_dict["test_007_2.4G_connect"][20]["connect"]["devId"] = new_str + "_LED2_4"
-    server.input_dict["test_009_2.4G_remove"][0]["remove"]["devId"] = new_str + "_LED2_4"
+    server.input_dict["test_007_2.4G_connect"][21]["query"]["devId"] = test.ble_devId
+    server.input_dict["test_007_2.4G_connect"][21]["query"]["prodTypeId"] = test.ble_prodTypeId
+    server.input_dict["test_008_2.4G_control"][0]["control"]["devId"] = test.ble_devId
+    server.input_dict["test_008_2.4G_control"][0]["control"]["devUuid"] = test.ble_devId
+    server.input_dict["test_008_2.4G_control"][0]["control"]["prodTypeId"] = test.ble_prodTypeId
+    server.input_dict["test_009_2.4G_remove"][0]["control"]["devId"] = new_str + "_LED2_4"
+    server.input_dict["test_009_2.4G_remove"][0]["control"]["devUuid"] = new_str + "_LED2_4"
+    server.input_dict["test_009_2.4G_remove"][0]["control"]["data"][1]["v"] = test.ble_devId
 
     server.output_dict["test_002_check_gateway_version"][0]["part_same"]["data"]["deviceMac"] = new_str
     server.output_dict["test_003_check_iot_version"][1]["part_same"]["data"]["gatewayMac"] = new_str
@@ -147,9 +187,8 @@ def test_json_update():
     server.output_dict["test_003_check_iot_version"][3]["part_same"]["data"]["gatewayMac"] = new_str
     server.output_dict["test_005_zigbee_connect"][1]["part_same"]["data"]["gatewayMac"] = new_str
     server.output_dict["test_007_2.4G_connect"][21]["part_same"]["data"]["gatewayMac"] = new_str
-    server.output_dict["test_008_2.4G_control"][1]["part_same"]["data"]["gatewayMac"] = new_str
-    server.output_dict["test_009_2.4G_remove"][1]["part_same"]["data"]["gatewayMac"] = new_str
-    server.output_dict["test_010_zigbee_remove"][1]["part_same"]["data"]["gatewayMac"] = new_str
+    server.output_dict["test_007_2.4G_connect"][21]["part_same"]["data"]["deviceMac"] = test.ble_devId
+    server.output_dict["test_007_2.4G_connect"][21]["part_same"]["data"]["prodTypeId"] = test.ble_prodTypeId
 
     config = configparser.ConfigParser()
     config.read("../conf/zgateway.conf", encoding="utf-8")
@@ -183,9 +222,90 @@ def test_json_update():
 def zigbee_json_update(zigbeeGate):
     server.input_dict["test_003_check_iot_version"][1]["query"]["devId"] = zigbeeGate
     server.input_dict["test_005_zigbee_connect"][0]["connect"]["devId"] = zigbeeGate
-    server.input_dict["test_010_zigbee_remove"][0]["remove"]["devId"] = zigbeeGate
+    server.input_dict["test_005_zigbee_connect"][1]["query"]["devId"] = test.zigbee_devId
+    server.input_dict["test_005_zigbee_connect"][1]["query"]["prodTypeId"] = test.zigbee_prodTypeId
+    server.input_dict["test_006_zigbee_control"][0]["control"]["devId"] = test.zigbee_devId
+    server.input_dict["test_006_zigbee_control"][0]["control"]["devUuid"] = test.zigbee_devId
+    server.input_dict["test_006_zigbee_control"][0]["control"]["prodTypeId"] = test.zigbee_prodTypeId
+    server.input_dict["test_006_zigbee_control"][2]["control"]["devId"] = test.zigbee_devId
+    server.input_dict["test_006_zigbee_control"][2]["control"]["devUuid"] = test.zigbee_devId
+    server.input_dict["test_006_zigbee_control"][2]["control"]["prodTypeId"] = test.zigbee_prodTypeId
+
+    server.input_dict["test_007_2.4G_connect"][0]["control"]["devId"] = test.zigbee_devId
+    server.input_dict["test_007_2.4G_connect"][0]["control"]["devUuid"] = test.zigbee_devId
+    server.input_dict["test_007_2.4G_connect"][0]["control"]["prodTypeId"] = test.zigbee_prodTypeId
+    server.input_dict["test_007_2.4G_connect"][2]["control"]["devId"] = test.zigbee_devId
+    server.input_dict["test_007_2.4G_connect"][2]["control"]["devUuid"] = test.zigbee_devId
+    server.input_dict["test_007_2.4G_connect"][2]["control"]["prodTypeId"] = test.zigbee_prodTypeId
+    server.input_dict["test_007_2.4G_connect"][4]["control"]["devId"] = test.zigbee_devId
+    server.input_dict["test_007_2.4G_connect"][4]["control"]["devUuid"] = test.zigbee_devId
+    server.input_dict["test_007_2.4G_connect"][4]["control"]["prodTypeId"] = test.zigbee_prodTypeId
+    server.input_dict["test_007_2.4G_connect"][6]["control"]["devId"] = test.zigbee_devId
+    server.input_dict["test_007_2.4G_connect"][6]["control"]["devUuid"] = test.zigbee_devId
+    server.input_dict["test_007_2.4G_connect"][6]["control"]["prodTypeId"] = test.zigbee_prodTypeId
+    server.input_dict["test_007_2.4G_connect"][8]["control"]["devId"] = test.zigbee_devId
+    server.input_dict["test_007_2.4G_connect"][8]["control"]["devUuid"] = test.zigbee_devId
+    server.input_dict["test_007_2.4G_connect"][8]["control"]["prodTypeId"] = test.zigbee_prodTypeId
+    server.input_dict["test_007_2.4G_connect"][10]["control"]["devId"] = test.zigbee_devId
+    server.input_dict["test_007_2.4G_connect"][10]["control"]["devUuid"] = test.zigbee_devId
+    server.input_dict["test_007_2.4G_connect"][10]["control"]["prodTypeId"] = test.zigbee_prodTypeId
+    server.input_dict["test_007_2.4G_connect"][12]["control"]["devId"] = test.zigbee_devId
+    server.input_dict["test_007_2.4G_connect"][12]["control"]["devUuid"] = test.zigbee_devId
+    server.input_dict["test_007_2.4G_connect"][12]["control"]["prodTypeId"] = test.zigbee_prodTypeId
+    server.input_dict["test_007_2.4G_connect"][14]["control"]["devId"] = test.zigbee_devId
+    server.input_dict["test_007_2.4G_connect"][14]["control"]["devUuid"] = test.zigbee_devId
+    server.input_dict["test_007_2.4G_connect"][14]["control"]["prodTypeId"] = test.zigbee_prodTypeId
+    server.input_dict["test_007_2.4G_connect"][16]["control"]["devId"] = test.zigbee_devId
+    server.input_dict["test_007_2.4G_connect"][16]["control"]["devUuid"] = test.zigbee_devId
+    server.input_dict["test_007_2.4G_connect"][16]["control"]["prodTypeId"] = test.zigbee_prodTypeId
+    server.input_dict["test_007_2.4G_connect"][18]["control"]["devId"] = test.zigbee_devId
+    server.input_dict["test_007_2.4G_connect"][18]["control"]["devUuid"] = test.zigbee_devId
+    server.input_dict["test_007_2.4G_connect"][18]["control"]["prodTypeId"] = test.zigbee_prodTypeId
+
+    server.input_dict["test_010_zigbee_remove"][0]["control"]["devId"] = zigbeeGate
+    server.input_dict["test_010_zigbee_remove"][0]["control"]["devUuid"] = zigbeeGate
+    server.input_dict["test_010_zigbee_remove"][0]["control"]["data"][0]["v"] = test.zigbee_devId
 
     server.output_dict["test_003_check_iot_version"][1]["part_same"]["data"]["deviceMac"] = zigbeeGate
+    server.output_dict["test_005_zigbee_connect"][1]["part_same"]["data"]["deviceMac"] = test.zigbee_devId
+    server.output_dict["test_005_zigbee_connect"][1]["part_same"]["data"]["prodTypeId"] = test.zigbee_prodTypeId
+    server.output_dict["test_006_zigbee_control"][1]["part_same"]["data"]["devId"] = test.zigbee_devId
+    server.output_dict["test_006_zigbee_control"][1]["part_same"]["data"]["devUuid"] = test.zigbee_devId
+    server.output_dict["test_006_zigbee_control"][1]["part_same"]["data"]["prodTypeId"] = test.zigbee_prodTypeId
+    server.output_dict["test_006_zigbee_control"][3]["part_same"]["data"]["devId"] = test.zigbee_devId
+    server.output_dict["test_006_zigbee_control"][3]["part_same"]["data"]["devUuid"] = test.zigbee_devId
+    server.output_dict["test_006_zigbee_control"][3]["part_same"]["data"]["prodTypeId"] = test.zigbee_prodTypeId
+    server.output_dict["test_007_2.4G_connect"][1]["part_same"]["data"]["devId"] = test.zigbee_devId
+    server.output_dict["test_007_2.4G_connect"][1]["part_same"]["data"]["devUuid"] = test.zigbee_devId
+    server.output_dict["test_007_2.4G_connect"][1]["part_same"]["data"]["prodTypeId"] = test.zigbee_prodTypeId
+    server.output_dict["test_007_2.4G_connect"][3]["part_same"]["data"]["devId"] = test.zigbee_devId
+    server.output_dict["test_007_2.4G_connect"][3]["part_same"]["data"]["devUuid"] = test.zigbee_devId
+    server.output_dict["test_007_2.4G_connect"][3]["part_same"]["data"]["prodTypeId"] = test.zigbee_prodTypeId
+    server.output_dict["test_007_2.4G_connect"][5]["part_same"]["data"]["devId"] = test.zigbee_devId
+    server.output_dict["test_007_2.4G_connect"][5]["part_same"]["data"]["devUuid"] = test.zigbee_devId
+    server.output_dict["test_007_2.4G_connect"][5]["part_same"]["data"]["prodTypeId"] = test.zigbee_prodTypeId
+    server.output_dict["test_007_2.4G_connect"][7]["part_same"]["data"]["devId"] = test.zigbee_devId
+    server.output_dict["test_007_2.4G_connect"][7]["part_same"]["data"]["devUuid"] = test.zigbee_devId
+    server.output_dict["test_007_2.4G_connect"][7]["part_same"]["data"]["prodTypeId"] = test.zigbee_prodTypeId
+    server.output_dict["test_007_2.4G_connect"][9]["part_same"]["data"]["devId"] = test.zigbee_devId
+    server.output_dict["test_007_2.4G_connect"][9]["part_same"]["data"]["devUuid"] = test.zigbee_devId
+    server.output_dict["test_007_2.4G_connect"][9]["part_same"]["data"]["prodTypeId"] = test.zigbee_prodTypeId
+    server.output_dict["test_007_2.4G_connect"][11]["part_same"]["data"]["devId"] = test.zigbee_devId
+    server.output_dict["test_007_2.4G_connect"][11]["part_same"]["data"]["devUuid"] = test.zigbee_devId
+    server.output_dict["test_007_2.4G_connect"][11]["part_same"]["data"]["prodTypeId"] = test.zigbee_prodTypeId
+    server.output_dict["test_007_2.4G_connect"][13]["part_same"]["data"]["devId"] = test.zigbee_devId
+    server.output_dict["test_007_2.4G_connect"][13]["part_same"]["data"]["devUuid"] = test.zigbee_devId
+    server.output_dict["test_007_2.4G_connect"][13]["part_same"]["data"]["prodTypeId"] = test.zigbee_prodTypeId
+    server.output_dict["test_007_2.4G_connect"][15]["part_same"]["data"]["devId"] = test.zigbee_devId
+    server.output_dict["test_007_2.4G_connect"][15]["part_same"]["data"]["devUuid"] = test.zigbee_devId
+    server.output_dict["test_007_2.4G_connect"][15]["part_same"]["data"]["prodTypeId"] = test.zigbee_prodTypeId
+    server.output_dict["test_007_2.4G_connect"][17]["part_same"]["data"]["devId"] = test.zigbee_devId
+    server.output_dict["test_007_2.4G_connect"][17]["part_same"]["data"]["devUuid"] = test.zigbee_devId
+    server.output_dict["test_007_2.4G_connect"][17]["part_same"]["data"]["prodTypeId"] = test.zigbee_prodTypeId
+    server.output_dict["test_007_2.4G_connect"][19]["part_same"]["data"]["devId"] = test.zigbee_devId
+    server.output_dict["test_007_2.4G_connect"][19]["part_same"]["data"]["devUuid"] = test.zigbee_devId
+    server.output_dict["test_007_2.4G_connect"][19]["part_same"]["data"]["prodTypeId"] = test.zigbee_prodTypeId
+    server.output_dict["test_010_zigbee_remove"][1]["part_same"]["data"]["data"][0]["v"] = test.zigbee_devId
 
     # print(server.input_dict)
     # print(server.output_dict)

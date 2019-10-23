@@ -618,15 +618,34 @@
 
         {
             "part_same": {
-                "code": 200,
-                "data": {
-                        "connectState": 1,
-                        "deviceMac": "000d6f000b7ab1d3",
-                        "gatewayMac": "D4EE02112240",
-                        "prodTypeId": "SmartPlug"
-                    },
-                "message": "成功"
-            },
+                "code":200,
+                "data":{
+                    "attribute":"light_power",
+                    "command":"set_power",
+                    "creater":"link_control",
+                    "data":[
+                        {
+                            "k":"power",
+                            "v":"0"
+                        }
+                    ],
+                    "devId":"011001275a",
+                    "devUuid":"011001275a",
+                    "hid":"FDS544S8FD5FF4C7B",
+                    "isCallback":0,
+                    "isDel":0,
+                    "isMultiple":0,
+                    "isSuccess":0,
+                    "lastModifer":"link_control",
+                    "prodOperCode":"0b8de76d81474fe3a906fba206a04b3e",
+                    "prodTypeId":"8grteg3l",
+                    "systemCode":"deletePwdJob",
+                    "userCode":"ebe71c40-42d1-4efb-827c-042c22b23ce6",
+                    "userName":"程志广",
+                    "userType":1
+                },
+                "message":"成功"
+            }
 		}
     ],
 
@@ -640,15 +659,38 @@
 
         {
             "part_same": {
-                "code": 200,
-                "data": {
-                    "connectState": 0,
-                    "deviceMac": "011001215b",
-                    "gatewayMac": "D4EE02112240",
-                    "prodTypeId": "8grteg3l"
-                },
-                "message": "成功"
-            }
+                	"code":200,
+                    "data":{
+                        "attribute":"light_network",
+                        "command":"remove_light",
+                        "creater":"link_control",
+                        "data":[
+                            {
+                                "k":"index",
+                                "v":"2"
+                            },
+                            {
+                                "k":"mac",
+                                "v":"011001275a"
+                            }
+                        ],
+                        "devId":"E4F3E8D38B66_LED2_4",
+                        "devUuid":"E4F3E8D38B66_LED2_4",
+                        "hid":"FDS544S8FD5FF4C7B",
+                        "isCallback":0,
+                        "isDel":0,
+                        "isMultiple":0,
+                        "isSuccess":0,
+                        "lastModifer":"link_control",
+                        "prodOperCode":"0b8de76d81474fe3a906fba206a04b3e",
+                        "prodTypeId":"LED2_4",
+                        "systemCode":"deletePwdJob",
+                        "userCode":"ebe71c40-42d1-4efb-827c-042c22b23ce6",
+                        "userName":"程志广",
+                        "userType":1
+                    },
+                    "message":"成功"
+                }
         }
     ],
 
@@ -664,14 +706,33 @@
             "part_same": {
                 "code":200,
                 "data":{
-                    "connectState":0,
-                    "deviceMac":"000d6f000b7ab1d3",
-                    "gatewayMac":"D4EE02112240",
-                    "prodTypeId":"SmartPlug",
-                    "version":""
+                    "attribute":"zigbee_deviceinfo",
+                    "command":"set_deletedevice",
+                    "creater":"link_control",
+                    "data":[
+                        {
+                            "k":"mac",
+                            "v":"000d6f000b7ab1d3"
+                        }
+                    ],
+                    "devId":"A365063292492124",
+                    "devUuid":"A365063292492124",
+                    "hid":"FDS544S8FD5FF4C7B",
+                    "isCallback":1,
+                    "isDel":0,
+                    "isMultiple":0,
+                    "isSuccess":1,
+                    "lastModifer":"link_control",
+                    "message":"成功",
+                    "prodOperCode":"0b8de76d81474fe3a906fba206a04b3e",
+                    "prodTypeId":"Dusun_zigbeeGate",
+                    "systemCode":"deletePwdJob",
+                    "userCode":"ebe71c40-42d1-4efb-827c-042c22b23ce6",
+                    "userName":"程志广",
+                    "userType":1
                 },
-                "message": "成功"
-            },
+                "message":"成功"
+            }
 		}
     ]
 }

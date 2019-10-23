@@ -601,77 +601,107 @@
     ],
 
     "test_008_2.4G_control": [
+
         {
-            "url": "/link-handle-gateway/v1/operate/device/control",
-            "query": {
-               "msgType": "DEVICE_CONTROL",
-               "devId": "05f00124a7",
-               "prodTypeId":   "esujto8n",
-               "time": "2018-05-14 10:10:10",
-               "sno": "789",
+            "url": "/link-control/v1/device/controlDevice",
+            "head_1": "AccessToken",
+            "head_2": "asdwefe3232ffhdkal82iedjfalki290",
+            "control": {
+                "prodOperCode": "0b8de76d81474fe3a906fba206a04b3e",
+                "hid": "FDS544S8FD5FF4C7B",
+                "userCode": "ebe71c40-42d1-4efb-827c-042c22b23ce6",
+                "userName": "程志广",
+                "userType": 1,
+                "mobile": "18518115887",
+                "msgType": "DEVICE_CONTROL",
+                "devId": "05f00124a7",
+                "devUuid": "05f00124a7",
+                "prodTypeId": "esujto8n",
+                "time": "2018-05-14 10:10:10",
+                "sno": "26bf95ac-eb03-11e9-96d4-d017c29ab7d1",
                 "attribute":"light_power",
                 "command":"set_power",
                 "data":[{
                     "k":"power",
-                    "v":"1"
+                    "v":"0"
                 }]
-            },
+            }
         },
+
         {
-            "url": "/link-dataquery/v1/device/list",
-            "query": {
-                "mac": "D4EE02112240"
+            "url": "/link-control-record/v1/query/queryRecordBySno",
+            "control_resp": {
+               "sno": "94a11da4-eb0c-11e9-abfd-d017c29ab7d1"
             }
         }
     ],
 
     "test_009_2.4G_remove": [
+
         {
-            "url": "/link-handle-gateway/v1/operate/device/control",
-            "remove": {
+            "url": "/link-control/v1/device/controlDevice",
+            "head_1": "AccessToken",
+            "head_2": "asdwefe3232ffhdkal82iedjfalki290",
+            "control": {
+                "prodOperCode": "0b8de76d81474fe3a906fba206a04b3e",
+                "hid": "FDS544S8FD5FF4C7B",
+                "userCode": "ebe71c40-42d1-4efb-827c-042c22b23ce6",
+                "userName": "程志广",
+                "userType": 1,
+                "mobile": "18518115887",
                 "msgType": "DEVICE_CONTROL",
                 "devId": "D4EE02112240_LED2_4",
-                "prodTypeId":   "LED2_4",
-                "time": "2019-02-14 10:10:10",
-                "sno": "789",
+                "devUuid": "D4EE02112240_LED2_4",
+                "prodTypeId": "LED2_4",
+                "time": "2018-05-14 10:10:10",
+                "sno": "26bf95ac-eb03-11e9-96d4-d017c29ab7d1",
                 "attribute": "light_network",
                 "command": "remove_light",
                 "data": [{"k":"index","v":"2"},
                     {"k":"mac","v":"05f00124a7"}]
             }
         },
+
         {
-            "url": "/link-dataquery/v1/device/query/mac/prodtype",
-            "query": {
-               "devId": "05f00124a7",
-               "prodTypeId": "esujto8n"
+            "url": "/link-control-record/v1/query/queryRecordBySno",
+            "control_resp": {
+               "sno": "94a11da4-eb0c-11e9-abfd-d017c29ab7d1"
             }
         }
     ],
 
     "test_010_zigbee_remove": [
         {
-            "url": "/link-handle-gateway/v1/operate/device/control",
-            "remove": {
-               "msgType": "DEVICE_CONTROL",
-               "devId": "04B36D3342907908",
-               "prodTypeId": "Dusun_zigbeeGate",
-               "time": "2018-05-14 10:10:10",
-               "sno": "123",
-               "attribute": "zigbee_deviceinfo",
-               "command": "set_deletedevice",
-               "data": [{
+            "url": "/link-control/v1/device/controlDevice",
+            "head_1": "AccessToken",
+            "head_2": "asdwefe3232ffhdkal82iedjfalki290",
+            "control": {
+                "prodOperCode": "0b8de76d81474fe3a906fba206a04b3e",
+                "hid": "FDS544S8FD5FF4C7B",
+                "userCode": "ebe71c40-42d1-4efb-827c-042c22b23ce6",
+                "userName": "程志广",
+                "userType": 1,
+                "mobile": "18518115887",
+                "msgType": "DEVICE_CONTROL",
+                "devId": "04B36D3342907908",
+                "devUuid": "04B36D3342907908",
+                "prodTypeId": "Dusun_zigbeeGate",
+                "time": "2018-05-14 10:10:10",
+                "sno": "26bf95ac-eb03-11e9-96d4-d017c29ab7d1",
+                "attribute": "zigbee_deviceinfo",
+                "command": "set_deletedevice",
+                "data": [{
                   "k": "mac",
                   "v": "000d6f000b7ab1d3"
-               }
-               ]
+                }
+                ]
             }
         },
+
         {
-            "url": "/link-dataquery/v1/device/query/mac/prodtype",
-            "query": {
-               "devId": "000d6f000b7ab1d3",
-               "prodTypeId": "SmartPlug"
+            "url": "/link-control-record/v1/query/queryRecordBySno",
+            "control_resp": {
+               "sno": "94a11da4-eb0c-11e9-abfd-d017c29ab7d1"
             }
         }
     ]
