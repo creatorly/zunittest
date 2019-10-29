@@ -12,6 +12,7 @@ import base64
 import time
 import configparser
 import sys
+import os
 
 sys.path.append("../../..")
 from zutils import zexcel
@@ -57,7 +58,9 @@ excel = ExcelInfo
 def data_init():
     # 获取配置文件信息
     config = configparser.ConfigParser()
-    config.read("../../zrouter.conf", encoding="utf-8")
+    config_path = os.path.join(os.path.dirname(__file__) + '/../../zrouter.conf')
+    config.read(config_path, encoding="utf-8")
+
     if config.has_option("server", "host"):
         server.url = config.get("server", "host")
     else:
@@ -88,7 +91,8 @@ def data_init():
         print("miss version")
         exit()
 
-    config.read("../conf/api.conf", encoding="utf-8")
+    config_path = os.path.join(os.path.dirname(__file__) + '/../conf/api.conf')
+    config.read(config_path, encoding="utf-8")
     if config.has_option("test", test.name + "_modules"):
         test.modules = config.get("test", test.name + "_modules").split(",")
     else:
@@ -110,7 +114,8 @@ def logging_init():
     logger.setLevel(logging.INFO)  # 设置logger日志等级
 
     # 创建handler
-    fh = logging.FileHandler("../results/" + test.output_file + ".log", encoding="utf-8")
+    log_file = os.path.join(os.path.dirname(__file__) + "/../results/" + test.output_file + ".log")
+    fh = logging.FileHandler(log_file, encoding="utf-8")
     ch = logging.StreamHandler()
 
     # 设置输出日志格式
@@ -161,8 +166,8 @@ def test_json_update(module_name):
 def test_json_init(module_name):
     check_name = "test_"
     # 获取所有的测试名称及请求内容
-    input_file = "../input_json/" + test.name + "/" + module_name + ".json5"
-    output_file = "../output_json/" + test.name + "/" + module_name + ".json5"
+    input_file = os.path.join(os.path.dirname(__file__) + "/../input_json/" + test.name + "/" + module_name + ".json5")
+    output_file = os.path.join(os.path.dirname(__file__) + "/../output_json/" + test.name + "/" + module_name + ".json5")
     with open(input_file, 'r', encoding="utf8") as load_f:
         server.input_dict = json5.loads(load_f.read())
 
@@ -252,7 +257,7 @@ def run_test_case(module_name):
                 request_data = server.input_dict[key][request_i]
                 request_data["sid"] = server.sid
                 logging.info("%s send:%s", key, request_data)
-                resp_data = requests.post(server.url, data=json.dumps(request_data), headers=server.headers)
+                resp_data = requests.post(server.url, data=json.dumps(request_data), headers=server.headers, timeout=5)
                 logging.info("%s recv:%s", key, resp_data.text)
                 if resp_data.status_code == 200:
                     logging.info("%s src:%s", key, server.output_dict[key][request_i])
@@ -324,7 +329,7 @@ def test_end():
     excel.sheet_fd.write(zexcel.TOTAL_FAIL_ROW, zexcel.TOTAL_FAIL_COL + 1, test.fail_num,
                          style=zexcel.set_style(zexcel.BLACK, 260, bold=True, align='', pattern_color='light_orange'))
 
-    filename = "../results/" + test.output_file + ".xls"
+    filename = os.path.join(os.path.dirname(__file__) + "/../results/" + test.output_file + ".xls")
     excel.excel_fd.save(filename)  # 保存xls
     logging.info("test end!")
     exit()

@@ -13,6 +13,7 @@ import configparser
 import sys
 import paramiko
 import uuid
+import os
 
 sys.path.append("../../../..")
 from zutils import zexcel
@@ -62,42 +63,41 @@ excel = ExcelInfo
 def data_init():
     # 获取配置文件信息
     config = configparser.ConfigParser()
-    config.read("../conf/zgateway.conf", encoding="utf-8")
+    config_path = os.path.join(os.path.dirname(__file__) + '/../conf/zgateway.conf')
+    config.read(config_path, encoding="utf-8")
+
     if config.has_option("link", "host"):
         server.url = config.get("link", "host")
     else:
         print("miss url")
         exit()
 
-    config.read("../conf/zgateway.conf", encoding="utf-8")
     if config.has_option("link", "zigbee_devId"):
         test.zigbee_devId = config.get("link", "zigbee_devId")
     else:
         print("miss zigbee_devId")
         exit()
 
-    config.read("../conf/zgateway.conf", encoding="utf-8")
     if config.has_option("link", "zigbee_prodTypeId"):
         test.zigbee_prodTypeId = config.get("link", "zigbee_prodTypeId")
     else:
         print("miss zigbee_prodTypeId")
         exit()
 
-    config.read("../conf/zgateway.conf", encoding="utf-8")
     if config.has_option("link", "ble_devId"):
         test.ble_devId = config.get("link", "ble_devId")
     else:
         print("miss ble_devId")
         exit()
 
-    config.read("../conf/zgateway.conf", encoding="utf-8")
     if config.has_option("link", "ble_prodTypeId"):
         test.ble_prodTypeId = config.get("link", "ble_prodTypeId")
     else:
         print("miss ble_prodTypeId")
         exit()
 
-    config.read("../../../zrouter.conf", encoding="utf-8")
+    config_path = os.path.join(os.path.dirname(__file__) + '/../../../zrouter.conf')
+    config.read(config_path, encoding="utf-8")
     if config.has_option("test", "project"):
         test.project = config.get("test", "project")
     else:
@@ -131,7 +131,8 @@ def logging_init():
     logger.setLevel(logging.INFO)  # 设置logger日志等级
 
     # 创建handler
-    fh = logging.FileHandler("../results/" + test.output_file + ".log", encoding="utf-8")
+    log_file = os.path.join(os.path.dirname(__file__) + "/../results/" + test.output_file + ".log")
+    fh = logging.FileHandler(log_file, encoding="utf-8")
     ch = logging.StreamHandler()
 
     # 设置输出日志格式
@@ -162,6 +163,7 @@ def test_json_update():
     sn = test.mac.split(":")
     new_str = sn[0] + sn[1] + sn[2] + sn[3] + sn[4] + sn[5]
     server.input_dict["test_002_check_gateway_version"][0]["query"]["devId"] = new_str
+    server.input_dict["test_003_check_iot_version"][0]["query"]["mac"] = new_str
     server.input_dict["test_003_check_iot_version"][2]["query"]["devId"] = new_str + "_S3GATEWAY"
     server.input_dict["test_003_check_iot_version"][3]["query"]["devId"] = new_str + "_LED2_4"
     server.input_dict["test_004_set_device_ssid"][0]["query"]["devId"] = new_str
@@ -189,6 +191,8 @@ def test_json_update():
     server.output_dict["test_007_2.4G_connect"][21]["part_same"]["data"]["gatewayMac"] = new_str
     server.output_dict["test_007_2.4G_connect"][21]["part_same"]["data"]["deviceMac"] = test.ble_devId
     server.output_dict["test_007_2.4G_connect"][21]["part_same"]["data"]["prodTypeId"] = test.ble_prodTypeId
+    server.output_dict["test_009_2.4G_remove"][1]["part_same"]["data"]["devId"] = new_str + "_LED2_4"
+    server.output_dict["test_009_2.4G_remove"][1]["part_same"]["data"]["devUuid"] = new_str + "_LED2_4"
 
     config = configparser.ConfigParser()
     config.read("../conf/zgateway.conf", encoding="utf-8")
@@ -314,8 +318,8 @@ def zigbee_json_update(zigbeeGate):
 def test_json_init(module_name):
     check_name = "test_"
     # 获取所有的测试名称及请求内容
-    input_file = "../input_json/" + module_name + ".json5"
-    output_file = "../output_json/" + module_name + ".json5"
+    input_file = os.path.join(os.path.dirname(__file__) + "/../input_json/" + test.name + "/" + module_name + ".json5")
+    output_file = os.path.join(os.path.dirname(__file__) + "/../output_json/" + test.name + "/" + module_name + ".json5")
     with open(input_file, 'r', encoding="utf8") as load_f:
         server.input_dict = json5.loads(load_f.read())
 
@@ -481,7 +485,7 @@ def run_test_case(module_name):
                         request_data = server.input_dict[key][request_i]["query"]
 
                     logging.info("%s send:%s", key, request_data)
-                    resp_data = requests.post(request_url, data=json.dumps(request_data), headers=request_head)
+                    resp_data = requests.post(request_url, data=json.dumps(request_data), headers=request_head, timeout=5)
                     logging.info("%s recv:%s", key, resp_data.text)
                     if resp_data.status_code == 200:
                         msg = json.loads(resp_data.text)
@@ -568,7 +572,7 @@ def test_end():
     excel.sheet_fd.write(zexcel.TOTAL_FAIL_ROW, zexcel.TOTAL_FAIL_COL + 1, test.fail_num,
                          style=zexcel.set_style(zexcel.BLACK, 260, bold=True, align='', pattern_color='light_orange'))
 
-    filename = "../results/" + test.output_file + ".xls"
+    filename = os.path.join(os.path.dirname(__file__) + "/../results/" + test.output_file + ".xls")
     excel.excel_fd.save(filename)  # 保存xls
     logging.info("test end!")
     exit()
