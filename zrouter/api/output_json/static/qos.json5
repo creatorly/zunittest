@@ -7,6 +7,7 @@
                     "errcode": 0,
                     "result": {
                         "enabled": "0",
+                        "rule":1,
                         "download": 1024000,
                         "upload": 1024000
                     },
@@ -18,7 +19,7 @@
         }
     ],
 
-    "test_002_set_qos": [
+    "test_002_set_qos_rule2": [
         {
             "data": [
                 {
@@ -37,8 +38,9 @@
                     "errcode": 0,
                     "result": {
                         "enabled": "1",
+                        "rule":2,
                         "download": 204800,
-                        "upload": 1024000
+                        "upload": 204800
                     },
                     "api": "get"
                 }
@@ -48,7 +50,69 @@
         }
     ],
 
-    "test_003_reset_qos": [
+    "test_003_set_qos_rule3": [
+        {
+            "data": [
+                {
+                    "module": "qos",
+                    "errcode": 0,
+                    "api": "set"
+                }
+            ],
+            "msg_id": 11111,
+            "errcode": 0
+        },
+        {
+            "data": [
+                {
+                    "module": "qos",
+                    "errcode": 0,
+                    "result": {
+                        "enabled": "1",
+                        "rule":3,
+                        "download": 1024,
+                        "upload": 1024
+                    },
+                    "api": "get"
+                }
+            ],
+            "msg_id": 11111,
+            "errcode": 0
+        }
+    ],
+
+    "test_004_set_qos_rule4": [
+        {
+            "data": [
+                {
+                    "module": "qos",
+                    "errcode": 0,
+                    "api": "set"
+                }
+            ],
+            "msg_id": 11111,
+            "errcode": 0
+        },
+        {
+            "data": [
+                {
+                    "module": "qos",
+                    "errcode": 0,
+                    "result": {
+                        "enabled": "1",
+                        "rule":4,
+                        "download": 40960,
+                        "upload": 40960
+                    },
+                    "api": "get"
+                }
+            ],
+            "msg_id": 11111,
+            "errcode": 0
+        }
+    ],
+
+    "test_005_reset_qos": [
         {
             "data": [
                 {
@@ -67,6 +131,7 @@
                     "errcode": 0,
                     "result": {
                         "enabled": "0",
+                        "rule":1,
                         "download": 1024000,
                         "upload": 1024000
                     },
@@ -78,7 +143,7 @@
         }
     ],
 
-    "test_004_get_qos_node": [
+    "test_006_get_qos_node": [
         {
             "data": [{
                 "module": "qos",
@@ -94,7 +159,7 @@
         }
     ],
 
-    "test_005_add_qos_node": [
+    "test_007_add_qos_node": [
         {
            "data": [
              {
@@ -130,7 +195,7 @@
         }
     ],
 
-    "test_006_modify_qos_node": [
+    "test_008_modify_qos_node": [
         {
             "data": [{
                 "module": "qos",
@@ -164,7 +229,7 @@
         }
     ],
 
-    "test_007_del_qos_node": [
+    "test_009_del_qos_node": [
         {
             "data": [
                 {
@@ -187,81 +252,6 @@
                 },
                 "api": "get_node"
             }],
-            "msg_id": 11111,
-            "errcode": 0
-        }
-    ],
-
-    "test_008_get_rule": [
-        {
-            "data": [
-                {
-                    "module": "qos",
-                    "errcode": 0,
-                    "result": {
-                        "rule": "1"
-                    },
-                    "api": "get_rule"
-                }
-            ],
-            "msg_id": 11111,
-            "errcode": 0
-        }
-    ],
-
-    "test_009_set_rule": [
-        {
-            "data": [
-                {
-                    "module": "qos",
-                    "errcode": 0,
-                    "result":{},
-                    "api": "set_rule"
-                }
-            ],
-            "msg_id": 11111,
-            "errcode": 0
-        },
-        {
-            "data": [
-                {
-                    "module": "qos",
-                    "errcode": 0,
-                    "result": {
-                        "rule": "4"
-                    },
-                    "api": "get_rule"
-                }
-            ],
-            "msg_id": 11111,
-            "errcode": 0
-        }
-    ],
-
-    "test_010_reset_rule": [
-        {
-            "data": [
-                {
-                    "module": "qos",
-                    "errcode": 0,
-                    "result":{},
-                    "api": "set_rule"
-                }
-            ],
-            "msg_id": 11111,
-            "errcode": 0
-        },
-        {
-            "data": [
-                {
-                    "module": "qos",
-                    "errcode": 0,
-                    "result": {
-                        "rule": "1"
-                    },
-                    "api": "get_rule"
-                }
-            ],
             "msg_id": 11111,
             "errcode": 0
         }

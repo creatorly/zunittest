@@ -195,7 +195,8 @@ def test_json_update():
     server.output_dict["test_009_2.4G_remove"][1]["part_same"]["data"]["devUuid"] = new_str + "_LED2_4"
 
     config = configparser.ConfigParser()
-    config.read("../conf/zgateway.conf", encoding="utf-8")
+    config_path = os.path.join(os.path.dirname(__file__) + '/../conf/zgateway.conf')
+    config.read(config_path, encoding="utf-8")
     if config.has_option("link", "zgateway"):
         new_str = config.get("link", "zgateway")
         server.output_dict["test_002_check_gateway_version"][0]["part_same"]["data"]["version"] = new_str
@@ -378,7 +379,7 @@ def start_connect_ssh(info):
     logging.info(info["passwd"])
 
     try:
-        client.connect(hostname=info["host"], port=22, username=info["username"], password=info["passwd"])
+        client.connect(hostname=info["host"], port=1022, username=info["username"], password=info["passwd"])
     except Exception as e:
         print("---异常---：", e)
         return True
