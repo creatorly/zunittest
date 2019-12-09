@@ -8,12 +8,16 @@ import logging
 import requests
 import json
 import json5
+import base64
 import time
 import configparser
 import sys
 import paramiko
 import uuid
 import os
+import threading
+import paho.mqtt.client as mqtt
+from paho.mqtt.client import Client
 
 sys.path.append("../../../..")
 from zutils import zexcel
@@ -23,6 +27,7 @@ from zrouter.func.wifi.scripts import utils_wifi
 class ServerInfo(object):
     url = ''
     headers = {}
+    password = ''
     input_dict = {}
     output_dict = {}
     wait_time = 1
@@ -41,10 +46,6 @@ class TestInfo(object):
     modules = []
     start_time = ''
     output_file = ''
-    zigbee_devId = "000d6f000b7ab1d3"
-    zigbee_prodTypeId = "SmartPlug"
-    ble_devId = "011001275a"
-    ble_prodTypeId = "8grteg3l"
 
 
 class ExcelInfo(object):
@@ -55,9 +56,18 @@ class ExcelInfo(object):
     module_info = {}
 
 
+class MqttClientInfo(object):
+    fd = ""
+    wait_event = threading.Event()
+    control_response = False
+    broadcast_response = False
+    stop = False
+
+
 server = ServerInfo
 test = TestInfo
 excel = ExcelInfo
+mqttClient = MqttClientInfo
 
 
 def data_init():
@@ -70,30 +80,6 @@ def data_init():
         server.url = config.get("link", "host")
     else:
         print("miss url")
-        exit()
-
-    if config.has_option("link", "zigbee_devId"):
-        test.zigbee_devId = config.get("link", "zigbee_devId")
-    else:
-        print("miss zigbee_devId")
-        exit()
-
-    if config.has_option("link", "zigbee_prodTypeId"):
-        test.zigbee_prodTypeId = config.get("link", "zigbee_prodTypeId")
-    else:
-        print("miss zigbee_prodTypeId")
-        exit()
-
-    if config.has_option("link", "ble_devId"):
-        test.ble_devId = config.get("link", "ble_devId")
-    else:
-        print("miss ble_devId")
-        exit()
-
-    if config.has_option("link", "ble_prodTypeId"):
-        test.ble_prodTypeId = config.get("link", "ble_prodTypeId")
-    else:
-        print("miss ble_prodTypeId")
         exit()
 
     config_path = os.path.join(os.path.dirname(__file__) + '/../../../zrouter.conf')
@@ -114,6 +100,12 @@ def data_init():
         test.mac = config.get("test", "mac")
     else:
         print("miss version")
+        exit()
+
+    if config.has_option("server", "passwd"):
+        server.password = config.get("server", "passwd")
+    else:
+        print("miss passwd")
         exit()
 
     server.headers = {'content-type': 'application/json'}
@@ -171,28 +163,13 @@ def test_json_update():
     server.input_dict["test_004_set_device_ssid"][2]["query"]["data"][1]["v"] = "ZR_P" + sn[4] + sn[5]
     server.input_dict["test_004_set_device_ssid"][2]["query"]["devId"] = new_str
 
-    server.input_dict["test_007_2.4G_connect"][20]["connect"]["devId"] = new_str + "_LED2_4"
-    server.input_dict["test_007_2.4G_connect"][21]["query"]["devId"] = test.ble_devId
-    server.input_dict["test_007_2.4G_connect"][21]["query"]["prodTypeId"] = test.ble_prodTypeId
-    server.input_dict["test_008_2.4G_control"][0]["control"]["devId"] = test.ble_devId
-    server.input_dict["test_008_2.4G_control"][0]["control"]["devUuid"] = test.ble_devId
-    server.input_dict["test_008_2.4G_control"][0]["control"]["prodTypeId"] = test.ble_prodTypeId
-    server.input_dict["test_009_2.4G_remove"][0]["control"]["devId"] = new_str + "_LED2_4"
-    server.input_dict["test_009_2.4G_remove"][0]["control"]["devUuid"] = new_str + "_LED2_4"
-    server.input_dict["test_009_2.4G_remove"][0]["control"]["data"][1]["v"] = test.ble_devId
-
     server.output_dict["test_002_check_gateway_version"][0]["part_same"]["data"]["deviceMac"] = new_str
     server.output_dict["test_003_check_iot_version"][1]["part_same"]["data"]["gatewayMac"] = new_str
     server.output_dict["test_003_check_iot_version"][2]["part_same"]["data"]["deviceMac"] = new_str + "_S3GATEWAY"
     server.output_dict["test_003_check_iot_version"][2]["part_same"]["data"]["gatewayMac"] = new_str
     server.output_dict["test_003_check_iot_version"][3]["part_same"]["data"]["deviceMac"] = new_str + "_LED2_4"
     server.output_dict["test_003_check_iot_version"][3]["part_same"]["data"]["gatewayMac"] = new_str
-    server.output_dict["test_005_zigbee_connect"][1]["part_same"]["data"]["gatewayMac"] = new_str
-    server.output_dict["test_007_2.4G_connect"][21]["part_same"]["data"]["gatewayMac"] = new_str
-    server.output_dict["test_007_2.4G_connect"][21]["part_same"]["data"]["deviceMac"] = test.ble_devId
-    server.output_dict["test_007_2.4G_connect"][21]["part_same"]["data"]["prodTypeId"] = test.ble_prodTypeId
-    server.output_dict["test_009_2.4G_remove"][1]["part_same"]["data"]["devId"] = new_str + "_LED2_4"
-    server.output_dict["test_009_2.4G_remove"][1]["part_same"]["data"]["devUuid"] = new_str + "_LED2_4"
+    server.output_dict["test_005_mqtt_connect"][1]["part_same"]["data"]["gatewayMac"] = new_str
 
     config = configparser.ConfigParser()
     config_path = os.path.join(os.path.dirname(__file__) + '/../conf/zgateway.conf')
@@ -221,99 +198,6 @@ def test_json_update():
     # print(server.input_dict)
     # print(server.output_dict)
     logging.info("json5更新完成...")
-
-
-# 由于zigbee网关的mac需要获取才能得到，得到后再更新到json中
-def zigbee_json_update(zigbeeGate):
-    server.input_dict["test_003_check_iot_version"][1]["query"]["devId"] = zigbeeGate
-    server.input_dict["test_005_zigbee_connect"][0]["connect"]["devId"] = zigbeeGate
-    server.input_dict["test_005_zigbee_connect"][1]["query"]["devId"] = test.zigbee_devId
-    server.input_dict["test_005_zigbee_connect"][1]["query"]["prodTypeId"] = test.zigbee_prodTypeId
-    server.input_dict["test_006_zigbee_control"][0]["control"]["devId"] = test.zigbee_devId
-    server.input_dict["test_006_zigbee_control"][0]["control"]["devUuid"] = test.zigbee_devId
-    server.input_dict["test_006_zigbee_control"][0]["control"]["prodTypeId"] = test.zigbee_prodTypeId
-    server.input_dict["test_006_zigbee_control"][2]["control"]["devId"] = test.zigbee_devId
-    server.input_dict["test_006_zigbee_control"][2]["control"]["devUuid"] = test.zigbee_devId
-    server.input_dict["test_006_zigbee_control"][2]["control"]["prodTypeId"] = test.zigbee_prodTypeId
-
-    server.input_dict["test_007_2.4G_connect"][0]["control"]["devId"] = test.zigbee_devId
-    server.input_dict["test_007_2.4G_connect"][0]["control"]["devUuid"] = test.zigbee_devId
-    server.input_dict["test_007_2.4G_connect"][0]["control"]["prodTypeId"] = test.zigbee_prodTypeId
-    server.input_dict["test_007_2.4G_connect"][2]["control"]["devId"] = test.zigbee_devId
-    server.input_dict["test_007_2.4G_connect"][2]["control"]["devUuid"] = test.zigbee_devId
-    server.input_dict["test_007_2.4G_connect"][2]["control"]["prodTypeId"] = test.zigbee_prodTypeId
-    server.input_dict["test_007_2.4G_connect"][4]["control"]["devId"] = test.zigbee_devId
-    server.input_dict["test_007_2.4G_connect"][4]["control"]["devUuid"] = test.zigbee_devId
-    server.input_dict["test_007_2.4G_connect"][4]["control"]["prodTypeId"] = test.zigbee_prodTypeId
-    server.input_dict["test_007_2.4G_connect"][6]["control"]["devId"] = test.zigbee_devId
-    server.input_dict["test_007_2.4G_connect"][6]["control"]["devUuid"] = test.zigbee_devId
-    server.input_dict["test_007_2.4G_connect"][6]["control"]["prodTypeId"] = test.zigbee_prodTypeId
-    server.input_dict["test_007_2.4G_connect"][8]["control"]["devId"] = test.zigbee_devId
-    server.input_dict["test_007_2.4G_connect"][8]["control"]["devUuid"] = test.zigbee_devId
-    server.input_dict["test_007_2.4G_connect"][8]["control"]["prodTypeId"] = test.zigbee_prodTypeId
-    server.input_dict["test_007_2.4G_connect"][10]["control"]["devId"] = test.zigbee_devId
-    server.input_dict["test_007_2.4G_connect"][10]["control"]["devUuid"] = test.zigbee_devId
-    server.input_dict["test_007_2.4G_connect"][10]["control"]["prodTypeId"] = test.zigbee_prodTypeId
-    server.input_dict["test_007_2.4G_connect"][12]["control"]["devId"] = test.zigbee_devId
-    server.input_dict["test_007_2.4G_connect"][12]["control"]["devUuid"] = test.zigbee_devId
-    server.input_dict["test_007_2.4G_connect"][12]["control"]["prodTypeId"] = test.zigbee_prodTypeId
-    server.input_dict["test_007_2.4G_connect"][14]["control"]["devId"] = test.zigbee_devId
-    server.input_dict["test_007_2.4G_connect"][14]["control"]["devUuid"] = test.zigbee_devId
-    server.input_dict["test_007_2.4G_connect"][14]["control"]["prodTypeId"] = test.zigbee_prodTypeId
-    server.input_dict["test_007_2.4G_connect"][16]["control"]["devId"] = test.zigbee_devId
-    server.input_dict["test_007_2.4G_connect"][16]["control"]["devUuid"] = test.zigbee_devId
-    server.input_dict["test_007_2.4G_connect"][16]["control"]["prodTypeId"] = test.zigbee_prodTypeId
-    server.input_dict["test_007_2.4G_connect"][18]["control"]["devId"] = test.zigbee_devId
-    server.input_dict["test_007_2.4G_connect"][18]["control"]["devUuid"] = test.zigbee_devId
-    server.input_dict["test_007_2.4G_connect"][18]["control"]["prodTypeId"] = test.zigbee_prodTypeId
-
-    server.input_dict["test_010_zigbee_remove"][0]["control"]["devId"] = zigbeeGate
-    server.input_dict["test_010_zigbee_remove"][0]["control"]["devUuid"] = zigbeeGate
-    server.input_dict["test_010_zigbee_remove"][0]["control"]["data"][0]["v"] = test.zigbee_devId
-
-    server.output_dict["test_003_check_iot_version"][1]["part_same"]["data"]["deviceMac"] = zigbeeGate
-    server.output_dict["test_005_zigbee_connect"][1]["part_same"]["data"]["deviceMac"] = test.zigbee_devId
-    server.output_dict["test_005_zigbee_connect"][1]["part_same"]["data"]["prodTypeId"] = test.zigbee_prodTypeId
-    server.output_dict["test_006_zigbee_control"][1]["part_same"]["data"]["devId"] = test.zigbee_devId
-    server.output_dict["test_006_zigbee_control"][1]["part_same"]["data"]["devUuid"] = test.zigbee_devId
-    server.output_dict["test_006_zigbee_control"][1]["part_same"]["data"]["prodTypeId"] = test.zigbee_prodTypeId
-    server.output_dict["test_006_zigbee_control"][3]["part_same"]["data"]["devId"] = test.zigbee_devId
-    server.output_dict["test_006_zigbee_control"][3]["part_same"]["data"]["devUuid"] = test.zigbee_devId
-    server.output_dict["test_006_zigbee_control"][3]["part_same"]["data"]["prodTypeId"] = test.zigbee_prodTypeId
-    server.output_dict["test_007_2.4G_connect"][1]["part_same"]["data"]["devId"] = test.zigbee_devId
-    server.output_dict["test_007_2.4G_connect"][1]["part_same"]["data"]["devUuid"] = test.zigbee_devId
-    server.output_dict["test_007_2.4G_connect"][1]["part_same"]["data"]["prodTypeId"] = test.zigbee_prodTypeId
-    server.output_dict["test_007_2.4G_connect"][3]["part_same"]["data"]["devId"] = test.zigbee_devId
-    server.output_dict["test_007_2.4G_connect"][3]["part_same"]["data"]["devUuid"] = test.zigbee_devId
-    server.output_dict["test_007_2.4G_connect"][3]["part_same"]["data"]["prodTypeId"] = test.zigbee_prodTypeId
-    server.output_dict["test_007_2.4G_connect"][5]["part_same"]["data"]["devId"] = test.zigbee_devId
-    server.output_dict["test_007_2.4G_connect"][5]["part_same"]["data"]["devUuid"] = test.zigbee_devId
-    server.output_dict["test_007_2.4G_connect"][5]["part_same"]["data"]["prodTypeId"] = test.zigbee_prodTypeId
-    server.output_dict["test_007_2.4G_connect"][7]["part_same"]["data"]["devId"] = test.zigbee_devId
-    server.output_dict["test_007_2.4G_connect"][7]["part_same"]["data"]["devUuid"] = test.zigbee_devId
-    server.output_dict["test_007_2.4G_connect"][7]["part_same"]["data"]["prodTypeId"] = test.zigbee_prodTypeId
-    server.output_dict["test_007_2.4G_connect"][9]["part_same"]["data"]["devId"] = test.zigbee_devId
-    server.output_dict["test_007_2.4G_connect"][9]["part_same"]["data"]["devUuid"] = test.zigbee_devId
-    server.output_dict["test_007_2.4G_connect"][9]["part_same"]["data"]["prodTypeId"] = test.zigbee_prodTypeId
-    server.output_dict["test_007_2.4G_connect"][11]["part_same"]["data"]["devId"] = test.zigbee_devId
-    server.output_dict["test_007_2.4G_connect"][11]["part_same"]["data"]["devUuid"] = test.zigbee_devId
-    server.output_dict["test_007_2.4G_connect"][11]["part_same"]["data"]["prodTypeId"] = test.zigbee_prodTypeId
-    server.output_dict["test_007_2.4G_connect"][13]["part_same"]["data"]["devId"] = test.zigbee_devId
-    server.output_dict["test_007_2.4G_connect"][13]["part_same"]["data"]["devUuid"] = test.zigbee_devId
-    server.output_dict["test_007_2.4G_connect"][13]["part_same"]["data"]["prodTypeId"] = test.zigbee_prodTypeId
-    server.output_dict["test_007_2.4G_connect"][15]["part_same"]["data"]["devId"] = test.zigbee_devId
-    server.output_dict["test_007_2.4G_connect"][15]["part_same"]["data"]["devUuid"] = test.zigbee_devId
-    server.output_dict["test_007_2.4G_connect"][15]["part_same"]["data"]["prodTypeId"] = test.zigbee_prodTypeId
-    server.output_dict["test_007_2.4G_connect"][17]["part_same"]["data"]["devId"] = test.zigbee_devId
-    server.output_dict["test_007_2.4G_connect"][17]["part_same"]["data"]["devUuid"] = test.zigbee_devId
-    server.output_dict["test_007_2.4G_connect"][17]["part_same"]["data"]["prodTypeId"] = test.zigbee_prodTypeId
-    server.output_dict["test_007_2.4G_connect"][19]["part_same"]["data"]["devId"] = test.zigbee_devId
-    server.output_dict["test_007_2.4G_connect"][19]["part_same"]["data"]["devUuid"] = test.zigbee_devId
-    server.output_dict["test_007_2.4G_connect"][19]["part_same"]["data"]["prodTypeId"] = test.zigbee_prodTypeId
-    server.output_dict["test_010_zigbee_remove"][1]["part_same"]["data"]["data"][0]["v"] = test.zigbee_devId
-
-    # print(server.input_dict)
-    # print(server.output_dict)
 
 
 def test_json_init(module_name):
@@ -375,14 +259,15 @@ def start_connect_ssh(info):
 
     # 连接SSH服务端，以用户名和密码进行认证
     logging.info(info["host"])
+    logging.info(info["port"])
     logging.info(info["username"])
-    logging.info(info["passwd"])
+    logging.info(server.password)
 
     try:
-        client.connect(hostname=info["host"], port=1022, username=info["username"], password=info["passwd"])
+        client.connect(hostname=info["host"], port=info["port"], username=info["username"], password=server.password)
     except Exception as e:
         print("---异常---：", e)
-        return True
+        return False
 
     if client:
         # 打开一个Channel并执行命令
@@ -393,12 +278,162 @@ def start_connect_ssh(info):
 
         # 关闭SSHClient
         client.close()
-        conn_result = False
-
-    else:
         conn_result = True
 
+    else:
+        conn_result = False
+
     return conn_result
+
+
+def restart_zgateway(info):
+    # 实例化SSHClient
+    client = paramiko.SSHClient()
+
+    # 自动添加策略，保存服务器的主机名和密钥信息，如果不添加，那么不再本地know_hosts文件中记录的主机将无法连接
+    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+    # 连接SSH服务端，以用户名和密码进行认证
+    logging.info(info["host"])
+    logging.info(info["port"])
+    logging.info(info["username"])
+    logging.info(server.password)
+
+    try:
+        client.connect(hostname=info["host"], port=info["port"], username=info["username"], password=server.password)
+    except Exception as e:
+        print("---异常---：", e)
+        return False
+
+    if client:
+        # 使用invoke_shell方式执行脚本，用exec_command会出现问题
+        chan = client.invoke_shell()
+        chan.settimeout(9000)
+        chan.send("/zihome/plugins/zgateway/run.sh restart" + '\n')
+        # result = chan.recv(4096)
+        # logging.info(result)
+
+        time.sleep(5)
+        # 关闭SSHClient
+        client.close()
+        conn_result = True
+
+    else:
+        conn_result = False
+
+    return conn_result
+
+
+# 消息处理函数
+def mqtt_on_message_come(lient, userdata, msg):
+    logging.info(msg.topic + " " + ":" + str(msg.payload))
+    if msg.topic == "local/iot/ziroom/PYTHON/112233445566/control":
+        mqttClient.control_response = True
+    elif msg.topic == "local/iot/ziroom/broadcast":
+        mqttClient.broadcast_response = True
+
+
+# subscribe 消息
+def mqtt_on_subscribe(mqttClient):
+    mqttClient.subscribe("local/iot/ziroom/PYTHON/112233445566/control", 1)
+    mqttClient.subscribe("local/iot/ziroom/broadcast", 1)
+    publish_data = {
+        "msgType": "DEVICE_INFO_REPORT",
+        "devId": "112233445566",
+        "prodTypeId": "PYTHON",
+        "hardwareversion": "0.0.1",
+        "softversion": "0.0.1",
+        "clientId": "PYTHON_MQTT_CLIENT_112233445566"
+    }
+
+    if mqttClient.publish("local/iot/ziroom/PYTHON/112233445566/notify", json.dumps(publish_data), 0):
+        logging.info("publish ok")
+    else:
+        logging.info("publish fail")
+
+    mqttClient.on_message = mqtt_on_message_come  # 消息到来处理函数
+
+
+def zgteway_mqtt_on_connect(info):
+    mqttClient.fd = Client(client_id="PYTHON_MQTT_CLIENT_112233445566")
+
+    # cacert.pem certificate.pfx
+    mqttClient.fd.tls_set(ca_certs="zgateway_cacert.pem", certfile=None, keyfile=None, cert_reqs=mqtt.ssl.CERT_REQUIRED,
+                          tls_version=mqtt.ssl.PROTOCOL_TLSv1, ciphers=None)
+    mqttClient.fd.tls_insecure_set(True)
+    will_payload = {
+        "msgType": "DEVICE_DISCONNECT",
+        "devId": "112233445566",
+        "prodTypeId": "PYTHON",
+        "clientId": "PYTHON_MQTT_CLIENT_112233445566"
+    }
+    mqttClient.fd.will_set("local/iot/ziroom/onoffline", json.dumps(will_payload), 1)
+
+    if mqtt.MQTT_ERR_SUCCESS == mqttClient.fd.connect(info["host"], 6885, 20):
+        logging.info("connect ok")
+        mqttClient.fd.loop_start()
+        mqtt_on_subscribe(mqttClient.fd)
+    else:
+        logging.info("connect fail")
+        return False
+
+    while True:
+        if mqttClient.stop:
+            return False
+        else:
+            pass
+
+
+def start_connect_zgteway_mqtt(info):
+    threading.Thread(target=zgteway_mqtt_on_connect, args=(info,)).start()
+    return True
+
+
+def open_remote_ssh(info):
+    mqttClient.fd = Client()
+
+    # cacert.pem certificate.pfx
+    mqttClient.fd.tls_set(ca_certs="remote_cacert.pem", certfile=None, keyfile=None, cert_reqs=mqtt.ssl.CERT_REQUIRED,
+                          tls_version=mqtt.ssl.PROTOCOL_TLSv1, ciphers=None)
+    mqttClient.fd.tls_insecure_set(True)
+    publish_data = {
+        "content": "[common]\nserver_addr = 47.94.157.88\nserver_port = 44922\n\n\n[ssh]\ntype = tcp\nlocal_ip = 127.0.0.1\nlocal_port = 1022\nauthentication_timeout = 0\nremote_port = 44923",
+        "action": "start"}
+    if mqtt.MQTT_ERR_SUCCESS == mqttClient.fd.connect(info["host"], info["port"], 20):
+        mqttClient.fd.loop_start()
+        if mqttClient.fd.publish(info["theme"], json.dumps(publish_data), 0):
+            logging.info("publish ok")
+            return True
+        else:
+            logging.info("publish fail")
+            return False
+    else:
+        logging.info("connect fail")
+        return False
+
+
+def close_remote_ssh(info):
+    mqttClient.fd = Client()
+
+    # cacert.pem certificate.pfx
+    mqttClient.fd.tls_set(ca_certs="remote_cacert.pem", certfile=None, keyfile=None, cert_reqs=mqtt.ssl.CERT_REQUIRED,
+                          tls_version=mqtt.ssl.PROTOCOL_TLSv1, ciphers=None)
+    mqttClient.fd.tls_insecure_set(True)
+    publish_data = {
+        "content": "[common]\nserver_addr = 47.94.157.88\nserver_port = 44922\n\n\n[ssh]\ntype = tcp\nlocal_ip = 127.0.0.1\nlocal_port = 1022\nauthentication_timeout = 0\nremote_port = 44923",
+        "action": "stop"}
+    if mqtt.MQTT_ERR_SUCCESS == mqttClient.fd.connect(info["host"], info["port"], 20):
+        logging.info("connect ok")
+        mqttClient.fd.loop_start()
+        if mqttClient.fd.publish(info["theme"], json.dumps(publish_data), 0):
+            logging.info("publish ok")
+            return True
+        else:
+            logging.info("publish fail")
+            return False
+    else:
+        logging.info("connect fail")
+        return False
 
 
 # src是否包含dst,内容也要相等
@@ -461,29 +496,13 @@ def run_test_case(module_name):
                         request_head = {
                             server.input_dict[key][request_i]["head_1"]: server.input_dict[key][request_i]["head_2"],
                             'content-type': 'application/json'}
-                    # 入网事件
-                    if server.input_dict[key][request_i].__contains__("connect"):
-                        server.wait_time = 30
-                        request_data = server.input_dict[key][request_i]["connect"]
-                    # 解网事件
-                    elif server.input_dict[key][request_i].__contains__("remove"):
-                        server.wait_time = 3
-                        request_data = server.input_dict[key][request_i]["remove"]
-                    # 控制事件
-                    elif server.input_dict[key][request_i].__contains__("control"):
-                        server.wait_time = 3
-                        request_data = server.input_dict[key][request_i]["control"]
-                        server.sno = str(uuid.uuid1())
-                        request_data["sno"] = server.sno
-                    # 控制相应事件（前提要有控制，否则sno会错误）
-                    elif server.input_dict[key][request_i].__contains__("control_resp"):
-                        server.wait_time = 1
-                        request_data = server.input_dict[key][request_i]["control_resp"]
-                        request_data["sno"] = server.sno
+
                     # 请求事件
-                    elif server.input_dict[key][request_i].__contains__("query"):
+                    if server.input_dict[key][request_i].__contains__("query"):
                         server.wait_time = 1
                         request_data = server.input_dict[key][request_i]["query"]
+                    else:
+                        server.wait_time = 1
 
                     logging.info("%s send:%s", key, request_data)
                     resp_data = requests.post(request_url, data=json.dumps(request_data), headers=request_head, timeout=5)
@@ -498,23 +517,47 @@ def run_test_case(module_name):
                         elif server.output_dict[key][request_i].__contains__("part_same"):
                             if not comp_json_value(msg, server.output_dict[key][request_i]["part_same"]):
                                 request_result = False
-                        # 获取zigbeeGate的mac
-                        elif server.output_dict[key][request_i].__contains__("Dusun_zigbeeGate"):
-                            if not comp_json_value(msg, server.output_dict[key][request_i]["Dusun_zigbeeGate"]):
-                                request_result = False
-                            else:
-                                i = 0
-                                while i < len(msg["data"][0]):
-                                    if msg["data"][i]["prodTypeId"] == "Dusun_zigbeeGate":
-                                        zigbee_json_update(msg["data"][i]["deviceMac"])
-                                        break
-                                    i += 1
+
                 elif server.input_dict[key][request_i].__contains__("wifi_connect"):
                     if not utils_wifi.start_connect_wifi(server.input_dict[key][request_i]["wifi_connect"]):
                         request_result = False
-                elif server.input_dict[key][request_i].__contains__("ssh_connect"):
-                    if not start_connect_ssh(server.input_dict[key][request_i]["ssh_connect"]):
+                elif server.input_dict[key][request_i].__contains__("check_ssh_on"):
+                    if not start_connect_ssh(server.input_dict[key][request_i]["check_ssh_on"]):
                         request_result = False
+                elif server.input_dict[key][request_i].__contains__("check_ssh_off"):
+                    if start_connect_ssh(server.input_dict[key][request_i]["check_ssh_off"]):
+                        request_result = False
+                elif server.input_dict[key][request_i].__contains__("zgateway_mqtt_connect"):
+                    server.wait_time = 3
+                    if not start_connect_zgteway_mqtt(server.input_dict[key][request_i]["zgateway_mqtt_connect"]):
+                        request_result = False
+                elif server.input_dict[key][request_i].__contains__("zgateway_mqtt_control"):
+                    if not mqttClient.control_response:
+                        request_result = False
+                elif server.input_dict[key][request_i].__contains__("restart_zgateway"):
+                    if not restart_zgateway(server.input_dict[key][request_i]["restart_zgateway"]):
+                        request_result = False
+                    else:
+                        mqttClient.broadcast_response = False
+                        server.wait_time = 15
+                elif server.input_dict[key][request_i].__contains__("check_broadcast"):
+                    server.wait_time = 1
+                    if not mqttClient.broadcast_response:
+                        request_result = False
+                elif server.input_dict[key][request_i].__contains__("zgateway_mqtt_disconnect"):
+                    mqttClient.stop = True
+                    server.wait_time = 5
+                elif server.input_dict[key][request_i].__contains__("open_remote_ssh"):
+                    if not open_remote_ssh(server.input_dict[key][request_i]["open_remote_ssh"]):
+                        server.wait_time = 3
+                        request_result = False
+                elif server.input_dict[key][request_i].__contains__("close_remote_ssh"):
+                    if not close_remote_ssh(server.input_dict[key][request_i]["close_remote_ssh"]):
+                        server.wait_time = 3
+                        request_result = False
+
+                else:
+                    server.wait_time = 1
 
             except Exception as e:
                 logging.info("---异常---：", e)
@@ -525,13 +568,13 @@ def run_test_case(module_name):
 
         # 填写测试结果到excel的第二列
         if request_result:
-            logging.info("pass")
+            logging.info("%s: pass", key)
             excel.sheet_fd.write(excel.row_point, zexcel.CASE_RESULT_COL, "pass",
                                  style=zexcel.set_style(zexcel.GREEN, 240, bold=False, align=''))
             excel.module_info[module_name]["pass"] += 1
             test.pass_num += 1
         else:
-            logging.info("fail")
+            logging.info("%s: fail", key)
             excel.sheet_fd.write(excel.row_point, zexcel.CASE_RESULT_COL, "fail",
                                  style=zexcel.set_style(zexcel.RED, 240, bold=False, align=''))
             excel.module_info[module_name]["fail"] += 1

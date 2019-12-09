@@ -84,7 +84,7 @@ def DOpenPort(portx, bps, timeout):
 
 # 关闭串口
 def DColsePort(ser):
-    uart.fdstate = -1
+    uart.fd = -1
     ser.close()
 
 
@@ -97,22 +97,34 @@ def DWritePort(ser, data):
 
 
 def zigbee_on_off(sn, max_count):
-    url = 'https://tlink.zihome.com/link-handle-gateway/v1/operate/device/control'
-    payload = {
+    control_url = 'https://gw.zihome.com/link-control/v1/device/controlDevice'
+    control_payload = {
+        "prodOperCode": "0b8de76d81474fe3a906fba206a04b3e",
+        "hid": "FDS544S8FD5FF4C7B",
+        "userCode": "ebe71c40-42d1-4efb-827c-042c22b23ce6",
+        "userName": "程志广",
+        "userType": 1,
+        "mobile": "18518115887",
         "msgType": "DEVICE_CONTROL",
-        "devId": "000d6f000b7a976b",
+        "devId": "000d6f000b7ab1d3",
+        "devUuid": "000d6f000b7ab1d3",
         "prodTypeId": "SmartPlug",
         "time": "2018-05-14 10:10:10",
-        "sno": "123",
+        "sno": "26bf95ac-eb03-11e9-96d4-d017c29ab7d1",
         "attribute": "metersocket_switchstate",
         "command": "set_switchstate",
-        "data": [{
-            "k": "switchstate",
-            "v": "11"
-        }
-        ]
+        "data": [
+            {
+                "k": "switchstate",
+                "v": "11"
+            }
+        ],
     }
-    headers = {'GATEWAY-VALIDATE': 'kLSIUlsSLILEKXasAAALIELKFJCKSILidksKALSIDKCKAKSIDKOA',
+    resp_url = 'https://gw.zihome.com/link-control-record/v1/query/queryRecordBySno'
+    resp_payload = {
+        "sno": "94a11da4-eb0c-11e9-abfd-d017c29ab7d1"
+    }
+    headers = {'AccessToken': 'asdwefe3232ffhdkal82iedjfalki290',
                'content-type': 'application/json'}
 
     i = 0
@@ -120,42 +132,33 @@ def zigbee_on_off(sn, max_count):
 
     while i < max_count:
         i += 1
-        payload["devId"] = sn
-        payload["sno"] = str(uuid.uuid1())
-        payload["data"][0]["v"] = str(power_value)
-        logging.info(payload)
-        result = requests.post(url, data=json.dumps(payload), headers=headers, timeout=(5, 5))
+        control_payload["devId"] = sn
+        control_payload["devUuid"] = sn
+        control_payload["sno"] = str(uuid.uuid1())
+        control_payload["data"][0]["v"] = str(power_value)
+        logging.info(control_payload)
+        result = requests.post(control_url, data=json.dumps(control_payload), headers=headers, timeout=(5, 5))
         logging.info("1111 %s", result.text)
         if result.status_code == 200:
             msg = json.loads(result.text)
             if 200 == msg["code"]:
-                if 10 == power_value:
-                    power_value = 11
-                else:
-                    power_value = 10
+                time.sleep(1)
+                logging.info(resp_payload)
+                resp_payload["sno"] = control_payload["sno"]
+                result = requests.post(resp_url, data=json.dumps(resp_payload), headers=headers, timeout=(5, 5))
+                logging.info("2222 %s", result.text)
+                if result.status_code == 200:
+                    msg = json.loads(result.text)
+                    if 200 == msg["code"]:
+                        if 10 == power_value:
+                            power_value = 11
+                        else:
+                            power_value = 10
             else:
                 return False
         else:
             return False
 
-        time.sleep(2)
-
-    return True
-
-
-def blt_on_off(ser, sn, max_count):
-    i = 0
-    power_value = 1
-
-    while i < max_count:
-        i += 1
-
-        if 0 == power_value:
-            power_value = 1
-        else:
-            power_value = 0
-
-        send_set_power(ser, sn, power_value)
         time.sleep(2)
 
     return True
@@ -246,48 +249,62 @@ def uart_read_data(ser1, ser2):
         if ser.in_waiting:
             logging.info(ser)
             readbuf = ser.read(ser.in_waiting)
-            if readbuf[0] == 0x55 and readbuf[1] == 0xaa:
-                readstr = readbuf
-            else:
+            if len(readbuf) > 0:
                 readstr = readstr + readbuf
+                if not Led2_4Protocol_PacketDeal(readstr):
+                    readstr = ''
 
-            hexShow(readstr)
-            # logging.info("step:%d", uart.step)
-            # logging.info("len:%d", len(readstr))
-            if uart.step == 0:
-                if (readstr[3] == 0x08) and (len(readstr) > 70):
-                    uart.sn[0] = readstr[29]
-                    uart.sn[1] = readstr[30]
-                    uart.sn[2] = readstr[31]
-                    uart.sn[3] = readstr[32]
-                    uart.sn[4] = readstr[33]
-                    uart.sn[5] = readstr[34]
-                    uart.sn[6] = readstr[35]
-                    uart.sn[7] = readstr[36]
-                    uart.sn[8] = readstr[37]
-                    uart.sn[9] = readstr[38]
-                    logging.info("add succuss")
-                    uart.step = 0x08
-                    uart.response = True
-                    uart.write_event.set()
 
-            elif uart.step == 0x0c:
-                if (readstr[3] == 0x0D) and (len(readstr) > 25):
-                    logging.info("control success")
-                    uart.step = 0x09
-                    uart.response = True
-                    uart.write_event.set()
-            elif uart.step == 0x09:
-                if readbuf[3] == 0x09:
-                    if uart.fd == 1:
-                        uart.fd = 2
-                    elif uart.fd == 2:
-                        uart.fd = 1
+def Led2_4Protocol_PacketDeal(readstr):
+    while '' != readstr:
+        hexShow(readstr)
+        if readstr[0] != 0x55 or readstr[1] != 0xaa:
+            return False
 
-                    logging.info("del succuss")
-                    uart.step = 0
-                    uart.response = True
-                    uart.write_event.set()
+        if len(readstr) >= 6:
+            total_length = readstr[5] + 7
+            if len(readstr) < total_length:
+                return True
+        else:
+            return True
+
+        # logging.info("step:%d", uart.step)
+        # logging.info("len:%d", len(readstr))
+        if uart.step == 0:
+            if (readstr[3] == 0x08) and (len(readstr) > 70):
+                uart.sn[0] = readstr[29]
+                uart.sn[1] = readstr[30]
+                uart.sn[2] = readstr[31]
+                uart.sn[3] = readstr[32]
+                uart.sn[4] = readstr[33]
+                uart.sn[5] = readstr[34]
+                uart.sn[6] = readstr[35]
+                uart.sn[7] = readstr[36]
+                uart.sn[8] = readstr[37]
+                uart.sn[9] = readstr[38]
+                logging.info("add succuss")
+                uart.step = 0x08
+                uart.response = True
+                uart.write_event.set()
+        elif uart.step == 0x0c:
+            if (readstr[3] == 0x0D) and (len(readstr) > 25):
+                logging.info("control success")
+                uart.step = 0x09
+                uart.response = True
+                uart.write_event.set()
+        elif uart.step == 0x09:
+            if readstr[3] == 0x09:
+                if uart.fd == 1:
+                    uart.fd = 2
+                elif uart.fd == 2:
+                    uart.fd = 1
+
+                logging.info("del succuss")
+                uart.step = 0
+                uart.response = True
+                uart.write_event.set()
+
+        readstr = readstr[total_length:]
 
 
 # 测试任务
@@ -303,17 +320,11 @@ def uart_send_data(ser1, ser2):
             logging.info("count:%d", uart.count)
             logging.info("fail:%d", uart.fail)
             uart.count += 1
-            # zigbee_on_off("000d6f000b7ab1d3", 12)
-            sn = uart.switch_sn.split(" ")
-            i = 0
-            while i < len(sn):
-                sn[i] = int(sn[i], base=16)
-                i += 1
-            blt_on_off(uart.fd3, sn, 12)
-            stop_add_light(ser)
+            # zigbee_on_off("000d6f000b7a976b", 12)
             time.sleep(1)
             start_add_light(ser)
         elif uart.step == 0x08:
+            send_add_ack(ser)
             send_add_ack(ser)
             continue
         elif uart.step == 0x0c:
@@ -333,24 +344,25 @@ def uart_send_data(ser1, ser2):
 
 
 if __name__ == "__main__":
-    if 5 != len(sys.argv):
-        print("please enter COM1 COM2 COM3 sn")
-        print("as:COM4 COM5 COM6 \"30 31 31 30 30 31 32 32 32 61\"")
-        exit()
-    else:
-        uart.tty1 = sys.argv[1]
-        uart.tty2 = sys.argv[2]
-        uart.tty3 = sys.argv[3]
-        uart.switch_sn = sys.argv[4]
+    # if 4 != len(sys.argv):
+    #     print("please enter COM1 COM2 sn")
+    #     print("as:COM4 COM5 \"30 31 31 30 30 31 32 32 32 61\"")
+    #     exit()
+    # else:
+    #     uart.tty1 = sys.argv[1]
+    #     uart.tty2 = sys.argv[2]
+    #     uart.switch_sn = sys.argv[4]
+
+    uart.tty1 = "COM6"
+    uart.tty2 = "COM4"
+    uart.switch_sn = "30 31 31 30 30 31 35 65 34 66"
 
     logging_init()
     uart.fd1 = DOpenPort(uart.tty1, 115200, None)
     uart.fd2 = DOpenPort(uart.tty2, 115200, None)
-    uart.fd3 = DOpenPort(uart.tty3, 115200, None)
     logging.info(uart.fd1)
     logging.info(uart.fd2)
-    logging.info(uart.fd3)
     uart.fd = 1
-    if(uart.fd1 != -1) and (uart.fd2 != -1) and (uart.fd3 != -1):  # 判断串口是否成功打开
+    if(uart.fd1 != -1) and (uart.fd2 != -1):  # 判断串口是否成功打开
         threading.Thread(target=uart_read_data, args=(uart.fd1, uart.fd2)).start()
         threading.Thread(target=uart_send_data, args=(uart.fd1, uart.fd2)).start()
