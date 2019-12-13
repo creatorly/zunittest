@@ -36,7 +36,7 @@ uart = UartInfo(-1, 0, 0)
 
 
 def logging_init():
-    logging.basicConfig(  # filename="log/test.log", # 指定输出的文件
+    logging.basicConfig(# filename="log/Zigbee_Add_Remove_Test.log",
         level=logging.DEBUG,
         format='%(asctime)s - %(filename)s[line:%(lineno)d] - %(levelname)s: %(message)s')
 
@@ -97,7 +97,7 @@ def DWritePort(ser, data):
 
 
 def zigbee_on_off(sn, max_count):
-    control_url = 'https://gw.zihome.com/link-control/v1/device/controlDevice'
+    control_url = 'https://tlink.zihome.com/link-control/v1/device/controlDevice'
     control_payload = {
         "prodOperCode": "0b8de76d81474fe3a906fba206a04b3e",
         "hid": "FDS544S8FD5FF4C7B",
@@ -120,7 +120,7 @@ def zigbee_on_off(sn, max_count):
             }
         ],
     }
-    resp_url = 'https://gw.zihome.com/link-control-record/v1/query/queryRecordBySno'
+    resp_url = 'https://tlink.zihome.com/link-control-record/v1/query/queryRecordBySno'
     resp_payload = {
         "sno": "94a11da4-eb0c-11e9-abfd-d017c29ab7d1"
     }
@@ -150,14 +150,18 @@ def zigbee_on_off(sn, max_count):
                 if result.status_code == 200:
                     msg = json.loads(result.text)
                     if 200 == msg["code"]:
-                        if 10 == power_value:
-                            power_value = 11
-                        else:
-                            power_value = 10
+                        if control_payload["data"][0]["v"] == msg["data"]["data"][0]["v"]:
+                            if 10 == power_value:
+                                power_value = 11
+                            else:
+                                power_value = 10
+                    else:
+                        logging.info("zigbee control fail....")
+                        time.sleep(2)
             else:
-                return False
+                i -= 1
         else:
-            return False
+            i -= 1
 
         time.sleep(2)
 
@@ -239,7 +243,7 @@ def start_del_light(ser, sn):
 # 读数据
 def uart_read_data(ser1, ser2):
     # 循环接收数据，此为死循环，可用线程实现
-    readstr = ""
+    readstr = bytearray([])
     while (-1 != ser1) and (-1 != ser2):
         if uart.fd == 1:
             ser = ser1
@@ -247,16 +251,18 @@ def uart_read_data(ser1, ser2):
             ser = ser2
 
         if ser.in_waiting:
-            logging.info(ser)
             readbuf = ser.read(ser.in_waiting)
             if len(readbuf) > 0:
-                readstr = readstr + readbuf
+                i = 0
+                while i < len(readbuf):
+                    readstr.append(readbuf[i])
+                    i += 1
                 if not Led2_4Protocol_PacketDeal(readstr):
-                    readstr = ''
+                    readstr = bytearray([])
 
 
 def Led2_4Protocol_PacketDeal(readstr):
-    while '' != readstr:
+    while len(readstr) > 0:
         hexShow(readstr)
         if readstr[0] != 0x55 or readstr[1] != 0xaa:
             return False
@@ -264,12 +270,13 @@ def Led2_4Protocol_PacketDeal(readstr):
         if len(readstr) >= 6:
             total_length = readstr[5] + 7
             if len(readstr) < total_length:
+                logging.info("len < total_length")
                 return True
         else:
             return True
 
-        # logging.info("step:%d", uart.step)
-        # logging.info("len:%d", len(readstr))
+        logging.info("step:%d", uart.step)
+        logging.info("len:%d", len(readstr))
         if uart.step == 0:
             if (readstr[3] == 0x08) and (len(readstr) > 70):
                 uart.sn[0] = readstr[29]
@@ -320,11 +327,11 @@ def uart_send_data(ser1, ser2):
             logging.info("count:%d", uart.count)
             logging.info("fail:%d", uart.fail)
             uart.count += 1
-            # zigbee_on_off("000d6f000b7a976b", 12)
+            zigbee_on_off("000d6f000b7ab1d3", 12)
+            stop_add_light(ser)
             time.sleep(1)
             start_add_light(ser)
         elif uart.step == 0x08:
-            send_add_ack(ser)
             send_add_ack(ser)
             continue
         elif uart.step == 0x0c:
@@ -340,7 +347,16 @@ def uart_send_data(ser1, ser2):
         logging.info("give")
         if uart.response == False:
             logging.info("fail")
-            uart.fail += 1
+            if uart.step == 0x0c:
+                uart.step = 0x09
+                continue
+            else:
+                uart.step = 0
+                uart.fail += 1
+                if uart.fd == 1:
+                    uart.fd = 2
+                elif uart.fd == 2:
+                    uart.fd = 1
 
 
 if __name__ == "__main__":
@@ -353,16 +369,17 @@ if __name__ == "__main__":
     #     uart.tty2 = sys.argv[2]
     #     uart.switch_sn = sys.argv[4]
 
-    uart.tty1 = "COM6"
-    uart.tty2 = "COM4"
+    uart.tty1 = "COM4"
+    # uart.tty2 = "COM6"
     uart.switch_sn = "30 31 31 30 30 31 35 65 34 66"
 
     logging_init()
     uart.fd1 = DOpenPort(uart.tty1, 115200, None)
-    uart.fd2 = DOpenPort(uart.tty2, 115200, None)
+    # uart.fd2 = DOpenPort(uart.tty2, 115200, None)
+    uart.fd2 = 1
     logging.info(uart.fd1)
     logging.info(uart.fd2)
     uart.fd = 1
-    if(uart.fd1 != -1) and (uart.fd2 != -1):  # 判断串口是否成功打开
-        threading.Thread(target=uart_read_data, args=(uart.fd1, uart.fd2)).start()
-        threading.Thread(target=uart_send_data, args=(uart.fd1, uart.fd2)).start()
+    if(uart.fd1 != -1):  # 判断串口是否成功打开
+        threading.Thread(target=uart_read_data, args=(uart.fd1, uart.fd1)).start()
+        threading.Thread(target=uart_send_data, args=(uart.fd1, uart.fd1)).start()
