@@ -55,7 +55,7 @@ test = TestInfo
 excel = ExcelInfo
 
 
-def data_init():
+def data_init(module_name):
     # 获取配置文件信息
     config = configparser.ConfigParser()
     config_path = os.path.join(os.path.dirname(__file__) + '/../../../zrouter.conf')
@@ -96,7 +96,7 @@ def data_init():
     test.total_num = 0
     test.pass_num = 0
     test.fail_num = 0
-    test.output_file = time.strftime("%Y%m%d_%H%M%S", time.localtime()) + "_wan_test"
+    test.output_file = time.strftime("%Y%m%d_%H%M%S", time.localtime()) + "_" + module_name + "_test"
     excel.row_point = 0
 
 
@@ -126,9 +126,10 @@ def logging_init():
     return True
 
 
-def excel_init():
+def excel_init(module_name):
     excel.excel_fd = zexcel.excel_init()
-    excel.sheet_fd = zexcel.sheet_init(excel.excel_fd, "WAN测试结果")
+    sheet_name = module_name + "测试结果"
+    excel.sheet_fd = zexcel.sheet_init(excel.excel_fd, sheet_name)
     # 从第二行开始写入
     excel.row_point = 1
 
@@ -266,11 +267,11 @@ def run_test_case(module_name):
     return True
 
 
-def test_start():
-    data_init()
+def test_start(module_name):
+    data_init(module_name)
     logging_init()
     logging.info("test start...")
-    excel_init()
+    excel_init(module_name)
 
 
 def test_end():
@@ -306,7 +307,7 @@ def test_end():
 
 
 if __name__ == '__main__':
-    test_start()
+    test_start("wan")
 
     server.sid = utils_login.get_sid(server.url, server.headers, server.password)
     if not server.sid:

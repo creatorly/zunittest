@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 # Author: ye.lin
 # Time: 2019/06/26
-# Describe：动态api测试，表示ooutput的json是变化的，所以post得到的json和output里面的json内容只要节点名称一致即判断通过
+# Describe：api测试
 
 import logging
 import requests
@@ -55,7 +55,7 @@ test = TestInfo
 excel = ExcelInfo
 
 
-def data_init():
+def data_init(module_name):
     # 获取配置文件信息
     config = configparser.ConfigParser()
     config_path = os.path.join(os.path.dirname(__file__) + '/../../zrouter.conf')
@@ -91,7 +91,7 @@ def data_init():
         print("miss version")
         exit()
 
-    config_path = os.path.join(os.path.dirname(__file__) + '/../conf/api.conf')
+    config_path = os.path.join(os.path.dirname(__file__) + '/../conf/' + module_name + '.conf')
     config.read(config_path, encoding="utf-8")
     if config.has_option("test", test.name + "_modules"):
         test.modules = config.get("test", test.name + "_modules").split(",")
@@ -104,7 +104,7 @@ def data_init():
     test.total_num = 0
     test.pass_num = 0
     test.fail_num = 0
-    test.output_file = time.strftime("%Y%m%d_%H%M%S", time.localtime()) + "_api_test"
+    test.output_file = time.strftime("%Y%m%d_%H%M%S", time.localtime()) + "_" + module_name + "_test"
     excel.row_point = 0
 
 
@@ -134,12 +134,10 @@ def logging_init():
     return True
 
 
-def excel_init():
+def excel_init(module_name):
     excel.excel_fd = zexcel.excel_init()
-    if test.name == "static":
-        excel.sheet_fd = zexcel.sheet_init(excel.excel_fd, "静态API测试结果")
-    elif test.name == "dynamic":
-        excel.sheet_fd = zexcel.sheet_init(excel.excel_fd, "动态API测试结果")
+    sheet_name = test.name + " " + module_name + "测试结果"
+    excel.sheet_fd = zexcel.sheet_init(excel.excel_fd, sheet_name)
     # 从第二行开始写入
     excel.row_point = 1
 
@@ -296,11 +294,11 @@ def run_test_case(module_name):
     return True
 
 
-def test_start():
-    data_init()
+def test_start(module_name):
+    data_init(module_name)
     logging_init()
     logging.info("test start...")
-    excel_init()
+    excel_init(module_name)
 
 
 def test_end():
@@ -342,7 +340,7 @@ if __name__ == '__main__':
     else:
         test.name = sys.argv[1]
 
-    test_start()
+    test_start("api")
 
     server.sid = utils_login.get_sid(server.url, server.headers, server.password)
     if not server.sid:

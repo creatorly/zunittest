@@ -3,14 +3,13 @@
 |------------------|-------------|----|
 |test_001_check_ssh_off | 1 | 检查ssh是否关闭 |
 |test_002_check_gateway_version | 2 | 检查gateway版本是否正常 |
-|test_003_check_iot_version | 2 | 检查iot版本是否正常 |
-|test_004_set_device_ssid | 2 | 设置设备wifi |
-|test_005_mqtt_connect | 1 | mqtt连接 |
-|test_006_mqtt_control | 2 | mqtt控制 |
-|test_007_open_remote_ssh | 2 |  开启远程调试 |
-|test_008_check_broadcast_theme | 2 | 重启zgateway获取broadcast消息 |
-|test_009_close_remote_ssh | 2 | 关闭远程调试 |
-|test_010_mqtt_disconnect | 2 |  关闭mqtt|
+|test_003_set_device_ssid | 2 | 设置设备wifi |
+|test_004_mqtt_connect | 1 | mqtt连接 |
+|test_005_mqtt_control | 2 | mqtt控制 |
+|test_006_open_remote_ssh | 2 |  开启远程调试 |
+|test_007_check_broadcast_theme | 2 | 重启zgateway获取broadcast消息 |
+|test_008_close_remote_ssh | 2 | 关闭远程调试 |
+|test_009_mqtt_disconnect | 2 |  关闭mqtt|
 */
 {
     "test_001_check_local_ssh_off": [
@@ -33,40 +32,7 @@
         }
     ],
 
-    "test_003_check_iot_version": [
-        {
-            "url": "/link-dataquery/v1/device/list",
-            "query": {
-               "mac": "E4F3E8D38B66",
-            }
-        },
-
-        {
-            "url": "/link-dataquery/v1/device/query/mac/prodtype",
-            "query": {
-               "devId": "04B36D3342907908",
-               "prodTypeId": "Dusun_zigbeeGate"
-            }
-        },
-
-        {
-            "url": "/link-dataquery/v1/device/query/mac/prodtype",
-            "query": {
-               "devId": "D4EE02112240_S3GATEWAY",
-               "prodTypeId": "S3GATEWAY"
-            }
-        },
-
-        {
-            "url": "/link-dataquery/v1/device/query/mac/prodtype",
-            "query": {
-               "devId": "D4EE02112240_LED2_4",
-               "prodTypeId": "LED2_4"
-            }
-        }
-    ],
-
-    "test_004_set_device_ssid": [
+    "test_003_set_device_ssid": [
         {
             "url": "/link-handle-gateway/v1/operate/device/control",
             "query": {
@@ -130,7 +96,7 @@
         }
     ],
 
-    "test_005_mqtt_connect": [
+    "test_004_mqtt_connect": [
         {
             "zgateway_mqtt_connect": {
                 "host": "link.t.zihome.com",
@@ -146,7 +112,7 @@
         }
     ],
 
-    "test_006_mqtt_control": [
+    "test_005_mqtt_control": [
         {
             "url": "/link-handle-gateway/v1/operate/device/control",
             "query": {
@@ -170,12 +136,12 @@
         }
     ],
 
-    "test_007_open_remote_ssh": [
+    "test_006_open_remote_ssh": [
         {
             "open_remote_ssh": {
                 "host": "152.136.148.124",
                 "port": 7885,
-                "theme": "/com/ziroom/iot/zgateway/debug/E4F3E8D38B66"
+                "theme": "/com/ziroom/iot/zgateway/debug/D4EE02112240"
             }
         },
         {
@@ -187,7 +153,7 @@
         }
     ],
 
-    "test_008_check_broadcast_theme": [
+    "test_007_check_broadcast_theme": [
         {
             "restart_zgateway": {
                 "host": "mapway.cn",
@@ -202,12 +168,12 @@
         }
     ],
 
-    "test_009_close_remote_ssh": [
+    "test_008_close_remote_ssh": [
         {
             "close_remote_ssh": {
                 "host": "152.136.148.124",
                 "port": 7885,
-                "theme": "/com/ziroom/iot/zgateway/debug/E4F3E8D38B66"
+                "theme": "/com/ziroom/iot/zgateway/debug/D4EE02112240"
             }
         },
         {
@@ -219,7 +185,7 @@
         }
     ],
 
-    "test_010_mqtt_disconnect": [
+    "test_009_mqtt_disconnect": [
         {
             "zgateway_mqtt_disconnect": {
 

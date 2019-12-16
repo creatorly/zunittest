@@ -70,10 +70,10 @@ excel = ExcelInfo
 mqttClient = MqttClientInfo
 
 
-def data_init():
+def data_init(module_name):
     # 获取配置文件信息
     config = configparser.ConfigParser()
-    config_path = os.path.join(os.path.dirname(__file__) + '/../conf/zgateway.conf')
+    config_path = os.path.join(os.path.dirname(__file__) + '/../conf/' + module_name + '.conf')
     config.read(config_path, encoding="utf-8")
 
     if config.has_option("link", "host"):
@@ -113,7 +113,7 @@ def data_init():
     test.total_num = 0
     test.pass_num = 0
     test.fail_num = 0
-    test.output_file = time.strftime("%Y%m%d_%H%M%S", time.localtime()) + "_zgateway_test"
+    test.output_file = time.strftime("%Y%m%d_%H%M%S", time.localtime()) + "_" + module_name + "_test"
     excel.row_point = 0
 
 
@@ -143,9 +143,10 @@ def logging_init():
     return True
 
 
-def excel_init():
+def excel_init(module_name):
     excel.excel_fd = zexcel.excel_init()
-    excel.sheet_fd = zexcel.sheet_init(excel.excel_fd, "Zgateway测试结果")
+    sheet_name = module_name + "测试结果"
+    excel.sheet_fd = zexcel.sheet_init(excel.excel_fd, sheet_name)
     # 从第二行开始写入
     excel.row_point = 1
 
@@ -155,21 +156,15 @@ def test_json_update():
     sn = test.mac.split(":")
     new_str = sn[0] + sn[1] + sn[2] + sn[3] + sn[4] + sn[5]
     server.input_dict["test_002_check_gateway_version"][0]["query"]["devId"] = new_str
-    server.input_dict["test_003_check_iot_version"][0]["query"]["mac"] = new_str
-    server.input_dict["test_003_check_iot_version"][2]["query"]["devId"] = new_str + "_S3GATEWAY"
-    server.input_dict["test_003_check_iot_version"][3]["query"]["devId"] = new_str + "_LED2_4"
-    server.input_dict["test_004_set_device_ssid"][0]["query"]["devId"] = new_str
-    server.input_dict["test_004_set_device_ssid"][2]["query"]["data"][0]["v"] = "ZR_D" + sn[4] + sn[5]
-    server.input_dict["test_004_set_device_ssid"][2]["query"]["data"][1]["v"] = "ZR_P" + sn[4] + sn[5]
-    server.input_dict["test_004_set_device_ssid"][2]["query"]["devId"] = new_str
+    server.input_dict["test_003_set_device_ssid"][0]["query"]["devId"] = new_str
+    server.input_dict["test_003_set_device_ssid"][2]["query"]["data"][0]["v"] = "ZR_D" + sn[4] + sn[5]
+    server.input_dict["test_003_set_device_ssid"][2]["query"]["data"][1]["v"] = "ZR_P" + sn[4] + sn[5]
+    server.input_dict["test_003_set_device_ssid"][2]["query"]["devId"] = new_str
+    server.input_dict["test_006_open_remote_ssh"][0]["open_remote_ssh"]["theme"] = "/com/ziroom/iot/zgateway/debug/" + new_str
+    server.input_dict["test_008_close_remote_ssh"][0]["close_remote_ssh"]["theme"] = "/com/ziroom/iot/zgateway/debug/" + new_str
 
     server.output_dict["test_002_check_gateway_version"][0]["part_same"]["data"]["deviceMac"] = new_str
-    server.output_dict["test_003_check_iot_version"][1]["part_same"]["data"]["gatewayMac"] = new_str
-    server.output_dict["test_003_check_iot_version"][2]["part_same"]["data"]["deviceMac"] = new_str + "_S3GATEWAY"
-    server.output_dict["test_003_check_iot_version"][2]["part_same"]["data"]["gatewayMac"] = new_str
-    server.output_dict["test_003_check_iot_version"][3]["part_same"]["data"]["deviceMac"] = new_str + "_LED2_4"
-    server.output_dict["test_003_check_iot_version"][3]["part_same"]["data"]["gatewayMac"] = new_str
-    server.output_dict["test_005_mqtt_connect"][1]["part_same"]["data"]["gatewayMac"] = new_str
+    server.output_dict["test_004_mqtt_connect"][1]["part_same"]["data"]["gatewayMac"] = new_str
 
     config = configparser.ConfigParser()
     config_path = os.path.join(os.path.dirname(__file__) + '/../conf/zgateway.conf')
@@ -179,20 +174,6 @@ def test_json_update():
         server.output_dict["test_002_check_gateway_version"][0]["part_same"]["data"]["version"] = new_str
     else:
         print("miss zgateway")
-        exit()
-
-    if config.has_option("link", "433"):
-        new_str = config.get("link", "433")
-        server.output_dict["test_003_check_iot_version"][2]["part_same"]["data"]["version"] = "ZIROOM433*V" + new_str
-    else:
-        print("miss 433")
-        exit()
-
-    if config.has_option("link", "2.4"):
-        new_str = config.get("link", "2.4")
-        server.output_dict["test_003_check_iot_version"][3]["part_same"]["data"]["version"] = new_str
-    else:
-        print("miss 2.4")
         exit()
 
     # print(server.input_dict)
@@ -583,11 +564,11 @@ def run_test_case(module_name):
     return True
 
 
-def test_start():
-    data_init()
+def test_start(module_name):
+    data_init(module_name)
     logging_init()
     logging.info("test start...")
-    excel_init()
+    excel_init(module_name)
 
 
 def test_end():
@@ -623,7 +604,7 @@ def test_end():
 
 
 if __name__ == '__main__':
-    test_start()
+    test_start("zgateway")
 
     if not test_json_init("zgateway"):
         logging.error("json init error")

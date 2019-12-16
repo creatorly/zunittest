@@ -20,61 +20,7 @@
         }
     ],
 
-    "test_003_check_iot_version": [
-        {
-            "Dusun_zigbeeGate": {
-                "code": 200,
-                "data": {
-
-                },
-                "message": "success"
-            }
-        },
-
-        {
-            "part_same": {
-                "code": 200,
-                "data": {
-                    "connectState": 1,
-                    "deviceMac": "04B36D3342907908",
-                    "gatewayMac": "D4EE02112240",
-                    "prodTypeId": "Dusun_zigbeeGate",
-                    "version": ""
-                },
-                "message": "success"
-            }
-        },
-
-        {
-            "part_same": {
-                "code": 200,
-                "data": {
-                    "connectState": 1,
-                    "deviceMac": "D4EE02112240_S3GATEWAY",
-                    "gatewayMac": "D4EE02112240",
-                    "prodTypeId": "S3GATEWAY",
-                    "version": "ZIROOM433*V1.02"
-                },
-                "message": "success"
-            }
-        },
-
-        {
-            "part_same": {
-                "code": 200,
-                "data": {
-                    "connectState": 1,
-                    "deviceMac": "D4EE02112240_LED2_4",
-                    "gatewayMac": "D4EE02112240",
-                    "prodTypeId": "LED2_4",
-                    "version": "1.0.8"
-                },
-                "message": "success"
-            },
-        }
-    ],
-
-    "test_004_set_device_ssid": [
+    "test_003_set_device_ssid": [
         {
            "total_same": {
               "code": 200,
@@ -94,7 +40,7 @@
         }
     ],
 
-    "test_005_mqtt_connect": [
+    "test_004_mqtt_connect": [
         {
 
         },
@@ -113,7 +59,7 @@
 		}
     ],
 
-    "test_006_mqtt_control": [
+    "test_005_mqtt_control": [
         {
             "total_same": {
                 "code": 200,
@@ -125,7 +71,7 @@
         }
     ],
 
-    "test_007_open_remote_ssh": [
+    "test_006_open_remote_ssh": [
         {
 
         },
@@ -134,7 +80,7 @@
         }
     ],
 
-    "test_008_check_broadcast_theme": [
+    "test_007_check_broadcast_theme": [
         {
 
         },
@@ -143,7 +89,7 @@
         }
     ],
 
-    "test_009_close_remote_ssh": [
+    "test_008_close_remote_ssh": [
         {
 
         },
@@ -152,7 +98,7 @@
         }
     ],
 
-    "test_010_mqtt_disconnect": [
+    "test_009_mqtt_disconnect": [
         {
 
         },
