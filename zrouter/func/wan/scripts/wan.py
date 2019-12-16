@@ -130,6 +130,20 @@ def excel_init(module_name):
     excel.excel_fd = zexcel.excel_init()
     sheet_name = module_name + "测试结果"
     excel.sheet_fd = zexcel.sheet_init(excel.excel_fd, sheet_name)
+
+    # 写设备信息
+    excel.sheet_fd.write(zexcel.PROJECT_ROW, zexcel.PROJECT_COL + 1, test.project,
+                         style=zexcel.set_style(zexcel.BLACK, 260, bold=True, align='', pattern_color='light_orange'))
+    excel.sheet_fd.write(zexcel.VERSION_ROW, zexcel.VERSION_COL + 1, test.version,
+                         style=zexcel.set_style(zexcel.BLACK, 260, bold=True, align='', pattern_color='light_orange'))
+    excel.sheet_fd.write(zexcel.MAC_ROW, zexcel.MAC_COL + 1, test.mac,
+                         style=zexcel.set_style(zexcel.BLACK, 260, bold=True, align='', pattern_color='light_orange'))
+    excel.sheet_fd.write(zexcel.DATE_ROW, zexcel.DATE_COL + 1, test.date,
+                         style=zexcel.set_style(zexcel.BLACK, 260, bold=True, align='', pattern_color='light_orange'))
+
+    filename = os.path.join(os.path.dirname(__file__) + "/../results/" + test.output_file + ".xls")
+    excel.excel_fd.save(filename)  # 保存xls
+
     # 从第二行开始写入
     excel.row_point = 1
 
@@ -184,11 +198,11 @@ def test_top_write(module_name):
 
 def requests_internet():
     try:
-        result = requests.get("http://www.baidu.com")
+        result = requests.get("http://www.baidu.com", timeout=5)
         logging.info(result.status_code)
         if result.status_code == 200:
             time.sleep(2)
-            result = requests.get("http://www.baidu.com")
+            result = requests.get("http://www.baidu.com", timeout=5)
             logging.info(result.status_code)
             if result.status_code == 200:
                 return True
@@ -264,6 +278,9 @@ def run_test_case(module_name):
             excel.module_info[module_name]["fail"] += 1
             test.fail_num += 1
 
+        filename = os.path.join(os.path.dirname(__file__) + "/../results/" + test.output_file + ".xls")
+        excel.excel_fd.save(filename)  # 保存xls
+
     return True
 
 
@@ -285,14 +302,6 @@ def test_end():
         excel.sheet_fd.write(excel.module_info[key]["row"], zexcel.FAIL_COL, excel.module_info[key]["fail"],
                              style=zexcel.set_style(zexcel.RED, 240, bold=False, align=''))
 
-    excel.sheet_fd.write(zexcel.PROJECT_ROW, zexcel.PROJECT_COL + 1, test.project,
-                         style=zexcel.set_style(zexcel.BLACK, 260, bold=True, align='', pattern_color='light_orange'))
-    excel.sheet_fd.write(zexcel.VERSION_ROW, zexcel.VERSION_COL + 1, test.version,
-                         style=zexcel.set_style(zexcel.BLACK, 260, bold=True, align='', pattern_color='light_orange'))
-    excel.sheet_fd.write(zexcel.MAC_ROW, zexcel.MAC_COL + 1, test.mac,
-                         style=zexcel.set_style(zexcel.BLACK, 260, bold=True, align='', pattern_color='light_orange'))
-    excel.sheet_fd.write(zexcel.DATE_ROW, zexcel.DATE_COL + 1, test.date,
-                         style=zexcel.set_style(zexcel.BLACK, 260, bold=True, align='', pattern_color='light_orange'))
     excel.sheet_fd.write(zexcel.TOTAL_ROW, zexcel.TOTAL_COL + 1, test.total_num,
                          style=zexcel.set_style(zexcel.BLACK, 260, bold=True, align='', pattern_color='light_orange'))
     excel.sheet_fd.write(zexcel.TOTAL_PASS_ROW, zexcel.TOTAL_PASS_COL + 1, test.pass_num,
