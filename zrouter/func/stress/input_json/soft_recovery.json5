@@ -1,0 +1,69 @@
+/*
+|    单元测试      |post请求次数 |描述|
+|------------------|-------------|----|
+|test_001_get_dmz  | 1 | 获取默认dmz|
+|test_002_set_dmz  | 2 | 设置dmz|
+|test_003_system_factory | 1 | 恢复出厂设置|
+*/
+{
+    "test_001_get_dmz": [
+        {
+            "ver": "v1",
+            "sid": "00000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "dmz",
+                    "api": "get"
+                }]
+            }
+        }
+    ],
+
+    "test_002_set_dmz": [
+        {
+            "ver": "v1",
+            "sid": "00000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "dmz",
+                    "api": "set",
+                    "param": {
+                        "enabled":"1",
+                        "ipv4addr":"192.168.18.111"
+                    }
+                }]
+            }
+        },
+        {
+            "ver": "v1",
+            "sid":"000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "dmz",
+                    "api": "get"
+                }]
+            }
+        }
+    ],
+
+   "test_003_system_factory": [
+        {
+            "ver": "v1",
+            "sid": "00000000000000000000000000000000",
+            "method": "api",
+            "param": {
+                "msg_id": 11111,
+                "params": [{
+                    "module": "system",
+                    "api": "factory"
+                }]
+            }
+        }
+    ]
+}

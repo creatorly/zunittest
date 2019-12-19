@@ -1,0 +1,61 @@
+{
+    "test_001_get_dmz": [
+        {
+            "data": [{
+                "module": "dmz",
+                "errcode": 0,
+                "result": {
+                    "enabled": "0",
+                    "lanipv4addr":"192.168.18.1",
+                    "lanipv4mask":"255.255.255.0"
+                },
+                "api": "get"
+            }],
+            "msg_id": 11111,
+            "errcode": 0
+        }
+    ],
+
+    "test_002_set_dmz": [
+        {
+            "data": [{
+                "module": "dmz",
+                "errcode": 0,
+                "result": {},
+                "api": "set"
+            }],
+            "msg_id": 11111,
+            "errcode": 0
+        },
+        {
+            "data": [{
+                "module": "dmz",
+                "errcode": 0,
+                "result": {
+                    "enabled": "1",
+                    "ipv4addr": "192.168.18.111",
+                    "lanipv4addr":"192.168.18.1",
+                    "lanipv4mask":"255.255.255.0"
+                },
+                "api": "get"
+            }],
+            "msg_id": 11111,
+            "errcode": 0
+        }
+    ],
+
+    "test_003_system_factory": [
+        {
+            "data": [
+                {
+                    "module": "system",
+                    "errcode": 0,
+                    "result": {},
+                    "api": "factory"
+                }
+            ],
+            "msg_id": 11111,
+            "errcode": 0
+        }
+    ]
+}
