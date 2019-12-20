@@ -1,0 +1,72 @@
+/*
+|    单元测试      |post请求次数 |描述|
+|------------------|-------------|----|
+|test_001_set_ota1 | 1 | 下发OTA1 |
+|test_002_get_version1 | 1 | 获取版本1 |
+|test_001_set_ota2 | 1 | 下发OTA2 |
+|test_002_get_version2 | 1 | 获取版本2 |
+*/
+{
+
+    "test_001_set_ota1": [
+        {
+            "url": "/link-handle-gateway/v1/operate/device/control",
+            "control": {
+                "msgType": "DEVICE_CONTROL",
+                "devId": "DC4BDD1DFA48_LED2_4",
+                "prodTypeId": "LED2_4",
+                "time": "2018-05-14 10:10:10",
+                "sno": "789",
+                "attribute": "light_ota",
+                "command": "ota",
+                "data": [
+                    {
+                        "k": "addr",
+                        "v": "http://file.ziroom.com/g4m2/M00/2A/0E/CtgFCV3DuZiAIAy0AAKTFMCATRU689.bin"
+                    }
+                ],
+            }
+        }
+    ],
+
+    "test_002_get_version1": [
+        {
+            "url": "/link-dataquery/v1/device/query/mac/prodtype",
+            "query": {
+               "devId": "DC4BDD1DFA48_LED2_4",
+               "prodTypeId": "LED2_4"
+            }
+        }
+    ],
+
+    "test_003_set_ota2": [
+        {
+            "url": "/link-handle-gateway/v1/operate/device/control",
+            "control": {
+                "msgType": "DEVICE_CONTROL",
+                "devId": "DC4BDD1DFA48_LED2_4",
+                "prodTypeId": "LED2_4",
+                "time": "2018-05-14 10:10:10",
+                "sno": "789",
+                "attribute": "light_ota",
+                "command": "ota",
+                "data": [
+                    {
+                        "k": "addr",
+                        "v": "http://file.ziroom.com/g4m3/M00/06/6C/ChAZE138IWiACkfjAACj5BZ6ssI309.bin"
+                    }
+                ],
+            }
+        }
+    ],
+
+    "test_004_get_version2": [
+        {
+            "url": "/link-dataquery/v1/device/query/mac/prodtype",
+            "query": {
+               "devId": "DC4BDD1DFA48_LED2_4",
+               "prodTypeId": "LED2_4"
+            }
+        }
+    ]
+}

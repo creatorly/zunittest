@@ -1,0 +1,45 @@
+{
+    "test_001_set_ota1": [
+        {
+            "code": 200,
+            "message": "success"
+        }
+    ],
+
+    "test_002_get_version1": [
+        {
+            "code": 200,
+            "data": {
+                "connectState": 1,
+                "deviceId": 20000,
+                "deviceMac": "DC4BDD1DFA48_LED2_4",
+                "gatewayMac": "DC4BDD1DFA48",
+                "prodTypeId": "LED2_4",
+                "version": "1.2.3"
+            },
+            "message": "success"
+        }
+    ],
+
+    "test_003_set_ota2": [
+        {
+            "code": 200,
+            "message": "success"
+        }
+    ],
+
+    "test_004_get_version2": [
+        {
+            "code": 200,
+            "data": {
+                "connectState": 1,
+                "deviceId": 20000,
+                "deviceMac": "DC4BDD1DFA48_LED2_4",
+                "gatewayMac": "DC4BDD1DFA48",
+                "prodTypeId": "LED2_4",
+                "version": "1.2.3"
+            },
+            "message": "success"
+        }
+    ]
+}

@@ -111,5 +111,37 @@ def sheet_init(excel_fd, sheet_name):
     return sheet_fd
 
 
+def common_sheet_init(excel_fd, sheet_name):
+    sheet_fd = excel_fd.add_sheet(sheet_name)  # 增加sheet
+    sheet_fd.col(CASE_NAME_COL).width = 200 * 40  # 设置第1列列宽
+    sheet_fd.col(CASE_RESULT_COL).width = 200 * 15  # 设置第2列列宽
+    sheet_fd.col(COUNT_COL).width = 200 * 15  # 设置第3列列宽
+    sheet_fd.col(PASS_COL).width = 200 * 15  # 设置第4列列宽
+    sheet_fd.col(FAIL_COL).width = 200 * 15  # 设置第5列列宽
+    sheet_fd.col(PROJECT_COL).width = 180 * 15  # 设置第7列列宽
+    sheet_fd.col(PROJECT_COL + 1).width = 360 * 15  # 设置第8列列宽
+
+    # 写第一行数据
+    sheet_fd.write_merge(0, 0, 0, 4, sheet_name, set_style(0x7FFF, 320, bold=True))
+
+    # 写项目信息
+    sheet_fd.write(PROJECT_ROW, PROJECT_COL, "project:",
+                   style=set_style(BLACK, 260, bold=True, align='', pattern_color='light_orange'))
+    sheet_fd.write(VERSION_ROW, VERSION_COL, "version:",
+                   style=set_style(BLACK, 260, bold=True, align='', pattern_color='light_orange'))
+    sheet_fd.write(MAC_ROW, MAC_COL, "mac:",
+                   style=set_style(BLACK, 260, bold=True, align='', pattern_color='light_orange'))
+    sheet_fd.write(DATE_ROW, DATE_COL, "date:",
+                   style=set_style(BLACK, 260, bold=True, align='', pattern_color='light_orange'))
+    sheet_fd.write(TOTAL_ROW, TOTAL_COL, "total:",
+                   style=set_style(BLACK, 260, bold=True, align='', pattern_color='light_orange'))
+    sheet_fd.write(TOTAL_PASS_ROW, TOTAL_PASS_COL, "pass:",
+                   style=set_style(BLACK, 260, bold=True, align='', pattern_color='light_orange'))
+    sheet_fd.write(TOTAL_FAIL_ROW, TOTAL_FAIL_COL, "fail:",
+                   style=set_style(BLACK, 260, bold=True, align='', pattern_color='light_orange'))
+
+    return sheet_fd
+
+
 if __name__ == '__main__':
     print("请开始你的表演")
