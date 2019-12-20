@@ -33,8 +33,8 @@
         {
             "url": "/link-dataquery/v1/device/query/mac/prodtype",
             "query": {
-               "devId": "DC4BDD1DFA48_LED2_4",
-               "prodTypeId": "LED2_4"
+               "devId": "DC4BDD1fdgfDFA48_LED2_4",
+               "prodTypeId": "LED2fdgdf_4"
             }
         }
     ],
@@ -64,8 +64,8 @@
         {
             "url": "/link-dataquery/v1/device/query/mac/prodtype",
             "query": {
-               "devId": "DC4BDD1DFA48_LED2_4",
-               "prodTypeId": "LED2_4"
+               "devId": "DC4BDD1DfadfFA48_LED2_4",
+               "prodTypeId": "LEDgg2_4"
             }
         }
     ]

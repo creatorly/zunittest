@@ -11,9 +11,7 @@
             "code": 200,
             "data": {
                 "connectState": 1,
-                "deviceId": 20000,
                 "deviceMac": "DC4BDD1DFA48_LED2_4",
-                "gatewayMac": "DC4BDD1DFA48",
                 "prodTypeId": "LED2_4",
                 "version": "1.2.3"
             },
@@ -33,9 +31,7 @@
             "code": 200,
             "data": {
                 "connectState": 1,
-                "deviceId": 20000,
                 "deviceMac": "DC4BDD1DFA48_LED2_4",
-                "gatewayMac": "DC4BDD1DFA48",
                 "prodTypeId": "LED2_4",
                 "version": "1.2.3"
             },

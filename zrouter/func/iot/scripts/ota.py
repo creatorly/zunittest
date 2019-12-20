@@ -157,6 +157,11 @@ def excel_init(module_name):
 
 # 用于测试的设备版本、mac等信息是不一样，有些api需要跟新对应的信息
 def test_json_update():
+    server.input_dict["test_002_get_version1"][0]["query"]["devId"] = test.devId
+    server.input_dict["test_002_get_version1"][0]["query"]["prodTypeId"] = test.prodTypeId
+    server.input_dict["test_004_get_version2"][0]["query"]["devId"] = test.devId
+    server.input_dict["test_004_get_version2"][0]["query"]["prodTypeId"] = test.prodTypeId
+
     server.output_dict["test_002_get_version1"][0]["data"]["deviceMac"] = test.devId
     server.output_dict["test_002_get_version1"][0]["data"]["prodTypeId"] = test.prodTypeId
     server.output_dict["test_002_get_version1"][0]["data"]["version"] = test.ota1_version
@@ -217,6 +222,40 @@ def test_top_write(module_name):
     excel.module_info[module_name]["fail"] = 0
 
 
+# src是否包含dst,内容也要相等
+def comp_json_value(src, dst):
+    # logging.info("src %s", src)
+    # logging.info("dst %s", dst)
+    for key in dst:
+        logging.info("key %s", key)
+        if src.__contains__(key):
+            if type(dst[key]) is dict:
+                if not comp_json_value(src[key], dst[key]):
+                    return False
+            elif type(dst[key]) is list:
+                i = 0
+                while i < len(dst[key]):
+                    if type(dst[key][i]) is dict or type(dst[key][i]) is list:
+                        if not comp_json_value(src[key][i], dst[key][i]):
+                            return False
+                    else:
+                        if src[key][i] != dst[key][i]:
+                            return False
+                    i += 1
+            else:
+                # logging.info("src %s", src[key])
+                # logging.info("dst %s", dst[key])
+                if src[key] != dst[key]:
+                    return False
+                else:
+                    continue
+        else:
+            logging.info("src don't have %s", key)
+            return False
+
+    return True
+
+
 def run_test_case(module_name, count_max):
     # 写excel表,test case的头部
     test_top_write(module_name)
@@ -264,8 +303,7 @@ def run_test_case(module_name, count_max):
                             logging.info("%s recv:%s", key, resp_data.text)
                             if resp_data.status_code == 200:
                                 msg = json.loads(resp_data.text)
-                                # 全部相等
-                                if msg != server.output_dict[key][request_i]:
+                                if not comp_json_value(msg, server.output_dict[key][request_i]):
                                     request_result = False
                                 else:
                                     excel.sheet_fd.write(excel.row_point, OTA_VERSION_COL, server.output_dict[key][request_i]["data"]["version"],
