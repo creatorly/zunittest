@@ -12,13 +12,14 @@ import time
 import configparser
 import sys
 import os
+import signal
+
+sys.path.append("../../../..")
+from zutils import zexcel
 
 OTA_RESULT_COL = 1
 OTA_VERSION_COL = 2
 OTA_COUNT_COL = 3
-
-sys.path.append("../../../..")
-from zutils import zexcel
 
 
 class ServerInfo(object):
@@ -383,14 +384,25 @@ def test_end():
     exit()
 
 
-if __name__ == '__main__':
-    test_start("ota")
+def signal_handler(signal_num, frame):
+    print("signal_num", signal_num)
+    test_end()
 
-    if not test_json_init("ota"):
+
+if __name__ == '__main__':
+
+    for sig in [signal.SIGABRT, signal.SIGFPE, signal.SIGILL, signal.SIGINT, signal.SIGSEGV, signal.SIGTERM]:
+        signal.signal(sig, signal_handler)
+
+    module = "ota"
+
+    test_start(module)
+
+    if not test_json_init(module):
         logging.error("json init error")
         test_end()
 
-    run_test_case("ota", 100)
+    run_test_case(module, 100)
 
     test_end()
 

@@ -8,14 +8,13 @@ import logging
 import requests
 import json
 import json5
-import base64
 import time
 import configparser
 import sys
-import paramiko
 import uuid
 import os
 import threading
+import signal
 import paho.mqtt.client as mqtt
 from paho.mqtt.client import Client
 
@@ -558,14 +557,25 @@ def test_end():
     exit()
 
 
-if __name__ == '__main__':
-    test_start("iot")
+def signal_handler(signal_num, frame):
+    print("signal_num", signal_num)
+    test_end()
 
-    if not test_json_init("iot"):
+
+if __name__ == '__main__':
+
+    for sig in [signal.SIGABRT, signal.SIGFPE, signal.SIGILL, signal.SIGINT, signal.SIGSEGV, signal.SIGTERM]:
+        signal.signal(sig, signal_handler)
+
+    module = "wan"
+
+    test_start(module)
+
+    if not test_json_init(module):
         logging.error("json init error")
         test_end()
 
-    run_test_case("iot")
+    run_test_case(module)
 
     test_end()
 

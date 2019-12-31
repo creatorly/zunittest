@@ -13,6 +13,7 @@ import time
 import configparser
 import sys
 import os
+import signal
 
 sys.path.append("../../../..")
 from zutils import zexcel
@@ -315,19 +316,30 @@ def test_end():
     exit()
 
 
+def signal_handler(signal_num, frame):
+    print("signal_num", signal_num)
+    test_end()
+
+
 if __name__ == '__main__':
-    test_start("wan")
+
+    for sig in [signal.SIGABRT, signal.SIGFPE, signal.SIGILL, signal.SIGINT, signal.SIGSEGV, signal.SIGTERM]:
+        signal.signal(sig, signal_handler)
+
+    module = "wan"
+
+    test_start(module)
 
     server.sid = utils_login.get_sid(server.url, server.headers, server.password)
     if not server.sid:
         logging.error("login fail")
         test_end()
 
-    if not test_json_init("wan"):
+    if not test_json_init(module):
         logging.error("json init error")
         test_end()
 
-    run_test_case("wan")
+    run_test_case(module)
 
     test_end()
 

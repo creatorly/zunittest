@@ -13,7 +13,7 @@ import time
 import configparser
 import sys
 import paramiko
-import uuid
+import signal
 import os
 import threading
 import paho.mqtt.client as mqtt
@@ -611,14 +611,25 @@ def test_end():
     exit()
 
 
-if __name__ == '__main__':
-    test_start("zgateway")
+def signal_handler(signal_num, frame):
+    print("signal_num", signal_num)
+    test_end()
 
-    if not test_json_init("zgateway"):
+
+if __name__ == '__main__':
+
+    for sig in [signal.SIGABRT, signal.SIGFPE, signal.SIGILL, signal.SIGINT, signal.SIGSEGV, signal.SIGTERM]:
+        signal.signal(sig, signal_handler)
+
+    module = "zgateway"
+
+    test_start(module)
+
+    if not test_json_init(module):
         logging.error("json init error")
         test_end()
 
-    run_test_case("zgateway")
+    run_test_case(module)
 
     test_end()
 

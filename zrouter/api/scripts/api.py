@@ -13,6 +13,7 @@ import time
 import configparser
 import sys
 import os
+import signal
 
 sys.path.append("../../..")
 from zutils import zexcel
@@ -342,12 +343,20 @@ def test_end():
     exit()
 
 
+def signal_handler(signal_num, frame):
+    print("signal_num", signal_num)
+    test_end()
+
+
 if __name__ == '__main__':
     if 2 != len(sys.argv) or (sys.argv[1] != 'static' and sys.argv[1] != 'dynamic'):
         print("please enter static/dynamic")
         exit()
     else:
         test.name = sys.argv[1]
+
+    for sig in [signal.SIGABRT, signal.SIGFPE, signal.SIGILL, signal.SIGINT, signal.SIGSEGV, signal.SIGTERM]:
+        signal.signal(sig, signal_handler)
 
     test_start("api")
 

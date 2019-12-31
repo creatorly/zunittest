@@ -5,7 +5,8 @@
 # Describe：1一分钟获取一次进程的内存信息，将内存信息保存在excel中，一个sheet对应一个进程
 
 import logging
-import base64
+import signal
+import sys
 import time
 import configparser
 import os
@@ -227,14 +228,21 @@ def test_end():
     exit()
 
 
-if __name__ == '__main__':
-    # if 2 != len(sys.argv) or (sys.argv[1] != 'zrouter' and sys.argv[1] != 'zgateway'):
-    #     print("please enter zrouter/zgateway")
-    #     exit()
-    # else:
-    #     test.name = sys.argv[1]
+def signal_handler(signal_num, frame):
+    print("signal_num", signal_num)
+    test_end()
 
-    test.name = "zgateway"
+
+if __name__ == '__main__':
+    if 2 != len(sys.argv) or (sys.argv[1] != 'zrouter' and sys.argv[1] != 'zgateway'):
+        print("please enter zrouter/zgateway")
+        exit()
+    else:
+        test.name = sys.argv[1]
+
+    for sig in [signal.SIGABRT, signal.SIGFPE, signal.SIGILL, signal.SIGINT, signal.SIGSEGV, signal.SIGTERM]:
+        signal.signal(sig, signal_handler)
+
     test_start("mem")
     run_test_case()
     test_end()

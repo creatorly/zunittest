@@ -13,7 +13,7 @@ import time
 import configparser
 import sys
 import pywifi
-import shutil
+import signal
 import os
 
 sys.path.append("../../../..")
@@ -298,9 +298,20 @@ def test_end():
     exit()
 
 
+def signal_handler(signal_num, frame):
+    print("signal_num", signal_num)
+    test_end()
+
+
 if __name__ == '__main__':
-    test_start("soft_reboot")
-    run_test_case("soft_reboot", 100)
+
+    for sig in [signal.SIGABRT, signal.SIGFPE, signal.SIGILL, signal.SIGINT, signal.SIGSEGV, signal.SIGTERM]:
+        signal.signal(sig, signal_handler)
+
+    module = "soft_reboot"
+
+    test_start(module)
+    run_test_case(module, 1000)
     test_end()
 
 
