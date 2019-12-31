@@ -137,7 +137,7 @@ def zigbee_on_off(sn, max_count):
         control_payload["sno"] = str(uuid.uuid1())
         control_payload["data"][0]["v"] = str(power_value)
         logging.info(control_payload)
-        result = requests.post(control_url, data=json.dumps(control_payload), headers=headers, timeout=(5, 5))
+        result = requests.post(control_url, data=json.dumps(control_payload), headers=headers, timeout=10)
         logging.info("1111 %s", result.text)
         if result.status_code == 200:
             msg = json.loads(result.text)
@@ -145,7 +145,7 @@ def zigbee_on_off(sn, max_count):
                 time.sleep(1)
                 logging.info(resp_payload)
                 resp_payload["sno"] = control_payload["sno"]
-                result = requests.post(resp_url, data=json.dumps(resp_payload), headers=headers, timeout=(5, 5))
+                result = requests.post(resp_url, data=json.dumps(resp_payload), headers=headers, timeout=10)
                 logging.info("2222 %s", result.text)
                 if result.status_code == 200:
                     msg = json.loads(result.text)

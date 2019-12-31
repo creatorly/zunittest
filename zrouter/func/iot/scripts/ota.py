@@ -337,6 +337,7 @@ def run_test_case(module_name, count_max):
                                      style=zexcel.set_style(zexcel.RED, 240, bold=False, align=''))
                 excel.module_info[module_name]["fail"] += 1
                 test.fail_num += 1
+                test_end()
 
         excel.row_point += 1
         excel.sheet_fd.write(excel.row_point, OTA_COUNT_COL, test_count,
