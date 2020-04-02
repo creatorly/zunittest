@@ -68,7 +68,7 @@ if __name__ == '__main__':
     gw_pass = 0
     tlink_pass = 0
 
-    mac_list = read_mac("自如SN-MAC.xlsx")
+    mac_list = read_mac("SN-MAC.xlsx")
 
     while i < len(mac_list):
         start_mac = mac_list[i]

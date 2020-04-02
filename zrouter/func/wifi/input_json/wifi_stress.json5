@@ -1,0 +1,27 @@
+/*
+|    单元测试      |post请求次数 |描述|
+|------------------|-------------|----|
+|test_001_connect_2.4G | 1 | 链接2.4G |
+|test_002_connect_5G | 1 | 链接5G |
+*/
+{
+    "test_001_connect_2.4G": [
+        {
+            "w2": {
+                "ssid": "ZHOME_FA48",
+                "auth": "mixed-psk",
+                "key": "12345678",
+            },
+        },
+    ],
+
+    "test_002_connect_5G": [
+        {
+            "w5": {
+                "ssid": "ZHOME_FA48_5G",
+                "auth": "mixed-psk",
+                "key": "12345678",
+            },
+        },
+    ]
+}
