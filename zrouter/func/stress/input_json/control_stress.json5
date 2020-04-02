@@ -1,0 +1,78 @@
+/*
+|    单元测试      |post请求次数 |描述|
+|------------------|-------------|----|
+|test_control_stress | 2 | 控制压力测试 |
+*/
+{
+    "test_control_stress": [
+        {
+            "url": "/link-control/v1/device/controlDevice",
+            "head_1": "AccessToken",
+            "head_2": "asdwefe3232ffhdkal82iedjfalki290",
+            "control": {
+                "prodOperCode": "0b8de76d81474fe3a906fba206a04b3e",
+                "hid": "FDS544S8FD5FF4C7B",
+                "userCode": "ebe71c40-42d1-4efb-827c-042c22b23ce6",
+                "userName": "程志广",
+                "userType": 1,
+                "mobile": "18518115887",
+                "msgType": "DEVICE_CONTROL",
+                "devId": "000d6f000b7ab1d3",
+                "devUuid": "000d6f000b7ab1d3",
+                "prodTypeId": "SmartPlug",
+                "time": "2018-05-14 10:10:10",
+                "sno": "26bf95ac-eb03-11e9-96d4-d017c29ab7d1",
+                "attribute": "metersocket_switchstate",
+                "command": "set_switchstate",
+                "data": [
+                    {
+                        "k": "switchstate",
+                        "v": "10"
+                    }
+                ],
+            }
+        },
+
+        {
+            "url": "/link-control-record/v1/query/queryRecordBySno",
+            "control_resp": {
+               "sno": "94a11da4-eb0c-11e9-abfd-d017c29ab7d1"
+            }
+        },
+
+        {
+            "url": "/link-control/v1/device/controlDevice",
+            "head_1": "AccessToken",
+            "head_2": "asdwefe3232ffhdkal82iedjfalki290",
+            "control": {
+                "prodOperCode": "0b8de76d81474fe3a906fba206a04b3e",
+                "hid": "FDS544S8FD5FF4C7B",
+                "userCode": "ebe71c40-42d1-4efb-827c-042c22b23ce6",
+                "userName": "程志广",
+                "userType": 1,
+                "mobile": "18518115887",
+                "msgType": "DEVICE_CONTROL",
+                "devId": "000d6f000b7ab1d3",
+                "devUuid": "000d6f000b7ab1d3",
+                "prodTypeId": "SmartPlug",
+                "time": "2018-05-14 10:10:10",
+                "sno": "26bf95ac-eb03-11e9-96d4-d017c29ab7d1",
+                "attribute": "metersocket_switchstate",
+                "command": "set_switchstate",
+                "data": [
+                    {
+                        "k": "switchstate",
+                        "v": "11"
+                    }
+                ],
+            }
+        },
+
+        {
+            "url": "/link-control-record/v1/query/queryRecordBySno",
+            "control_resp": {
+               "sno": "94a11da4-eb0c-11e9-abfd-d017c29ab7d1"
+            }
+        }
+    ],
+}
