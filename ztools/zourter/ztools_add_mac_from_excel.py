@@ -10,11 +10,7 @@ import logging
 import os
 import time
 import json
-
-# mac起始地址
-start_mac = "DC4BDDFFCE41"
-# mac个数，如：200台，400个，这边就填写200
-start_len = 1
+import xlrd
 
 
 def logging_init():
@@ -44,24 +40,20 @@ def logging_init():
     return True
 
 
-def add_mac(url, payload):
-    logging.info("url: %s, payload: %s", url, payload)
-    try:
-        result = requests.post(gw_url, data=json.dumps(payload), headers=headers, timeout=(5, 5))
-        logging.info("result: %s", result.text)
-        if result.status_code == 200:
-            msg = json.loads(result.text)
-            if (200 == msg["code"]) and ("success" == msg["message"]):
-                return True
-            else:
-                return False
-    except Exception as e:
-        print("---异常---：", e)
-        return False
+def read_mac(excel_name):
+    excel_fd = xlrd.open_workbook(excel_name)
+    logging.info("sheet_names: %s", excel_fd.sheet_names())  # 获取所有sheet名字
+    logging.info("sheets: %d", excel_fd.nsheets)  # 获取sheet数量
+    excel_sheet = excel_fd.sheet_by_index(0)  # 第一个表
+    mac_list = excel_sheet.col_values(1)   # 第二列数据
+    logging.info("mac_list: %s", mac_list)
+
+    return mac_list
 
 
 if __name__ == '__main__':
     logging_init()
+
     gw_url = 'https://gw.zihome.com/link-assist-handle/v1/business/gateway/add'
     tlink_url = 'https://tlink.zihome.com/link-assist-handle/v1/business/gateway/add'
     payload = {
@@ -72,24 +64,36 @@ if __name__ == '__main__':
     }
     headers = {'content-type': 'application/json'}
 
-    i = 0
+    i = 1  # 第一行不为MAC地址
     gw_pass = 0
     tlink_pass = 0
 
-    while i < start_len:
+    mac_list = read_mac("自如SN-MAC.xlsx")
+
+    while i < len(mac_list):
+        start_mac = mac_list[i]
         payload["macs"][0] = start_mac.upper()
+        logging.info("gw_url: %s, payload: %s", gw_url, payload)
+        result = requests.post(gw_url, data=json.dumps(payload), headers=headers, timeout=(5, 5))
+        logging.info("result: %s", result.text)
+        if result.status_code == 200:
+            msg = json.loads(result.text)
+            if (200 == msg["code"]) and ("success" == msg["message"]):
+                gw_pass += 1
+                logging.info("正式环境 mac: %s, add ok", start_mac)
+            else:
+                logging.info("正式环境 mac: %s, add fail", start_mac)
 
-        if add_mac(gw_url, payload):
-            gw_pass += 1
-            logging.info("正式环境 mac: %s, add ok", start_mac)
-        else:
-            logging.info("正式环境 mac: %s, add fail", start_mac)
-
-        if add_mac(tlink_url, payload):
-            tlink_pass += 1
-            logging.info("测试环境 mac: %s, add ok", start_mac)
-        else:
-            logging.info("测试环境 mac: %s, add fail", start_mac)
+        logging.info("tlink_url: %s, payload: %s", tlink_url, payload)
+        result = requests.post(tlink_url, data=json.dumps(payload), headers=headers, timeout=(5, 5))
+        logging.info("result: %s", result.text)
+        if result.status_code == 200:
+            msg = json.loads(result.text)
+            if (200 == msg["code"]) and ("success" == msg["message"]):
+                tlink_pass += 1
+                logging.info("测试环境 mac: %s, add ok", start_mac)
+            else:
+                logging.info("测试环境 mac: %s, add fail", start_mac)
 
         int_mac = int(start_mac, base=16)
         int_mac += 2
