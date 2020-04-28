@@ -40,8 +40,8 @@ def scan_wifi(self):
     for i in wifi_info:
         if i.signal > -90:  # 信号强度<-90的wifi几乎连不上
             wifi_list.append((i.ssid, i.signal, i.freq, i.bssid, i.akm))  # 添加到wifi列表
-            logging.info("ssid: %s, 信号: %s, freq: %s, mac: %s, 加密方式: %s",
-                         i.ssid.encode('raw_unicode_escape', 'strict').decode('utf-8'), i.signal, i.freq, i.bssid, i.akm)
+            # logging.info("ssid: %s, 信号: %s, freq: %s, mac: %s, 加密方式: %s",
+            #           i.ssid.encode('raw_unicode_escape', 'strict').decode('utf-8'), i.signal, i.freq, i.bssid, i.akm)
 
     return sorted(wifi_list, key=lambda x: x[1], reverse=True)  # 按信号强度由高到低排序
 
@@ -64,17 +64,17 @@ def connect_wifi(self, profile_info):
     tmp_profile = self.add_network_profile(profile_info)  # 加载配置文件
 
     self.connect(tmp_profile)  # 连接
-    time.sleep(10)  # 尝试10秒能否成功连接
+    time.sleep(2)  # 尝试2秒能否成功连接
 
-    logging.info(self.status())
-    if self.status() == pywifi.const.IFACE_CONNECTED:
-        logging.info("成功连接")
-        return True
-    else:
-        logging.info("失败")
-        self.disconnect()  # 断开连接
+    scan_i = 0
+    while scan_i < 5:  # 2秒一次，尝试5次
         time.sleep(2)
-        return False
+        scan_i += 1
+        if self.status() == pywifi.const.IFACE_CONNECTED:
+            logging.info("成功连接")
+            return True
+
+    return False
 
 
 # 断开无线网卡已连接状态

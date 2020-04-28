@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 # -*- coding:utf-8 -*-
 # Author: ye.lin
-# Time: 2020/04/02
-# Describe：wifi压力测试
+# Time: 2019/08/27
+# Describe：wan测试
 
 import logging
 import requests
@@ -14,11 +14,13 @@ import configparser
 import sys
 import os
 import signal
+import pyautogui
+from PIL import Image
+import pytesseract
 
 sys.path.append("../../../..")
 from zutils import zexcel
 from zrouter.api.scripts import utils_login
-from zrouter.func.wifi.scripts import utils_wifi
 
 
 class ServerInfo(object):
@@ -198,12 +200,18 @@ def test_top_write(module_name):
     excel.module_info[module_name]["fail"] = 0
 
 
-def requests_zrouter():
+def requests_internet():
     try:
-        result = requests.get("http://192.168.18.1", timeout=5)
+        result = requests.get("http://www.baidu.com", timeout=5)
         logging.info(result.status_code)
         if result.status_code == 200:
-            return True
+            time.sleep(2)
+            result = requests.get("http://www.baidu.com", timeout=5)
+            logging.info(result.status_code)
+            if result.status_code == 200:
+                return True
+            else:
+                return False
         else:
             return False
     except Exception as e:
@@ -211,94 +219,149 @@ def requests_zrouter():
         return False
 
 
-def run_test_case(module_name, count_max):
-    # 写excel表,test case的头部
-    test_top_write("2.4G")
-    test_top_write("5G")
-    test_count = 0
+def run_IxChariot(name, wait_time):
+    location = pyautogui.locateOnScreen(image='../conf/image/Run.png')
+    print("Run location", location)
+    try:
+        x, y = pyautogui.center(location)
+        pyautogui.moveTo(x, y, duration=1)
+        pyautogui.click()
+        print("click run...")
 
-    while test_count <= count_max:
-        test_count += 1
-        for key in server.input_dict:
-            # 填写测试名称到excel的第一列
-            excel.row_point += 1
-            excel.sheet_fd.write(excel.row_point, zexcel.CASE_NAME_COL, test_count,
-                                 style=zexcel.set_style(zexcel.BLACK, 240, bold=False, align=''))
-            excel.module_info["2.4G"]["count"] += 1
-            excel.module_info["5G"]["count"] += 1
+    except Exception as err:
+        print(err)
 
-            # 一个case里面可能会有多个请求
-            request_i = 0
-            request_result = True
-            test_module = "2.4G"
-            while request_i < len(server.input_dict[key]):
-                try:
-                    if server.input_dict[key][request_i].__contains__("method"):   # api设置接口
-                        request_data = server.input_dict[key][request_i]
-                        request_data["sid"] = server.sid
-                        logging.info("%s send:%s", key, request_data)
-                        resp_data = requests.post(server.url, data=json.dumps(request_data), headers=server.headers, timeout=5)
-                        logging.info("%s recv:%s", key, resp_data.text)
-                        if resp_data.status_code == 200:
-                            msg = json.loads(resp_data.text)
-                            # 判断返回的数据与output_json里面的数据是否一致
-                            if msg != server.output_dict[key][request_i]:
-                                request_result = False
-                    else:   # wifi连接
-                        wifi_info = server.input_dict[key][request_i]
-                        if wifi_info.__contains__("w2"):
-                            test_module = "2.4G"
-                            if not utils_wifi.start_connect_wifi(wifi_info["w2"]):
-                                request_result = False
-                            else:
-                                if not requests_zrouter():
-                                    request_result = False
+    time.sleep(1)  # 两次点击之间延迟一会儿
+    location = pyautogui.locateOnScreen(image='../conf/image/Throughput.png')
+    print("Throughput location", location)
+    try:
+        x, y = pyautogui.center(location)
+        pyautogui.moveTo(x, y, duration=1)
+        pyautogui.click()
+        print("click Throughput...")
 
-                        if wifi_info.__contains__("w5"):
-                            test_module = "5G"
-                            if not utils_wifi.start_connect_wifi(wifi_info["w5"]):
-                                request_result = False
-                            else:
-                                if not requests_zrouter():
-                                    request_result = False
+    except Exception as err:
+        print(err)
 
-                except Exception as e:
-                    logging.info("---异常---：", e)
-                    request_result = False
+    time.sleep(wait_time)
 
-                request_i += 1
-                time.sleep(2)
-
-            # 填写测试结果到excel的第二列
-            if request_result:
-                logging.info("pass")
-                excel.sheet_fd.write(excel.row_point, zexcel.CASE_RESULT_COL, "pass",
-                                     style=zexcel.set_style(zexcel.GREEN, 240, bold=False, align=''))
-                if test_module == "2.4G":
-                    excel.module_info["2.4G"]["pass"] += 1
-                elif test_module == "5G":
-                    excel.module_info["5G"]["pass"] += 1
-                test.pass_num += 1
+    wait_i = 0
+    while wait_i < wait_time:  # 2秒一次，尝试5次
+        time.sleep(2)
+        wait_i += 2
+        logging.info("等待测试结束...")
+        error_location = pyautogui.locateOnScreen(image='../conf/image/Error.png')
+        if error_location:
+            print("Error location", error_location)
+            logging.info("测试出错,关闭窗口再次测试")
+            ok_location = pyautogui.locateOnScreen(image='../conf/image/Error_Ok.png')
+            print("ok_location location", ok_location)
+            try:
+                # 为了去掉Throughput的选中，点击一下Average
+                x, y = pyautogui.center(ok_location)
+                pyautogui.moveTo(x, y, duration=1)
+                pyautogui.click()
+                print("click ok...")
+                return "error"
+            except Exception as err:
+                print(err)
+                return "error"
+        else:
+            run_location = pyautogui.locateOnScreen(image='../conf/image/Run.png')
+            if run_location:
+                print("Run location", run_location)
+                logging.info("测试已经停止，获取测试结果")
+                break
             else:
-                logging.info("fail")
-                excel.sheet_fd.write(excel.row_point, zexcel.CASE_RESULT_COL, "fail",
-                                     style=zexcel.set_style(zexcel.RED, 240, bold=False, align=''))
-                if test_module == "2.4G":
-                    excel.module_info["2.4G"]["fail"] += 1
-                elif test_module == "5G":
-                    excel.module_info["5G"]["fail"] += 1
-                test.fail_num += 1
+                logging.info("...")
 
-            filename = os.path.join(os.path.dirname(__file__) + "/../results/" + test.output_file + ".xls")
-            excel.excel_fd.save(filename)  # 保存xls
+    location = pyautogui.locateOnScreen(image='../conf/image/Average_4.png')
+    print("Average location", location)
+    try:
+        # 为了去掉Throughput的选中，点击一下Average
+        x, y = pyautogui.center(location)
+        pyautogui.moveTo(x, y, duration=1)
+        pyautogui.click()
+        print("click Average...")
 
-        logging.info("2.4G pass: %d", excel.module_info["2.4G"]["pass"])
-        logging.info("2.4G fail: %d", excel.module_info["2.4G"]["fail"])
-        logging.info("2.4G total: %d", test_count)
+        # Average的图片大小50 * 30，向下移动5个点，获取数据长度: 70 * 15
+        # average_data_x = location[0] - 10
+        # average_data_y = location[1] + 32
+        # Average_4的图片大小60 * 40，向下移动5个点，获取数据长度: 60 * 15
+        average_data_x = location[0] - 2
+        average_data_y = location[1] + 44
 
-        logging.info("5G pass: %d", excel.module_info["5G"]["pass"])
-        logging.info("5G fail: %d", excel.module_info["5G"]["fail"])
-        logging.info("5G total: %d", test_count)
+        average_img = '../results/image/screenshot_' + name + '.png'
+        print("save img", average_img)
+        img = pyautogui.screenshot(region=[average_data_x, average_data_y, 62, 17])  # x,y,w,h
+        img.save(average_img)
+
+        time.sleep(2)
+
+        pytesseract.pytesseract.tesseract_cmd = 'D:\\Program Files\\Tesseract-OCR\\tesseract.exe'
+        image = Image.open(average_img)
+
+        content = pytesseract.image_to_string(image)  # 解析图片
+        print(content)
+        data = ''.join(list(filter(lambda ch: ch in '0123456789.', content)))
+        try:
+            float(data)
+        except Exception as err:
+            print(err)
+            content = pytesseract.image_to_string(image)  # 解析图片
+            print(content)
+            data = ''.join(list(filter(lambda ch: ch in '0123456789.', content)))
+
+        return float(data)
+
+    except Exception as err:
+        print(err)
+
+
+def run_test_case(module_name):
+    # 写excel表,test case的头部
+    test_top_write(module_name)
+    for key in server.input_dict:
+        # 填写测试名称到excel的第一列
+        excel.row_point += 1
+        excel.sheet_fd.write(excel.row_point, zexcel.CASE_NAME_COL, key,
+                             style=zexcel.set_style(zexcel.BLACK, 240, bold=False, align=''))
+        excel.module_info[module_name]["count"] += 1
+
+        # 一个case里面可能会有多个请求
+        request_i = 0
+        request_result = True
+        while request_i < len(server.input_dict[key]):
+            try:
+                if server.input_dict[key][request_i].__contains__("run_IxChariot"):
+                    tc = run_IxChariot(key, server.input_dict[key][request_i]["run_IxChariot"]["wait_time"])
+                    print(key, ":", tc)
+                else:
+                    logging.info("2-30,,,,")
+
+            except Exception as e:
+                logging.info("---异常---：", e)
+                request_result = False
+
+            request_i += 1
+            time.sleep(1)
+
+        # 填写测试结果到excel的第二列
+        if request_result:
+            logging.info("pass")
+            excel.sheet_fd.write(excel.row_point, zexcel.CASE_RESULT_COL, "pass",
+                                 style=zexcel.set_style(zexcel.GREEN, 240, bold=False, align=''))
+            excel.module_info[module_name]["pass"] += 1
+            test.pass_num += 1
+        else:
+            logging.info("fail")
+            excel.sheet_fd.write(excel.row_point, zexcel.CASE_RESULT_COL, "fail",
+                                 style=zexcel.set_style(zexcel.RED, 240, bold=False, align=''))
+            excel.module_info[module_name]["fail"] += 1
+            test.fail_num += 1
+
+        filename = os.path.join(os.path.dirname(__file__) + "/../results/" + test.output_file + ".xls")
+        excel.excel_fd.save(filename)  # 保存xls
 
     return True
 
@@ -344,15 +407,23 @@ if __name__ == '__main__':
     for sig in [signal.SIGABRT, signal.SIGFPE, signal.SIGILL, signal.SIGINT, signal.SIGSEGV, signal.SIGTERM]:
         signal.signal(sig, signal_handler)
 
-    module = "wifi_stress"
+    module = "throughput"
 
     test_start(module)
+
+    server.sid = utils_login.get_sid(server.url, server.headers, server.password)
+    if not server.sid:
+        logging.error("login fail")
+        test_end()
 
     if not test_json_init(module):
         logging.error("json init error")
         test_end()
 
-    run_test_case(module, 4)
+    run_test_case(module)
 
     test_end()
+
+
+
 

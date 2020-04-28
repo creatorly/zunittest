@@ -143,7 +143,7 @@ def excel_init():
         excel.sheet_fd[process].set_column(0, 2, 20)
 
         excel.row_point[process] = 0
-        rows = ['时间(分钟)', '内存（Kb）']
+        rows = ['时间(分钟)', '内存（KB）']
         for index, val in enumerate(rows):
             excel.sheet_fd[process].write(excel.row_point[process], index, val)
 
@@ -169,7 +169,7 @@ def start_connect_ssh(process):
 
         # 打印执行结果
         command_result = stdout.read().decode('utf-8')
-        logging.info(command_result)
+        logging.info("%s: %s", process, command_result)
 
         if command_result:
             ret = int(command_result.replace("\n", ""))
@@ -184,7 +184,7 @@ def start_connect_ssh(process):
 
 def run_test_case():
     test_time = 0
-    while test_time < 2:
+    while True:
         # 每个线程一个sheet
         for process in test.process:
 
@@ -196,7 +196,7 @@ def run_test_case():
 
         test_time += 1
         logging.info("time: %d", test_time)
-        time.sleep(3)
+        time.sleep(60)
 
 
 def test_start(module_name):
