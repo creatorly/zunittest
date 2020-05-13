@@ -1,26 +1,24 @@
 #!/usr/bin/python3
 # -*- coding:utf-8 -*-
 # Author: ye.lin
-# Time: 2019/08/27
-# Describe：wan测试
+# Time: 2020/04/30
+# Describe：跑流
 
 import logging
-import requests
-import json
-import json5
 import base64
 import time
 import configparser
-import sys
 import os
+import sys
 import signal
 import pyautogui
 from PIL import Image
 import pytesseract
+import telnetlib
+import xlsxwriter
 
 sys.path.append("../../../..")
 from zutils import zexcel
-from zrouter.api.scripts import utils_login
 
 
 class ServerInfo(object):
@@ -32,16 +30,20 @@ class ServerInfo(object):
     output_dict = {}
 
 
+class RadioRackInfo(object):
+    ip = '192.168.1.18'
+    port = 50000
+    attenuation = []
+    channel = []
+    wait_time = 60
+
+
 class TestInfo(object):
     project = ''
     version = ''
     mac = ''
     date = ''
     name = ''
-    total_num = 0
-    pass_num = 0
-    fail_num = 0
-    modules = []
     start_time = ''
     output_file = ''
 
@@ -57,6 +59,12 @@ class ExcelInfo(object):
 server = ServerInfo
 test = TestInfo
 excel = ExcelInfo
+radio_rack = RadioRackInfo
+CASE_NAME_COL = 0
+CASE_UPLINK_COL = 1
+CASE_DOWNLINK_COL = 2
+
+excel_type = "xlsx"
 
 
 def data_init(module_name):
@@ -95,6 +103,39 @@ def data_init(module_name):
         print("miss version")
         exit()
 
+    config_path = os.path.join(os.path.dirname(__file__) + '/../conf/' + module_name + '.conf')
+    config.read(config_path, encoding="utf-8")
+
+    if config.has_option("radio_rack", "ip"):
+        radio_rack.ip = config.get("radio_rack", "ip")
+    else:
+        print("miss radio_rack ip")
+        exit()
+
+    if config.has_option("radio_rack", "port"):
+        radio_rack.port = config.get("radio_rack", "port")
+    else:
+        print("miss radio_rack port")
+        exit()
+
+    if config.has_option("radio_rack", "attenuation"):
+        radio_rack.attenuation = config.get("radio_rack", "attenuation").split(",")
+    else:
+        print("miss radio_rack attenuation")
+        exit()
+
+    if config.has_option("radio_rack", "channel"):
+        radio_rack.channel = config.get("radio_rack", "channel").split(",")
+    else:
+        print("miss radio_rack channel")
+        exit()
+
+    if config.has_option("IxChariot", "wait_time"):
+        radio_rack.wait_time = int(config.get("IxChariot", "wait_time"))
+    else:
+        print("miss wait_time")
+        exit()
+
     server.headers = {'content-type': 'application/json'}
     test.date = time.strftime("%Y/%m/%d", time.localtime())
     test.total_num = 0
@@ -131,117 +172,112 @@ def logging_init():
 
 
 def excel_init(module_name):
-    excel.excel_fd = zexcel.excel_init()
-    sheet_name = module_name + "测试结果"
-    excel.sheet_fd = zexcel.sheet_init(excel.excel_fd, sheet_name)
+    if excel_type == "xlsx":
+        filename = os.path.join(os.path.dirname(__file__) + "/../results/" + test.output_file + ".xlsx")
+        excel.excel_fd = xlsxwriter.Workbook(filename)
 
-    # 写设备信息
-    excel.sheet_fd.write(zexcel.PROJECT_ROW, zexcel.PROJECT_COL + 1, test.project,
-                         style=zexcel.set_style(zexcel.BLACK, 260, bold=True, align='', pattern_color='light_orange'))
-    excel.sheet_fd.write(zexcel.VERSION_ROW, zexcel.VERSION_COL + 1, test.version,
-                         style=zexcel.set_style(zexcel.BLACK, 260, bold=True, align='', pattern_color='light_orange'))
-    excel.sheet_fd.write(zexcel.MAC_ROW, zexcel.MAC_COL + 1, test.mac,
-                         style=zexcel.set_style(zexcel.BLACK, 260, bold=True, align='', pattern_color='light_orange'))
-    excel.sheet_fd.write(zexcel.DATE_ROW, zexcel.DATE_COL + 1, test.date,
-                         style=zexcel.set_style(zexcel.BLACK, 260, bold=True, align='', pattern_color='light_orange'))
+        sheet_name = module_name + "测试结果"
 
-    filename = os.path.join(os.path.dirname(__file__) + "/../results/" + test.output_file + ".xls")
-    excel.excel_fd.save(filename)  # 保存xls
+        excel.sheet_fd = excel.excel_fd.add_worksheet(sheet_name)  # 增加sheet
+        excel.sheet_fd.set_column(0, 3, 10)
+
+    elif excel_type == "xls":
+        sheet_name = module_name + "测试结果"
+        excel.excel_fd = zexcel.excel_init()
+        excel.sheet_fd = excel.excel_fd.add_sheet(sheet_name)  # 增加sheet
+        excel.sheet_fd.col(zexcel.CASE_NAME_COL).width = 200 * 15  # 设置第1列列宽
+        excel.sheet_fd.col(zexcel.CASE_RESULT_COL).width = 200 * 15  # 设置第2列列宽
+        excel.sheet_fd.col(zexcel.COUNT_COL).width = 200 * 15  # 设置第3列列宽
+        excel.sheet_fd.col(zexcel.PASS_COL).width = 200 * 15  # 设置第4列列宽
+        excel.sheet_fd.col(zexcel.FAIL_COL).width = 200 * 15  # 设置第5列列宽
+        excel.sheet_fd.col(zexcel.PROJECT_COL).width = 180 * 15  # 设置第7列列宽
+        excel.sheet_fd.col(zexcel.PROJECT_COL + 1).width = 360 * 15  # 设置第8列列宽
+
+        # 写第一行数据
+        excel.sheet_fd.write_merge(0, 0, 0, 4, sheet_name, zexcel.set_style(0x7FFF, 320, bold=True))
+
+        excel.sheet_fd.write(zexcel.PROJECT_ROW, zexcel.PROJECT_COL, "project:",
+                             style=zexcel.set_style(zexcel.BLACK, 260, bold=True, align='', pattern_color='light_orange'))
+        excel.sheet_fd.write(zexcel.VERSION_ROW, zexcel.VERSION_COL, "version:",
+                             style=zexcel.set_style(zexcel.BLACK, 260, bold=True, align='', pattern_color='light_orange'))
+        excel.sheet_fd.write(zexcel.MAC_ROW, zexcel.MAC_COL, "mac:",
+                             style=zexcel.set_style(zexcel.BLACK, 260, bold=True, align='', pattern_color='light_orange'))
+        excel.sheet_fd.write(zexcel.DATE_ROW, zexcel.DATE_COL, "date:",
+                             style=zexcel.set_style(zexcel.BLACK, 260, bold=True, align='', pattern_color='light_orange'))
+
+        # 写设备信息
+        excel.sheet_fd.write(zexcel.PROJECT_ROW, zexcel.PROJECT_COL + 1, test.project,
+                             style=zexcel.set_style(zexcel.BLACK, 260, bold=True, align='', pattern_color='light_orange'))
+        excel.sheet_fd.write(zexcel.VERSION_ROW, zexcel.VERSION_COL + 1, test.version,
+                             style=zexcel.set_style(zexcel.BLACK, 260, bold=True, align='', pattern_color='light_orange'))
+        excel.sheet_fd.write(zexcel.MAC_ROW, zexcel.MAC_COL + 1, test.mac,
+                             style=zexcel.set_style(zexcel.BLACK, 260, bold=True, align='', pattern_color='light_orange'))
+        excel.sheet_fd.write(zexcel.DATE_ROW, zexcel.DATE_COL + 1, test.date,
+                             style=zexcel.set_style(zexcel.BLACK, 260, bold=True, align='', pattern_color='light_orange'))
+
+        filename = os.path.join(os.path.dirname(__file__) + "/../results/" + test.output_file + ".xls")
+        excel.excel_fd.save(filename)  # 保存xls
 
     # 从第二行开始写入
     excel.row_point = 1
 
 
-def test_json_init(module_name):
-    check_name = "test_"
-    # 获取所有的测试名称及请求内容
-    input_file = os.path.join(os.path.dirname(__file__) + "/../input_json/" + test.name + "/" + module_name + ".json5")
-    output_file = os.path.join(os.path.dirname(__file__) + "/../output_json/" + test.name + "/" + module_name + ".json5")
-    with open(input_file, 'r', encoding="utf8") as load_f:
-        server.input_dict = json5.loads(load_f.read())
-
-    for key in server.input_dict:
-        # 判断key是否以"test_"开始
-        if not str(key).startswith(check_name):
-            logging.error("input_dict not start with test_")
-            return False
-
-    with open(output_file, 'r', encoding="utf8") as load_f:
-        server.output_dict = json5.loads(load_f.read())
-
-    for key in server.output_dict:
-        # 判断key是否以"test_"开始
-        if not str(key).startswith(check_name):
-            logging.error("output_dict not start with test_")
-            return False
-
-    # 判断input和output的内容是否对应
-    if len(server.input_dict) == len(server.output_dict):
-        for key in server.input_dict:
-            if key in server.output_dict:
-                logging.info("test case:%s", key)
-            else:
-                logging.error("input_json is different with output_json")
-                return False
-    else:
-        return False
-
-    return True
-
-
 def test_top_write(module_name):
     excel.row_point += 1
-    excel.sheet_fd.write(excel.row_point, zexcel.CASE_NAME_COL, module_name.capitalize() + "TestCase",
-                         style=zexcel.set_style(zexcel.BLACK, 280, bold=False, align='', pattern_color='sky_blue'))
-    excel.module_info[module_name] = {}
-    excel.module_info[module_name]["row"] = excel.row_point
-    excel.module_info[module_name]["count"] = 0
-    excel.module_info[module_name]["pass"] = 0
-    excel.module_info[module_name]["fail"] = 0
+    if excel_type == "xlsx":
+        excel.sheet_fd.write(excel.row_point, 0, "Atten")
+        excel.sheet_fd.write(excel.row_point, 1, "Downlink")
+        excel.sheet_fd.write(excel.row_point, 2, "Uplink")
+    elif excel_type == "xls":
+        excel.sheet_fd.write(excel.row_point, 0, "Atten",
+                             style=zexcel.set_style(zexcel.BLACK, 280, bold=False, align='', pattern_color='gray25'))
+        excel.sheet_fd.write(excel.row_point, 1, "Downlink",
+                             style=zexcel.set_style(zexcel.BLACK, 280, bold=False, align='', pattern_color='gray25'))
+        excel.sheet_fd.write(excel.row_point, 2, "Uplink",
+                             style=zexcel.set_style(zexcel.BLACK, 280, bold=False, align='', pattern_color='gray25'))
 
 
-def requests_internet():
+def set_RadioRack(command):
     try:
-        result = requests.get("http://www.baidu.com", timeout=5)
-        logging.info(result.status_code)
-        if result.status_code == 200:
-            time.sleep(2)
-            result = requests.get("http://www.baidu.com", timeout=5)
-            logging.info(result.status_code)
-            if result.status_code == 200:
-                return True
-            else:
-                return False
-        else:
-            return False
-    except Exception as e:
-        print("---异常---：", e)
+        # tn = telnetlib.Telnet(radio_rack.ip, radio_rack.port)
+        time.sleep(2)
+        # 执行命令
+        logging.info('send %s' % command)
+        # tn.write(command.encode('ascii') + b'\n')
+        # # 获取命令结果
+        # time.sleep(2)
+        # command_result = tn.read_very_eager().decode('ascii')
+        # logging.info('%s' % command_result)
+        # time.sleep(2)
+        # tn.close()
+    except Exception as err:
+        logging.warning('%s failed to connect !' % radio_rack.ip)
         return False
 
 
 def run_IxChariot(name, wait_time):
     location = pyautogui.locateOnScreen(image='../conf/image/Run.png')
-    print("Run location", location)
+    logging.info("Run location %s", location)
     try:
         x, y = pyautogui.center(location)
         pyautogui.moveTo(x, y, duration=1)
         pyautogui.click()
-        print("click run...")
+        logging.info("click run...")
 
     except Exception as err:
-        print(err)
+        logging.info(err)
 
     time.sleep(1)  # 两次点击之间延迟一会儿
     location = pyautogui.locateOnScreen(image='../conf/image/Throughput.png')
-    print("Throughput location", location)
+    logging.info("Throughput location %s", location)
     try:
         x, y = pyautogui.center(location)
         pyautogui.moveTo(x, y, duration=1)
         pyautogui.click()
-        print("click Throughput...")
+        logging.info("click Throughput...")
 
     except Exception as err:
-        print(err)
+        logging.info(err)
 
     time.sleep(wait_time)
 
@@ -252,38 +288,52 @@ def run_IxChariot(name, wait_time):
         logging.info("等待测试结束...")
         error_location = pyautogui.locateOnScreen(image='../conf/image/Error.png')
         if error_location:
-            print("Error location", error_location)
+            logging.info("Error location %s", error_location)
             logging.info("测试出错,关闭窗口再次测试")
             ok_location = pyautogui.locateOnScreen(image='../conf/image/Error_Ok.png')
-            print("ok_location location", ok_location)
+            logging.info("ok_location location %s", ok_location)
             try:
                 # 为了去掉Throughput的选中，点击一下Average
                 x, y = pyautogui.center(ok_location)
                 pyautogui.moveTo(x, y, duration=1)
                 pyautogui.click()
-                print("click ok...")
+                logging.info("click ok...")
                 return "error"
             except Exception as err:
-                print(err)
+                logging.info(err)
                 return "error"
         else:
             run_location = pyautogui.locateOnScreen(image='../conf/image/Run.png')
             if run_location:
-                print("Run location", run_location)
+                logging.info("Run location %s", run_location)
                 logging.info("测试已经停止，获取测试结果")
                 break
             else:
-                logging.info("...")
+                logging.info("%d...", wait_i)
 
-    location = pyautogui.locateOnScreen(image='../conf/image/Average_4.png')
-    print("Average location", location)
-    try:
-        # 为了去掉Throughput的选中，点击一下Average
-        x, y = pyautogui.center(location)
+    Pair10_on = pyautogui.locateOnScreen(image='../conf/image/Pair10_on.png')
+    logging.info("Pair10_on location %s", Pair10_on)
+
+    if Pair10_on:
+        # 点击一下Pair,去掉Throughput的选择和蓝色的全选，提高识别率
+        x, y = pyautogui.center(Pair10_on)
         pyautogui.moveTo(x, y, duration=1)
         pyautogui.click()
-        print("click Average...")
+        logging.info("click Pair10_on...")
+    else:
+        Pair10_off = pyautogui.locateOnScreen(image='../conf/image/Pair10_off.png')
+        logging.info("Pair10_off location %s", Pair10_off)
 
+        if Pair10_off:
+            # 点击一下Pair,去掉Throughput的选择和蓝色的全选，提高识别率
+            x, y = pyautogui.center(Pair10_off)
+            pyautogui.moveTo(x, y, duration=1)
+            pyautogui.click()
+            logging.info("click Pair10_off...")
+
+    location = pyautogui.locateOnScreen(image='../conf/image/Average_4.png')
+    logging.info("Average location %s", location)
+    try:
         # Average的图片大小50 * 30，向下移动5个点，获取数据长度: 70 * 15
         # average_data_x = location[0] - 10
         # average_data_y = location[1] + 32
@@ -291,8 +341,8 @@ def run_IxChariot(name, wait_time):
         average_data_x = location[0] - 2
         average_data_y = location[1] + 44
 
-        average_img = '../results/image/screenshot_' + name + '.png'
-        print("save img", average_img)
+        average_img = '../results/image/' + test.output_file + name + '.png'
+        logging.info("save img %s", average_img)
         img = pyautogui.screenshot(region=[average_data_x, average_data_y, 62, 17])  # x,y,w,h
         img.save(average_img)
 
@@ -302,66 +352,84 @@ def run_IxChariot(name, wait_time):
         image = Image.open(average_img)
 
         content = pytesseract.image_to_string(image)  # 解析图片
-        print(content)
+        logging.info(content)
         data = ''.join(list(filter(lambda ch: ch in '0123456789.', content)))
         try:
             float(data)
         except Exception as err:
-            print(err)
+            logging.info(err)
             content = pytesseract.image_to_string(image)  # 解析图片
-            print(content)
+            logging.info(content)
             data = ''.join(list(filter(lambda ch: ch in '0123456789.', content)))
 
         return float(data)
 
     except Exception as err:
-        print(err)
+        logging.info(err)
+
+
+def change_direction():
+    location = pyautogui.locateOnScreen(image='../conf/image/Allpairs.png')
+    logging.info("Allpairs location %s", location)
+    try:
+        x, y = pyautogui.center(location)
+        pyautogui.moveTo(x, y, duration=1)
+        pyautogui.click()
+        logging.info("click run...")
+
+    except Exception as err:
+        logging.info(err)
+
+    time.sleep(1)  # 两次点击之间延迟一会儿
+
+    location = pyautogui.locateOnScreen(image='../conf/image/Swap.png')
+    logging.info("Swap location %s", location)
+    try:
+        x, y = pyautogui.center(location)
+        pyautogui.moveTo(x, y, duration=1)
+        pyautogui.click()
+        logging.info("click Swap...")
+    except Exception as err:
+        logging.info(err)
 
 
 def run_test_case(module_name):
     # 写excel表,test case的头部
     test_top_write(module_name)
-    for key in server.input_dict:
-        # 填写测试名称到excel的第一列
+
+    for attenuation in radio_rack.attenuation:
+
+        set_command = "ATT "
+        for channel in radio_rack.channel:
+            set_command += channel + " " + attenuation + ";"
+        set_command = set_command[:-1] + "<CR><LF>"
+        set_RadioRack(set_command)
+
+        logging.info(" ############ Uplink : %s dB", attenuation)
+        uplink_data = run_IxChariot(attenuation + "db_uplink", radio_rack.wait_time)
+        change_direction()
+
+        logging.info(" ############ Downlink : %s dB", attenuation)
+        downlink_data = run_IxChariot(attenuation + "db_downlink", radio_rack.wait_time)
+        change_direction()
+
+        # 写excel
         excel.row_point += 1
-        excel.sheet_fd.write(excel.row_point, zexcel.CASE_NAME_COL, key,
-                             style=zexcel.set_style(zexcel.BLACK, 240, bold=False, align=''))
-        excel.module_info[module_name]["count"] += 1
-
-        # 一个case里面可能会有多个请求
-        request_i = 0
-        request_result = True
-        while request_i < len(server.input_dict[key]):
-            try:
-                if server.input_dict[key][request_i].__contains__("run_IxChariot"):
-                    tc = run_IxChariot(key, server.input_dict[key][request_i]["run_IxChariot"]["wait_time"])
-                    print(key, ":", tc)
-                else:
-                    logging.info("2-30,,,,")
-
-            except Exception as e:
-                logging.info("---异常---：", e)
-                request_result = False
-
-            request_i += 1
-            time.sleep(1)
-
-        # 填写测试结果到excel的第二列
-        if request_result:
-            logging.info("pass")
-            excel.sheet_fd.write(excel.row_point, zexcel.CASE_RESULT_COL, "pass",
+        if excel_type == "xlsx":
+            excel.sheet_fd.write(excel.row_point, CASE_NAME_COL, attenuation + "dB")
+            excel.sheet_fd.write(excel.row_point, CASE_UPLINK_COL, uplink_data)
+            excel.sheet_fd.write(excel.row_point, CASE_DOWNLINK_COL, downlink_data)
+        elif excel_type == "xls":
+            excel.sheet_fd.write(excel.row_point, CASE_NAME_COL, attenuation + "dB",
+                                 style=zexcel.set_style(zexcel.BLACK, 240, bold=False, align=''))
+            excel.sheet_fd.write(excel.row_point, CASE_UPLINK_COL, uplink_data,
                                  style=zexcel.set_style(zexcel.GREEN, 240, bold=False, align=''))
-            excel.module_info[module_name]["pass"] += 1
-            test.pass_num += 1
-        else:
-            logging.info("fail")
-            excel.sheet_fd.write(excel.row_point, zexcel.CASE_RESULT_COL, "fail",
-                                 style=zexcel.set_style(zexcel.RED, 240, bold=False, align=''))
-            excel.module_info[module_name]["fail"] += 1
-            test.fail_num += 1
+            excel.sheet_fd.write(excel.row_point, CASE_DOWNLINK_COL, downlink_data,
+                                 style=zexcel.set_style(zexcel.GREEN, 240, bold=False, align=''))
+            filename = os.path.join(os.path.dirname(__file__) + "/../results/" + test.output_file + ".xls")
+            excel.excel_fd.save(filename)  # 保存xls
 
-        filename = os.path.join(os.path.dirname(__file__) + "/../results/" + test.output_file + ".xls")
-        excel.excel_fd.save(filename)  # 保存xls
+        time.sleep(2)
 
     return True
 
@@ -374,25 +442,12 @@ def test_start(module_name):
 
 
 def test_end():
-    # 将统计的count pass fail写入excel
-    test.total_num = test.pass_num + test.fail_num
-    for key in excel.module_info:
-        excel.sheet_fd.write(excel.module_info[key]["row"], zexcel.COUNT_COL, excel.module_info[key]["count"],
-                             style=zexcel.set_style(zexcel.RED, 240, bold=False, align=''))
-        excel.sheet_fd.write(excel.module_info[key]["row"], zexcel.PASS_COL, excel.module_info[key]["pass"],
-                             style=zexcel.set_style(zexcel.RED, 240, bold=False, align=''))
-        excel.sheet_fd.write(excel.module_info[key]["row"], zexcel.FAIL_COL, excel.module_info[key]["fail"],
-                             style=zexcel.set_style(zexcel.RED, 240, bold=False, align=''))
+    if excel_type == "xlsx":
+        excel.excel_fd.close()  # 保存xlsx
+    elif excel_type == "xls":
+        filename = os.path.join(os.path.dirname(__file__) + "/../results/" + test.output_file + ".xls")
+        excel.excel_fd.save(filename)  # 保存xls
 
-    excel.sheet_fd.write(zexcel.TOTAL_ROW, zexcel.TOTAL_COL + 1, test.total_num,
-                         style=zexcel.set_style(zexcel.BLACK, 260, bold=True, align='', pattern_color='light_orange'))
-    excel.sheet_fd.write(zexcel.TOTAL_PASS_ROW, zexcel.TOTAL_PASS_COL + 1, test.pass_num,
-                         style=zexcel.set_style(zexcel.BLACK, 260, bold=True, align='', pattern_color='light_orange'))
-    excel.sheet_fd.write(zexcel.TOTAL_FAIL_ROW, zexcel.TOTAL_FAIL_COL + 1, test.fail_num,
-                         style=zexcel.set_style(zexcel.BLACK, 260, bold=True, align='', pattern_color='light_orange'))
-
-    filename = os.path.join(os.path.dirname(__file__) + "/../results/" + test.output_file + ".xls")
-    excel.excel_fd.save(filename)  # 保存xls
     logging.info("test end!")
     exit()
 
@@ -410,15 +465,6 @@ if __name__ == '__main__':
     module = "throughput"
 
     test_start(module)
-
-    server.sid = utils_login.get_sid(server.url, server.headers, server.password)
-    if not server.sid:
-        logging.error("login fail")
-        test_end()
-
-    if not test_json_init(module):
-        logging.error("json init error")
-        test_end()
 
     run_test_case(module)
 
