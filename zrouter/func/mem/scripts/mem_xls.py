@@ -12,7 +12,7 @@ import sys
 import os
 import paramiko
 
-sys.path.append("../../../..")
+sys.path.append("./../../../..")
 from zutils import zexcel
 
 
@@ -51,7 +51,7 @@ excel = ExcelInfo
 def data_init(module_name):
     # 获取配置文件信息
     config = configparser.ConfigParser()
-    config_path = os.path.join(os.path.dirname(__file__) + '/../../../zrouter.conf')
+    config_path = os.path.join(os.path.dirname(__file__) + './../../../zrouter.conf')
     config.read(config_path, encoding="utf-8")
 
     if config.has_option("test", "project"):
@@ -72,7 +72,7 @@ def data_init(module_name):
         print("miss version")
         exit()
 
-    config_path = os.path.join(os.path.dirname(__file__) + '/../conf/' + module_name + '.conf')
+    config_path = os.path.join(os.path.dirname(__file__) + './../conf/' + module_name + '.conf')
     config.read(config_path, encoding="utf-8")
     if config.has_option(test.name, "process"):
         test.process = config.get(test.name, "process").split(",")
@@ -114,7 +114,7 @@ def logging_init():
     logger.setLevel(logging.INFO)  # 设置logger日志等级
 
     # 创建handler
-    log_file = os.path.join(os.path.dirname(__file__) + "/../results/" + test.output_file + ".log")
+    log_file = os.path.join(os.path.dirname(__file__) + "./../results/" + test.output_file + ".log")
     fh = logging.FileHandler(log_file, encoding="utf-8")
     ch = logging.StreamHandler()
 
@@ -150,7 +150,7 @@ def excel_init():
             excel.sheet_fd[process].write(excel.row_point[process], index, val,
                                           style=zexcel.set_style(zexcel.BLACK, 280, bold=True, pattern_color='gray25'))
 
-    filename = os.path.join(os.path.dirname(__file__) + "/../results/" + test.output_file + ".xls")
+    filename = os.path.join(os.path.dirname(__file__) + "./../results/" + test.output_file + ".xls")
     excel.excel_fd.save(filename)  # 保存xls
 
 
@@ -202,7 +202,7 @@ def run_test_case():
             excel.sheet_fd[process].write(excel.row_point[process], CASE_MEM_COL, mem_result,
                                           style=zexcel.set_style(zexcel.BLACK, 240, bold=False, align=''))
 
-            filename = os.path.join(os.path.dirname(__file__) + "/../results/" + test.output_file + ".xls")
+            filename = os.path.join(os.path.dirname(__file__) + "./../results/" + test.output_file + ".xls")
             excel.excel_fd.save(filename)  # 保存xls
 
         test_time += 1
@@ -218,7 +218,7 @@ def test_start(module_name):
 
 
 def test_end():
-    filename = os.path.join(os.path.dirname(__file__) + "/../results/" + test.output_file + ".xls")
+    filename = os.path.join(os.path.dirname(__file__) + "./../results/" + test.output_file + ".xls")
     excel.excel_fd.save(filename)  # 保存xls
     logging.info("test end!")
     exit()

@@ -18,7 +18,7 @@ import signal
 import paho.mqtt.client as mqtt
 from paho.mqtt.client import Client
 
-sys.path.append("../../../..")
+sys.path.append("./../../../..")
 from zutils import zexcel
 from zrouter.func.wifi.scripts import utils_wifi
 
@@ -76,7 +76,7 @@ mqttClient = MqttClientInfo
 def data_init(module_name):
     # 获取配置文件信息
     config = configparser.ConfigParser()
-    config_path = os.path.join(os.path.dirname(__file__) + '/../conf/' + module_name + '.conf')
+    config_path = os.path.join(os.path.dirname(__file__) + './../conf/' + module_name + '.conf')
     config.read(config_path, encoding="utf-8")
 
     if config.has_option("link", "host"):
@@ -109,7 +109,7 @@ def data_init(module_name):
         print("miss ble_prodTypeId")
         exit()
 
-    config_path = os.path.join(os.path.dirname(__file__) + '/../../../zrouter.conf')
+    config_path = os.path.join(os.path.dirname(__file__) + './../../../zrouter.conf')
     config.read(config_path, encoding="utf-8")
     if config.has_option("test", "project"):
         test.project = config.get("test", "project")
@@ -150,7 +150,7 @@ def logging_init():
     logger.setLevel(logging.INFO)  # 设置logger日志等级
 
     # 创建handler
-    log_file = os.path.join(os.path.dirname(__file__) + "/../results/" + test.output_file + ".log")
+    log_file = os.path.join(os.path.dirname(__file__) + "./../results/" + test.output_file + ".log")
     fh = logging.FileHandler(log_file, encoding="utf-8")
     ch = logging.StreamHandler()
 
@@ -185,7 +185,7 @@ def excel_init(module_name):
     excel.sheet_fd.write(zexcel.DATE_ROW, zexcel.DATE_COL + 1, test.date,
                          style=zexcel.set_style(zexcel.BLACK, 260, bold=True, align='', pattern_color='light_orange'))
 
-    filename = os.path.join(os.path.dirname(__file__) + "/../results/" + test.output_file + ".xls")
+    filename = os.path.join(os.path.dirname(__file__) + "./../results/" + test.output_file + ".xls")
     excel.excel_fd.save(filename)  # 保存xls
 
     # 从第二行开始写入
@@ -214,7 +214,7 @@ def test_json_update():
     server.output_dict["test_005_2.4G_remove"][1]["part_same"]["data"]["devUuid"] = new_str + "_LED2_4"
 
     config = configparser.ConfigParser()
-    config_path = os.path.join(os.path.dirname(__file__) + '/../conf/iot.conf')
+    config_path = os.path.join(os.path.dirname(__file__) + './../conf/iot.conf')
     config.read(config_path, encoding="utf-8")
 
     if config.has_option("link", "433"):
@@ -338,8 +338,8 @@ def zigbee_json_update(zigbeeGate):
 def test_json_init(module_name):
     check_name = "test_"
     # 获取所有的测试名称及请求内容
-    input_file = os.path.join(os.path.dirname(__file__) + "/../input_json/" + test.name + "/" + module_name + ".json5")
-    output_file = os.path.join(os.path.dirname(__file__) + "/../output_json/" + test.name + "/" + module_name + ".json5")
+    input_file = os.path.join(os.path.dirname(__file__) + "./../input_json/" + test.name + "/" + module_name + ".json5")
+    output_file = os.path.join(os.path.dirname(__file__) + "./../output_json/" + test.name + "/" + module_name + ".json5")
     with open(input_file, 'r', encoding="utf8") as load_f:
         server.input_dict = json5.loads(load_f.read())
 
@@ -520,7 +520,7 @@ def run_test_case(module_name):
             excel.module_info[module_name]["fail"] += 1
             test.fail_num += 1
 
-        filename = os.path.join(os.path.dirname(__file__) + "/../results/" + test.output_file + ".xls")
+        filename = os.path.join(os.path.dirname(__file__) + "./../results/" + test.output_file + ".xls")
         excel.excel_fd.save(filename)  # 保存xls
 
     return True
@@ -551,7 +551,7 @@ def test_end():
     excel.sheet_fd.write(zexcel.TOTAL_FAIL_ROW, zexcel.TOTAL_FAIL_COL + 1, test.fail_num,
                          style=zexcel.set_style(zexcel.BLACK, 260, bold=True, align='', pattern_color='light_orange'))
 
-    filename = os.path.join(os.path.dirname(__file__) + "/../results/" + test.output_file + ".xls")
+    filename = os.path.join(os.path.dirname(__file__) + "./../results/" + test.output_file + ".xls")
     excel.excel_fd.save(filename)  # 保存xls
     logging.info("test end!")
     exit()
